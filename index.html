@@ -50,7 +50,59 @@
       background: rgba(0, 30, 60, 0.5);
       position: relative;
       border-bottom: 1px solid rgba(255,255,255,0.1);
+      flex-shrink: 0; /* منع انكماش الهيدر */
     }
+    
+    /* ===== تحسين التمرير لصفحة المصادقة ===== */
+    #auth {
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+      overflow: hidden; /* منع تمرير البطاقة نفسها */
+    }
+    
+    .auth-content {
+      flex: 1;
+      overflow-y: auto; /* إضافة تمرير عمودي للمحتوى */
+      padding: 0 15px;
+      min-height: 0; /* مهم ليعمل التمرير بشكل صحيح */
+      scrollbar-width: thin;
+      scrollbar-color: #3498db rgba(255,255,255,0.1);
+    }
+    
+    /* تخصيص شريط التمرير */
+    .auth-content::-webkit-scrollbar {
+      width: 6px;
+    }
+    
+    .auth-content::-webkit-scrollbar-track {
+      background: rgba(255,255,255,0.1);
+      border-radius: 10px;
+    }
+    
+    .auth-content::-webkit-scrollbar-thumb {
+      background: #3498db;
+      border-radius: 10px;
+    }
+    
+    .auth-content::-webkit-scrollbar-thumb:hover {
+      background: #2980b9;
+    }
+    
+    .auth-form {
+      padding: 15px 10px 25px 10px;
+      max-width: 500px;
+      margin: 0 auto;
+      width: 100%;
+    }
+    
+    /* تحسين ظهور الأزرار في نهاية التمرير */
+    .auth-footer {
+      margin-top: 20px;
+      padding-top: 10px;
+      border-top: 1px solid rgba(255,255,255,0.1);
+    }
+    
     .online-btn {
       position: absolute;
       right: 16px;
@@ -560,10 +612,11 @@
     .auth-tabs {
       display: flex;
       gap: 10px;
-      margin-bottom: 25px;
+      margin-bottom: 20px;
       background: rgba(255,255,255,0.1);
       padding: 5px;
       border-radius: 60px;
+      flex-shrink: 0;
     }
     
     .auth-tab {
@@ -590,19 +643,16 @@
       cursor: not-allowed;
     }
     
-    .auth-form {
-      padding: 10px 30px 30px 30px;
-    }
-    
+    /* تحسين مجموعات الإدخال */
     .input-group {
       margin-bottom: 20px;
     }
     
     .input-group label {
       display: block;
-      color: rgba(255,255,255,0.8);
+      color: rgba(255,255,255,0.9);
       margin-bottom: 8px;
-      font-size: 0.9rem;
+      font-size: 0.95rem;
       font-weight: 500;
     }
     
@@ -692,15 +742,15 @@
     /* متطلبات كلمة المرور */
     .password-requirements {
       margin-top: 10px;
-      padding: 15px;
-      background: rgba(0,0,0,0.2);
+      padding: 12px;
+      background: rgba(0,0,0,0.3);
       border-radius: 12px;
       border: 1px solid rgba(255,255,255,0.1);
     }
     
     .req-title {
-      color: rgba(255,255,255,0.7);
-      font-size: 0.85rem;
+      color: rgba(255,255,255,0.8);
+      font-size: 0.9rem;
       margin-bottom: 8px;
       display: block;
     }
@@ -896,6 +946,7 @@
       align-items: center;
       justify-content: center;
       gap: 10px;
+      margin-bottom: 10px;
     }
     
     .google-btn:hover {
@@ -1178,135 +1229,137 @@
       💬 مرحباً بك في الدردشة
     </div>
     
-    <div class="auth-form">
-      <!-- علامات التبويب (Tabs) للتبديل بين تسجيل الدخول والتسجيل -->
-      <div class="auth-tabs">
-        <button class="auth-tab active" id="loginTab" onclick="switchAuthTab('login')">تسجيل الدخول</button>
-        <button class="auth-tab" id="registerTab" onclick="switchAuthTab('register')">إنشاء حساب جديد</button>
-      </div>
+    <div class="auth-content">
+      <div class="auth-form">
+        <!-- علامات التبويب (Tabs) للتبديل بين تسجيل الدخول والتسجيل -->
+        <div class="auth-tabs">
+          <button class="auth-tab active" id="loginTab" onclick="switchAuthTab('login')">تسجيل الدخول</button>
+          <button class="auth-tab" id="registerTab" onclick="switchAuthTab('register')">إنشاء حساب جديد</button>
+        </div>
 
-      <!-- نموذج تسجيل الدخول -->
-      <div id="loginForm" style="display: block;">
-        <!-- مجموعة البريد الإلكتروني -->
-        <div class="input-group">
-          <label for="loginEmail">📧 البريد الإلكتروني</label>
-          <div class="input-wrapper">
-            <span class="input-icon">📧</span>
-            <input type="email" id="loginEmail" placeholder="example@domain.com" class="auth-input" oninput="validateLoginEmail()">
+        <!-- نموذج تسجيل الدخول -->
+        <div id="loginForm" style="display: block;">
+          <!-- مجموعة البريد الإلكتروني -->
+          <div class="input-group">
+            <label for="loginEmail">📧 البريد الإلكتروني</label>
+            <div class="input-wrapper">
+              <span class="input-icon">📧</span>
+              <input type="email" id="loginEmail" placeholder="example@domain.com" class="auth-input" oninput="validateLoginEmail()">
+            </div>
+            <div id="loginEmailValidation" class="validation-message"></div>
           </div>
-          <div id="loginEmailValidation" class="validation-message"></div>
-        </div>
 
-        <!-- مجموعة كلمة المرور -->
-        <div class="input-group">
-          <label for="loginPassword">🔒 كلمة المرور</label>
-          <div class="password-wrapper">
-            <input type="password" id="loginPassword" placeholder="أدخل كلمة المرور" class="auth-input">
-            <button class="password-toggle-btn" onclick="togglePasswordVisibility('loginPassword', this)" type="button" id="loginPasswordToggle">
-              <span class="eye-icon">👁️</span>
-            </button>
+          <!-- مجموعة كلمة المرور -->
+          <div class="input-group">
+            <label for="loginPassword">🔒 كلمة المرور</label>
+            <div class="password-wrapper">
+              <input type="password" id="loginPassword" placeholder="أدخل كلمة المرور" class="auth-input">
+              <button class="password-toggle-btn" onclick="togglePasswordVisibility('loginPassword', this)" type="button" id="loginPasswordToggle">
+                <span class="eye-icon">👁️</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- أزرار الإجراءات -->
+          <div class="action-buttons">
+            <button class="action-btn primary" onclick="login()" id="loginBtn">🔑 تسجيل الدخول</button>
+          </div>
+
+          <!-- رابط نسيت كلمة السر -->
+          <div class="forgot-password-link">
+            <button onclick="showForgotPasswordModal()" id="forgotBtn">🔑 نسيت كلمة السر..؟</button>
           </div>
         </div>
 
-        <!-- أزرار الإجراءات -->
-        <div class="action-buttons">
-          <button class="action-btn primary" onclick="login()" id="loginBtn">🔑 تسجيل الدخول</button>
-        </div>
-
-        <!-- رابط نسيت كلمة السر -->
-        <div class="forgot-password-link">
-          <button onclick="showForgotPasswordModal()" id="forgotBtn">🔑 نسيت كلمة السر..؟</button>
-        </div>
-      </div>
-
-      <!-- نموذج إنشاء حساب جديد -->
-      <div id="registerForm" style="display: none;">
-        <!-- مجموعة اسم المستخدم -->
-        <div class="input-group">
-          <label for="username">👤 اسم المستخدم</label>
-          <div class="input-wrapper">
-            <span class="input-icon">👤</span>
-            <input type="text" id="username" placeholder="اختر اسم مستخدم" class="auth-input" oninput="checkUsernameAvailability()">
+        <!-- نموذج إنشاء حساب جديد -->
+        <div id="registerForm" style="display: none;">
+          <!-- مجموعة اسم المستخدم -->
+          <div class="input-group">
+            <label for="username">👤 اسم المستخدم</label>
+            <div class="input-wrapper">
+              <span class="input-icon">👤</span>
+              <input type="text" id="username" placeholder="اختر اسم مستخدم" class="auth-input" oninput="checkUsernameAvailability()">
+            </div>
+            <div id="usernameCheck" class="username-check"></div>
           </div>
-          <div id="usernameCheck" class="username-check"></div>
-        </div>
 
-        <!-- مجموعة البريد الإلكتروني -->
-        <div class="input-group">
-          <label for="email">📧 البريد الإلكتروني</label>
-          <div class="input-wrapper">
-            <span class="input-icon">📧</span>
-            <input type="email" id="email" placeholder="example@domain.com" class="auth-input" oninput="validateEmail()">
+          <!-- مجموعة البريد الإلكتروني -->
+          <div class="input-group">
+            <label for="email">📧 البريد الإلكتروني</label>
+            <div class="input-wrapper">
+              <span class="input-icon">📧</span>
+              <input type="email" id="email" placeholder="example@domain.com" class="auth-input" oninput="validateEmail()">
+            </div>
+            <div id="emailValidation" class="validation-message"></div>
           </div>
-          <div id="emailValidation" class="validation-message"></div>
+
+          <!-- مجموعة كلمة المرور مع متطلباتها -->
+          <div class="input-group">
+            <label for="password">🔒 كلمة المرور</label>
+            <div class="password-wrapper">
+              <input type="password" id="password" placeholder="أدخل كلمة المرور" class="auth-input" oninput="validatePassword()">
+              <button class="password-toggle-btn" onclick="togglePasswordVisibility('password', this)" type="button" id="passwordToggle">
+                <span class="eye-icon">👁️</span>
+              </button>
+            </div>
+            
+            <!-- متطلبات كلمة المرور -->
+            <div class="password-requirements" id="passwordReqs">
+              <span class="req-title">📋 يجب أن تحتوي كلمة المرور على:</span>
+              <div class="req-item" id="req-length">
+                <span class="req-icon">❌</span>
+                <span>8 أحرف على الأقل</span>
+              </div>
+              <div class="req-item" id="req-capital">
+                <span class="req-icon">❌</span>
+                <span>حرف كبير (A-Z)</span>
+              </div>
+              <div class="req-item" id="req-number">
+                <span class="req-icon">❌</span>
+                <span>رقم (0-9)</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- أزرار الإجراءات -->
+          <div class="action-buttons">
+            <button class="action-btn secondary" onclick="register()" id="registerBtn">📝 إنشاء حساب</button>
+          </div>
         </div>
 
-        <!-- مجموعة كلمة المرور مع متطلباتها -->
-        <div class="input-group">
-          <label for="password">🔒 كلمة المرور</label>
-          <div class="password-wrapper">
-            <input type="password" id="password" placeholder="أدخل كلمة المرور" class="auth-input" oninput="validatePassword()">
-            <button class="password-toggle-btn" onclick="togglePasswordVisibility('password', this)" type="button" id="passwordToggle">
-              <span class="eye-icon">👁️</span>
-            </button>
+        <!-- صندوق التحقق من البريد الإلكتروني المحسن -->
+        <div id="verificationBox" class="verification-box">
+          <div class="verification-icon">📧</div>
+          <h4 style="color:#f1c40f; margin:10px 0;">تم إرسال رابط التحقق</h4>
+          <p style="color:white; opacity:0.9;">الرجاء التحقق من بريدك الإلكتروني خلال</p>
+          
+          <div class="timer-container">
+            <div class="timer-bar-bg">
+              <div class="timer-bar" id="timerBar"></div>
+            </div>
+            <div class="timer-text" id="timerText">05:00</div>
           </div>
           
-          <!-- متطلبات كلمة المرور -->
-          <div class="password-requirements" id="passwordReqs">
-            <span class="req-title">📋 يجب أن تحتوي كلمة المرور على:</span>
-            <div class="req-item" id="req-length">
-              <span class="req-icon">❌</span>
-              <span>8 أحرف على الأقل</span>
-            </div>
-            <div class="req-item" id="req-capital">
-              <span class="req-icon">❌</span>
-              <span>حرف كبير (A-Z)</span>
-            </div>
-            <div class="req-item" id="req-number">
-              <span class="req-icon">❌</span>
-              <span>رقم (0-9)</span>
-            </div>
+          <div class="auto-check-indicator" style="color:#f1c40f; margin:10px 0;" id="autoCheckIndicator">⏳ جاري التحقق التلقائي...</div>
+          
+          <div class="verification-actions">
+            <button class="action-btn secondary" onclick="checkEmailVerification()" id="manualCheckBtn">✅ تحقق يدوياً</button>
+            <button class="action-btn secondary" onclick="resendVerification()" id="resendBtn">🔄 إعادة إرسال</button>
+            <button class="action-btn secondary" onclick="cancelVerification()" style="background:#e74c3c;">✗ إلغاء</button>
           </div>
         </div>
 
-        <!-- أزرار الإجراءات -->
-        <div class="action-buttons">
-          <button class="action-btn secondary" onclick="register()" id="registerBtn">📝 إنشاء حساب</button>
-        </div>
+        <!-- الفاصل -->
+        <div class="separator">أو</div>
+
+        <!-- زر تسجيل الدخول بحساب Google -->
+        <button class="google-btn" onclick="googleLogin()" id="googleBtn">
+          <svg style="width:20px; height:20px;" viewBox="0 0 24 24">
+            <path fill="white" d="M12.545,10.239v3.821h5.445c-0.712,2.315-2.647,3.972-5.445,3.972c-3.332,0-6.033-2.701-6.033-6.032s2.701-6.032,6.033-6.032c1.498,0,2.866,0.549,3.921,1.453l2.814-2.814C17.503,2.988,15.139,2,12.545,2C7.021,2,2.543,6.477,2.543,12s4.478,10,10.002,10c8.396,0,10.249-7.85,9.426-11.748L12.545,10.239z"/>
+          </svg>
+          تسجيل الدخول بحساب Google
+        </button>
       </div>
-
-      <!-- صندوق التحقق من البريد الإلكتروني المحسن -->
-      <div id="verificationBox" class="verification-box">
-        <div class="verification-icon">📧</div>
-        <h4 style="color:#f1c40f; margin:10px 0;">تم إرسال رابط التحقق</h4>
-        <p style="color:white; opacity:0.9;">الرجاء التحقق من بريدك الإلكتروني خلال</p>
-        
-        <div class="timer-container">
-          <div class="timer-bar-bg">
-            <div class="timer-bar" id="timerBar"></div>
-          </div>
-          <div class="timer-text" id="timerText">05:00</div>
-        </div>
-        
-        <div class="auto-check-indicator" style="color:#f1c40f; margin:10px 0;" id="autoCheckIndicator">⏳ جاري التحقق التلقائي...</div>
-        
-        <div class="verification-actions">
-          <button class="action-btn secondary" onclick="checkEmailVerification()" id="manualCheckBtn">✅ تحقق يدوياً</button>
-          <button class="action-btn secondary" onclick="resendVerification()" id="resendBtn">🔄 إعادة إرسال</button>
-          <button class="action-btn secondary" onclick="cancelVerification()" style="background:#e74c3c;">✗ إلغاء</button>
-        </div>
-      </div>
-
-      <!-- الفاصل -->
-      <div class="separator">أو</div>
-
-      <!-- زر تسجيل الدخول بحساب Google -->
-      <button class="google-btn" onclick="googleLogin()" id="googleBtn">
-        <svg style="width:20px; height:20px;" viewBox="0 0 24 24">
-          <path fill="white" d="M12.545,10.239v3.821h5.445c-0.712,2.315-2.647,3.972-5.445,3.972c-3.332,0-6.033-2.701-6.033-6.032s2.701-6.032,6.033-6.032c1.498,0,2.866,0.549,3.921,1.453l2.814-2.814C17.503,2.988,15.139,2,12.545,2C7.021,2,2.543,6.477,2.543,12s4.478,10,10.002,10c8.396,0,10.249-7.85,9.426-11.748L12.545,10.239z"/>
-        </svg>
-        تسجيل الدخول بحساب Google
-      </button>
     </div>
   </div>
 
@@ -1489,6 +1542,20 @@
   // ✅ ألوان مختلفة للمستخدمين
   const userColors = {};
 
+  // ===== وظيفة للتمرير التلقائي إلى الزر عند الحاجة =====
+  function scrollToRegisterButton() {
+    setTimeout(() => {
+      const registerBtn = document.getElementById('registerBtn');
+      if (registerBtn) {
+        registerBtn.scrollIntoView({ 
+          behavior: 'smooth', 
+          block: 'center',
+          inline: 'nearest'
+        });
+      }
+    }, 100); // تأخير بسيط لضمان ظهور المحتوى أولاً
+  }
+
   // ===== دوال حفظ واسترجاع البيانات من localStorage =====
   function saveAuthData() {
     if (!isVerificationMode) return; // نحفظ فقط في وضع التحقق
@@ -1622,6 +1689,9 @@
       loginTab.classList.remove('active');
       registerForm.style.display = 'block';
       loginForm.style.display = 'none';
+      
+      // التمرير التلقائي إلى زر التسجيل عند التبديل إلى علامة التبويب
+      scrollToRegisterButton();
     }
   };
 
@@ -2394,6 +2464,14 @@
           // إذا كان المستخدم غير مفعل، نعرض صفحة الدخول
           authDiv.style.display = 'flex';
           disableAllButtons(false);
+          
+          // التمرير التلقائي إلى الأسفل قليلاً إذا كان هناك رسالة خطأ
+          setTimeout(() => {
+            const authContent = document.querySelector('.auth-content');
+            if (authContent) {
+              authContent.scrollTop = authContent.scrollHeight;
+            }
+          }, 100);
           
           // محاولة استعادة البيانات المحفوظة
           if (!isVerificationMode) {
