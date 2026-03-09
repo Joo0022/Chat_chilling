@@ -2071,9 +2071,6 @@
   async function sendOptimizedImage() {
     if (!selectedImageFile) return;
     
-    // ✅ إخفاء نافذة المعاينة فوراً لمنع النقر المزدوج
-    closeAdvancedPreview();
-    
     const compress = document.getElementById('compressImage')?.checked || false;
     const quality = parseFloat(document.getElementById('imageQuality')?.value || '0.7');
     
@@ -2121,6 +2118,7 @@
       showToast('❌ فشل إرسال الصورة', 'error');
     } finally {
       document.getElementById('uploadProgress').classList.remove('show');
+      closeAdvancedPreview();
       cancelImageUpload();
     }
   }
