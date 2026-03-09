@@ -2038,6 +2038,8 @@
   }
 
   function showAdvancedPreview(imageData, file) {
+    if (!advancedPreviewModal) return;
+    
     advancedPreviewModal.innerHTML = `
       <div class="preview-content">
         <h3>معاينة الصورة</h3>
@@ -2064,8 +2066,12 @@
   }
 
   function closeAdvancedPreview() {
-    advancedPreviewModal.style.display = 'none';
+    if (advancedPreviewModal) {
+      advancedPreviewModal.style.display = 'none';
+    }
     selectedImageFile = null;
+    const fileInput = document.getElementById('imageFileInput');
+    if (fileInput) fileInput.value = '';
   }
 
   async function sendOptimizedImage() {
@@ -2340,6 +2346,8 @@
     const reqLength = document.getElementById('req-length');
     const reqCapital = document.getElementById('req-capital');
     const reqNumber = document.getElementById('req-number');
+    
+    if (!reqLength || !reqCapital || !reqNumber) return;
     
     if (passVal.length >= 8) {
       reqLength.classList.add('met');
@@ -2862,7 +2870,7 @@
     
     const uploadBtns = document.querySelectorAll('.image-upload-btn');
     uploadBtns.forEach(btn => {
-      btn.disabled = disable;
+      if (btn) btn.disabled = disable;
     });
   }
 
@@ -3125,8 +3133,27 @@
   };
 
   // دوال رفع الصور
+  function createImageFileInput() {
+    if (!document.getElementById('imageFileInput')) {
+        const fileInput = document.createElement('input');
+        fileInput.type = 'file';
+        fileInput.id = 'imageFileInput';
+        fileInput.accept = 'image/*';
+        fileInput.style.display = 'none';
+        fileInput.onchange = (e) => {
+            if (e.target.files && e.target.files[0]) {
+                handleAdvancedImageSelect(e.target.files[0]);
+            }
+        };
+        document.body.appendChild(fileInput);
+    }
+    return document.getElementById('imageFileInput');
+  }
+
   function addImageUploadButtons() {
     const publicContainer = document.getElementById('imageUploadContainer');
+    if (!publicContainer) return;
+    
     publicContainer.innerHTML = '';
     
     const publicUploadBtn = document.createElement('button');
@@ -3134,40 +3161,30 @@
     publicUploadBtn.innerHTML = '📤';
     publicUploadBtn.type = 'button';
     publicUploadBtn.onclick = () => {
-      if (isButtonsDisabled) return;
-      currentImageMessageContext = 'public';
-      document.getElementById('imageFileInput').click();
+        if (isButtonsDisabled) return;
+        currentImageMessageContext = 'public';
+        createImageFileInput().click();
     };
     publicContainer.appendChild(publicUploadBtn);
     
     const privateContainer = document.getElementById('privateImageUploadContainer');
     if (privateContainer) {
-      privateContainer.innerHTML = '';
-      
-      const privateUploadBtn = document.createElement('button');
-      privateUploadBtn.className = 'image-upload-btn';
-      privateUploadBtn.innerHTML = '📤';
-      privateUploadBtn.type = 'button';
-      privateUploadBtn.onclick = () => {
-        if (isButtonsDisabled) return;
-        if (!activePartner) {
-          showToast('❌ لا توجد محادثة خاصة نشطة', 'error');
-          return;
-        }
-        currentImageMessageContext = 'private';
-        document.getElementById('imageFileInput').click();
-      };
-      privateContainer.appendChild(privateUploadBtn);
-    }
-    
-    if (!document.getElementById('imageFileInput')) {
-      const fileInput = document.createElement('input');
-      fileInput.type = 'file';
-      fileInput.id = 'imageFileInput';
-      fileInput.accept = 'image/*';
-      fileInput.style.display = 'none';
-      fileInput.onchange = (e) => handleAdvancedImageSelect(e.target.files[0]);
-      document.body.appendChild(fileInput);
+        privateContainer.innerHTML = '';
+        
+        const privateUploadBtn = document.createElement('button');
+        privateUploadBtn.className = 'image-upload-btn';
+        privateUploadBtn.innerHTML = '📤';
+        privateUploadBtn.type = 'button';
+        privateUploadBtn.onclick = () => {
+            if (isButtonsDisabled) return;
+            if (!activePartner) {
+                showToast('❌ لا توجد محادثة خاصة نشطة', 'error');
+                return;
+            }
+            currentImageMessageContext = 'private';
+            createImageFileInput().click();
+        };
+        privateContainer.appendChild(privateUploadBtn);
     }
   }
 
@@ -3175,7 +3192,8 @@
     selectedImageFile = null;
     imagePreviewUrl = null;
     document.getElementById('imagePreviewContainer').classList.remove('show');
-    document.getElementById('imageFileInput').value = '';
+    const fileInput = document.getElementById('imageFileInput');
+    if (fileInput) fileInput.value = '';
   };
 
   window.showFullImage = function(imageUrl) {
