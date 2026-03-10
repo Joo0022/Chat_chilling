@@ -359,7 +359,7 @@
       40% { transform: scale(1); opacity: 1; }
     }
     
-    /* شريط البحث */
+    /* شريط البحث - تم تحسينه */
     .search-bar {
       position: sticky;
       top: 0;
@@ -395,6 +395,13 @@
       background: #e74c3c;
       color: white;
       cursor: pointer;
+      transition: all 0.2s ease;
+      min-width: 80px;
+    }
+    
+    .search-bar button:hover {
+      background: #c0392b;
+      transform: scale(1.02);
     }
     
     .search-toggle {
@@ -409,10 +416,12 @@
       cursor: pointer;
       z-index: 10;
       font-size: 1rem;
+      transition: all 0.2s ease;
     }
     
     .search-toggle:hover {
       background: #8e44ad;
+      transform: scale(1.05);
     }
     
     /* قائمة السياق */
@@ -569,7 +578,7 @@
       border-color: #9b59b6;
     }
     
-    /* رسائل الإشعارات المؤقتة */
+    /* رسائل الإشعارات المؤقتة - تم تحسينها */
     .toast-message {
       position: fixed;
       bottom: 20px;
@@ -580,9 +589,14 @@
       padding: 12px 25px;
       border-radius: 50px;
       z-index: 10000;
-      animation: fadeInOut 2s ease;
+      animation: slideIn 0.3s ease, fadeOut 0.3s ease 1.7s forwards;
       border: 2px solid #9b59b6;
       font-weight: 500;
+      box-shadow: 0 5px 20px rgba(0,0,0,0.5);
+    }
+    
+    @keyframes fadeOut {
+      to { opacity: 0; transform: translateX(-50%) translateY(20px); }
     }
     
     .online-btn {
@@ -601,11 +615,18 @@
       align-items: center;
       gap: 8px;
       z-index: 10;
+      transition: all 0.2s ease;
+    }
+    
+    .online-btn:hover {
+      background: #2ecc71;
+      transform: scale(1.05);
     }
     
     .online-btn:disabled {
       opacity: 0.5;
       cursor: not-allowed;
+      transform: none;
     }
     
     .green-dot {
@@ -636,6 +657,7 @@
     
     .online-panel.show {
       display: block;
+      animation: slideIn 0.3s ease;
     }
     
     .online-panel h4 {
@@ -708,6 +730,7 @@
     
     .private-page.show {
       display: flex;
+      animation: slideIn 0.3s ease;
     }
     
     .private-header {
@@ -731,10 +754,12 @@
       display: flex;
       align-items: center;
       justify-content: center;
+      transition: all 0.2s ease;
     }
     
     .private-header button:hover {
       background: rgba(255,255,255,0.3);
+      transform: scale(1.1);
     }
     
     .private-header h3 {
@@ -953,6 +978,7 @@
     
     .image-preview-container.show {
       display: block;
+      animation: slideIn 0.3s ease;
     }
     
     .image-preview {
@@ -1008,6 +1034,7 @@
     
     .full-image-modal.show {
       display: flex;
+      animation: slideIn 0.3s ease;
     }
     
     .full-image-modal img {
@@ -1052,6 +1079,7 @@
     
     .upload-progress.show {
       display: block;
+      animation: slideIn 0.3s ease;
     }
     
     .spinner {
@@ -1268,6 +1296,7 @@
     
     .modal-overlay.show {
       display: flex;
+      animation: slideIn 0.3s ease;
     }
     
     .modal-content {
@@ -1423,14 +1452,14 @@
       <button class="online-btn" onclick="toggleOnlinePanel()" id="onlinePanelBtn">
         <span class="green-dot"></span> المتصلون
       </button>
-      <button class="search-toggle" onclick="toggleSearch()" id="searchToggleBtn">🔍</button>
+      <button class="search-toggle" onclick="toggleSearch()" id="searchToggleBtn">🔍 بحث</button>
       <button class="logout-btn" onclick="logout()" id="logoutBtn">خروج</button>
     </div>
 
-    <!-- شريط البحث (مخفي افتراضياً) -->
+    <!-- شريط البحث (مخفي افتراضياً) - تم تحسين زر الإغلاق -->
     <div class="search-bar" id="searchBar" style="display: none;">
       <input type="text" id="searchInput" placeholder="🔍 بحث في الرسائل..." oninput="searchMessages(this.value)">
-      <button onclick="clearSearch()">✕</button>
+      <button onclick="closeSearch()" id="closeSearchBtn">إغلاق ✕</button>
     </div>
 
     <!-- مؤشر الكتابة -->
@@ -1885,15 +1914,20 @@
     });
   }
 
-  // دوال البحث
+  // دوال البحث - تم إصلاح مشكلة الإغلاق
   function toggleSearch() {
-    if (searchBar.style.display === 'none') {
+    if (searchBar.style.display === 'none' || searchBar.style.display === '') {
       searchBar.style.display = 'flex';
       searchInput.focus();
     } else {
-      searchBar.style.display = 'none';
-      clearSearch();
+      closeSearch();
     }
+  }
+
+  // دالة جديدة لإغلاق البحث بشكل صحيح
+  function closeSearch() {
+    searchBar.style.display = 'none';
+    clearSearch();
   }
 
   function searchMessages(searchTerm) {
@@ -2038,8 +2072,6 @@
   }
 
   function showAdvancedPreview(imageData, file) {
-    if (!advancedPreviewModal) return;
-    
     advancedPreviewModal.innerHTML = `
       <div class="preview-content">
         <h3>معاينة الصورة</h3>
@@ -2066,12 +2098,8 @@
   }
 
   function closeAdvancedPreview() {
-    if (advancedPreviewModal) {
-      advancedPreviewModal.style.display = 'none';
-    }
+    advancedPreviewModal.style.display = 'none';
     selectedImageFile = null;
-    const fileInput = document.getElementById('imageFileInput');
-    if (fileInput) fileInput.value = '';
   }
 
   async function sendOptimizedImage() {
@@ -2346,8 +2374,6 @@
     const reqLength = document.getElementById('req-length');
     const reqCapital = document.getElementById('req-capital');
     const reqNumber = document.getElementById('req-number');
-    
-    if (!reqLength || !reqCapital || !reqNumber) return;
     
     if (passVal.length >= 8) {
       reqLength.classList.add('met');
@@ -2844,6 +2870,7 @@
       document.getElementById('sendResetBtn'),
       document.getElementById('cancelResetBtn'),
       document.getElementById('searchToggleBtn'),
+      document.getElementById('closeSearchBtn'),
       loginTab,
       registerTab
     ];
@@ -2870,7 +2897,7 @@
     
     const uploadBtns = document.querySelectorAll('.image-upload-btn');
     uploadBtns.forEach(btn => {
-      if (btn) btn.disabled = disable;
+      btn.disabled = disable;
     });
   }
 
@@ -3133,27 +3160,8 @@
   };
 
   // دوال رفع الصور
-  function createImageFileInput() {
-    if (!document.getElementById('imageFileInput')) {
-        const fileInput = document.createElement('input');
-        fileInput.type = 'file';
-        fileInput.id = 'imageFileInput';
-        fileInput.accept = 'image/*';
-        fileInput.style.display = 'none';
-        fileInput.onchange = (e) => {
-            if (e.target.files && e.target.files[0]) {
-                handleAdvancedImageSelect(e.target.files[0]);
-            }
-        };
-        document.body.appendChild(fileInput);
-    }
-    return document.getElementById('imageFileInput');
-  }
-
   function addImageUploadButtons() {
     const publicContainer = document.getElementById('imageUploadContainer');
-    if (!publicContainer) return;
-    
     publicContainer.innerHTML = '';
     
     const publicUploadBtn = document.createElement('button');
@@ -3161,30 +3169,40 @@
     publicUploadBtn.innerHTML = '📤';
     publicUploadBtn.type = 'button';
     publicUploadBtn.onclick = () => {
-        if (isButtonsDisabled) return;
-        currentImageMessageContext = 'public';
-        createImageFileInput().click();
+      if (isButtonsDisabled) return;
+      currentImageMessageContext = 'public';
+      document.getElementById('imageFileInput').click();
     };
     publicContainer.appendChild(publicUploadBtn);
     
     const privateContainer = document.getElementById('privateImageUploadContainer');
     if (privateContainer) {
-        privateContainer.innerHTML = '';
-        
-        const privateUploadBtn = document.createElement('button');
-        privateUploadBtn.className = 'image-upload-btn';
-        privateUploadBtn.innerHTML = '📤';
-        privateUploadBtn.type = 'button';
-        privateUploadBtn.onclick = () => {
-            if (isButtonsDisabled) return;
-            if (!activePartner) {
-                showToast('❌ لا توجد محادثة خاصة نشطة', 'error');
-                return;
-            }
-            currentImageMessageContext = 'private';
-            createImageFileInput().click();
-        };
-        privateContainer.appendChild(privateUploadBtn);
+      privateContainer.innerHTML = '';
+      
+      const privateUploadBtn = document.createElement('button');
+      privateUploadBtn.className = 'image-upload-btn';
+      privateUploadBtn.innerHTML = '📤';
+      privateUploadBtn.type = 'button';
+      privateUploadBtn.onclick = () => {
+        if (isButtonsDisabled) return;
+        if (!activePartner) {
+          showToast('❌ لا توجد محادثة خاصة نشطة', 'error');
+          return;
+        }
+        currentImageMessageContext = 'private';
+        document.getElementById('imageFileInput').click();
+      };
+      privateContainer.appendChild(privateUploadBtn);
+    }
+    
+    if (!document.getElementById('imageFileInput')) {
+      const fileInput = document.createElement('input');
+      fileInput.type = 'file';
+      fileInput.id = 'imageFileInput';
+      fileInput.accept = 'image/*';
+      fileInput.style.display = 'none';
+      fileInput.onchange = (e) => handleAdvancedImageSelect(e.target.files[0]);
+      document.body.appendChild(fileInput);
     }
   }
 
@@ -3192,8 +3210,7 @@
     selectedImageFile = null;
     imagePreviewUrl = null;
     document.getElementById('imagePreviewContainer').classList.remove('show');
-    const fileInput = document.getElementById('imageFileInput');
-    if (fileInput) fileInput.value = '';
+    document.getElementById('imageFileInput').value = '';
   };
 
   window.showFullImage = function(imageUrl) {
@@ -3228,6 +3245,9 @@
       }
       if (advancedPreviewModal.style.display === 'flex') {
         closeAdvancedPreview();
+      }
+      if (searchBar.style.display === 'flex') {
+        closeSearch();
       }
     }
   });
