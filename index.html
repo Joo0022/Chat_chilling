@@ -20,7 +20,7 @@
     html, body {
       width: 100%;
       height: 100%;
-      background: #0f172a; /* Dark solid background */
+      background: #0f172a;
       direction: rtl;
     }
     
@@ -51,6 +51,12 @@
     @keyframes spin {
       0% { transform: rotate(0deg); }
       100% { transform: rotate(360deg); }
+    }
+    
+    @keyframes notificationPulse {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.1); }
+      100% { transform: scale(1); }
     }
     
     .container {
@@ -102,7 +108,7 @@
       margin-right: auto;
     }
     
-    /* ===== Auth Styles (UNCHANGED) ===== */
+    /* ===== Auth Styles ===== */
     #auth {
       display: flex;
       flex-direction: column;
@@ -446,7 +452,7 @@
       color: var(--danger-color);
     }
     
-    /* ===== New Chat Styles ===== */
+    /* ===== Chat Styles ===== */
     #chat {
       display: none;
       flex-direction: column;
@@ -467,6 +473,7 @@
       gap: 8px;
       transition: all 0.2s ease;
       font-size: 0.9rem;
+      position: relative;
     }
     
     .online-btn:hover, .search-toggle:hover, .logout-btn:hover:not(:disabled) {
@@ -536,6 +543,8 @@
       gap: 12px;
       scroll-behavior: smooth;
       background: var(--bg-secondary);
+      will-change: transform;
+      -webkit-overflow-scrolling: touch;
     }
     
     #messages::-webkit-scrollbar {
@@ -564,6 +573,8 @@
       position: relative;
       background: var(--bg-tertiary);
       border: 1px solid var(--border-color);
+      transform: translateZ(0);
+      backface-visibility: hidden;
     }
     
     .msg.own {
@@ -801,6 +812,7 @@
       transition: 0.2s;
       margin-bottom: 5px;
       border: 1px solid transparent;
+      position: relative;
     }
     
     .online-user:hover {
@@ -814,6 +826,23 @@
       background: var(--success-color);
       border-radius: 50%;
       animation: pulse 2s infinite;
+    }
+    
+    .notification-badge {
+      position: absolute;
+      left: 10px;
+      background: var(--danger-color);
+      color: white;
+      border-radius: 50%;
+      padding: 2px 6px;
+      font-size: 0.7rem;
+      min-width: 18px;
+      height: 18px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      animation: notificationPulse 1s infinite;
+      border: 1px solid white;
     }
     
     .private-page {
@@ -885,6 +914,8 @@
       flex-direction: column;
       gap: 12px;
       background: var(--bg-secondary);
+      will-change: transform;
+      -webkit-overflow-scrolling: touch;
     }
     
     .private-msg {
@@ -897,6 +928,8 @@
       display: flex;
       flex-direction: column;
       animation: slideIn 0.2s ease;
+      transform: translateZ(0);
+      backface-visibility: hidden;
     }
     
     .private-msg.own {
@@ -1359,7 +1392,7 @@
 </div>
 
 <div class="container">
-  <!-- صفحة المصادقة (بدون تغيير) -->
+  <!-- صفحة المصادقة -->
   <div class="card" id="auth">
     <div class="header">
       💬 مرحباً بك في الدردشة
@@ -1484,7 +1517,7 @@
     </div>
   </div>
 
-  <!-- صفحة الدردشة المحسنة جذرياً -->
+  <!-- صفحة الدردشة المحسنة -->
   <div class="card" id="chat">
     <div class="header">
       <div class="header-title">💬 المحادثة العامة</div>
@@ -1686,7 +1719,7 @@
   const manualCheckBtn = document.getElementById('manualCheckBtn');
   const resendBtn = document.getElementById('resendBtn');
 
-  // ✅ متغيرات الحالة الجديدة
+  // ✅ متغيرات الحالة
   let currentUser = null;
   let currentUsername = '';
   let unsubscribePublic = null;
@@ -1711,6 +1744,13 @@
   let imagePreviewUrl = null;
   let currentImageMessageContext = null;
   
+  // ✅ متغيرات التعديلات الجديدة
+  let unreadPrivateMessages = {};
+  let lastReadTimestamps = {};
+  let currentPrivateRoomId = null;
+  let scrollAnimationFrame = null;
+  let isUpdatingMessages = false;
+  
   // ✅ ألوان مختلفة للمستخدمين
   const userColors = {};
   
@@ -1723,27 +1763,103 @@
     VERIFICATION_START: 'chat_verification_start'
   };
 
-  // ===== دالة السكرول المحسنة =====
+  // ===== دالة السكرول المحسنة بشكل كبير للقضاء على الرعشة =====
   function scrollToBottom(element, force = false) {
     if (!element) return;
     
-    // التحقق إذا كان المستخدم قريب من الأسفل (في آخر 150 بكسل)
-    const isNearBottom = element.scrollHeight - element.scrollTop - element.clientHeight < 150;
+    // إلغاء أي محاولة سكرول سابقة
+    if (scrollAnimationFrame) {
+      cancelAnimationFrame(scrollAnimationFrame);
+    }
     
-    // إذا كان المستخدم قريب من الأسفل أو القوة مفعلة، نقوم بالسكرول
-    if (isNearBottom || force) {
-      // استخدام requestAnimationFrame لسلاسة الحركة
-      requestAnimationFrame(() => {
-        element.scrollTo({
-          top: element.scrollHeight,
-          behavior: force ? 'auto' : 'smooth' // سلس إذا كان تلقائياً، فوري إذا كان قسرياً
-        });
-      });
+    scrollAnimationFrame = requestAnimationFrame(() => {
+      // التحقق من المسافة من الأسفل بدقة أكبر
+      const scrollThreshold = 150;
+      const distanceFromBottom = element.scrollHeight - element.scrollTop - element.clientHeight;
+      const isNearBottom = distanceFromBottom < scrollThreshold;
+      
+      // منع السكرول إذا كان المستخدم يقرأ رسائل أقدم بفارق كبير
+      if (isNearBottom || force) {
+        // استخدام scrollTop مباشرة لمنع التأخير
+        element.scrollTop = element.scrollHeight;
+        
+        // تأكيد السكرول بعد تحميل الصور
+        setTimeout(() => {
+          if (element && (element.scrollHeight - element.scrollTop - element.clientHeight < 50)) {
+            element.scrollTop = element.scrollHeight;
+          }
+        }, 100);
+      }
+      
+      scrollAnimationFrame = null;
+    });
+  }
+
+  // ===== دوال تتبع الرسائل غير المقروءة =====
+  function markMessagesAsRead(partnerUid) {
+    if (!currentUser || !partnerUid) return;
+    
+    const roomId = currentUser.uid < partnerUid 
+      ? currentUser.uid + '_' + partnerUid 
+      : partnerUid + '_' + currentUser.uid;
+    
+    lastReadTimestamps[roomId] = Date.now();
+    
+    if (unreadPrivateMessages[partnerUid]) {
+      delete unreadPrivateMessages[partnerUid];
+    }
+    
+    updateOnlineListWithNotifications();
+  }
+
+  function updateUnreadCount(senderUid, roomId, messageTimestamp) {
+    if (!currentUser || senderUid === currentUser.uid) return;
+    
+    const lastRead = lastReadTimestamps[roomId] || 0;
+    const messageTime = messageTimestamp?.toDate ? messageTimestamp.toDate().getTime() : Date.now();
+    
+    if (activePartner && activePartner.uid === senderUid) {
+      lastReadTimestamps[roomId] = messageTime;
+      return;
+    }
+    
+    if (messageTime > lastRead) {
+      if (!unreadPrivateMessages[senderUid]) {
+        unreadPrivateMessages[senderUid] = 1;
+      } else {
+        unreadPrivateMessages[senderUid]++;
+      }
+      
+      updateOnlineListWithNotifications();
     }
   }
 
-  // ===== دوال الميزات الجديدة (بدون تغيير في الوظيفة) =====
+  function updateOnlineListWithNotifications() {
+    if (!onlineList) return;
+    
+    const items = onlineList.children;
+    for (let i = 0; i < items.length; i++) {
+      const item = items[i];
+      const uid = item.dataset.uid;
+      
+      if (uid && unreadPrivateMessages[uid]) {
+        let badge = item.querySelector('.notification-badge');
+        if (!badge) {
+          badge = document.createElement('span');
+          badge.className = 'notification-badge';
+          item.appendChild(badge);
+        }
+        
+        let count = unreadPrivateMessages[uid];
+        badge.textContent = count > 9 ? '9+' : count;
+      } else {
+        const badge = item.querySelector('.notification-badge');
+        if (badge) badge.remove();
+      }
+    }
+  }
 
+  // ===== دوال الميزات الجديدة =====
   function showToast(message, type = 'success') {
     const toast = document.createElement('div');
     toast.className = 'toast-message';
@@ -1883,8 +1999,8 @@
       .then(() => {
         messageInput.value = '';
         cancelReply();
-        // سكرول قسري بعد الإرسال مباشرة
-        setTimeout(() => scrollToBottom(messagesDiv, true), 100);
+        // سكرول فوري بعد الإرسال
+        setTimeout(() => scrollToBottom(messagesDiv, true), 10);
       })
       .catch(err => {
         console.error('❌ خطأ في إرسال الرسالة:', err);
@@ -2274,7 +2390,7 @@
     }
   }
 
-  // ===== دوال المصادقة (محفوظة كما هي) =====
+  // ===== دوال المصادقة =====
   window.switchAuthTab = function(tab) {
     if (isButtonsDisabled) return;
     
@@ -2955,35 +3071,23 @@
     return userColors[uid];
   }
 
-  // إضافة مراقب لتغيير حجم الصور للعام
-  const publicMessagesObserver = new ResizeObserver(() => {
-    if (messagesDiv) {
-      const isNearBottom = messagesDiv.scrollHeight - messagesDiv.scrollTop - messagesDiv.clientHeight < 100;
-      if (isNearBottom) {
-        scrollToBottom(messagesDiv, true);
+  // مراقب محسن للرسائل العامة
+  const publicMessagesObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting && entry.target === messagesDiv?.lastElementChild) {
+        scrollToBottom(messagesDiv, false);
       }
-    }
-  });
+    });
+  }, { threshold: 0.1 });
 
-  // إضافة مراقب لتغيير حجم الصور للخاص
-  const privateMessagesObserver = new ResizeObserver(() => {
-    if (privateMessages) {
-      const isNearBottom = privateMessages.scrollHeight - privateMessages.scrollTop - privateMessages.clientHeight < 100;
-      if (isNearBottom) {
-        scrollToBottom(privateMessages, true);
+  // مراقب محسن للرسائل الخاصة
+  const privateMessagesObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting && entry.target === privateMessages?.lastElementChild) {
+        scrollToBottom(privateMessages, false);
       }
-    }
-  });
-
-  // بدء مراقبة العناصر بعد تحميلها
-  setTimeout(() => {
-    if (messagesDiv) {
-      publicMessagesObserver.observe(messagesDiv);
-    }
-    if (privateMessages) {
-      privateMessagesObserver.observe(privateMessages);
-    }
-  }, 1000);
+    });
+  }, { threshold: 0.1 });
 
   function loadPublicMessages() {
     if (unsubscribePublic) unsubscribePublic();
@@ -2991,77 +3095,96 @@
     unsubscribePublic = db.collection('messages')
       .orderBy('createdAt', 'asc')
       .onSnapshot(snapshot => {
-        // حفظ حالة السكرول قبل التحديث
-        const wasNearBottom = messagesDiv.scrollHeight - messagesDiv.scrollTop - messagesDiv.clientHeight < 100;
+        if (isUpdatingMessages) return;
+        isUpdatingMessages = true;
         
-        messagesDiv.innerHTML = '';
-        
-        if (snapshot.empty) {
-          messagesDiv.innerHTML = '<div style="color:var(--text-secondary); text-align:center; padding:20px;">لا توجد رسائل بعد...</div>';
-          return;
-        }
-        
-        snapshot.forEach(doc => {
-          const msg = doc.data();
-          if (!msg.text && !msg.imageUrl) return;
+        requestAnimationFrame(() => {
+          const wasNearBottom = messagesDiv.scrollHeight - messagesDiv.scrollTop - messagesDiv.clientHeight < 100;
           
-          const messageId = doc.id;
-          const div = document.createElement('div');
-          div.className = 'msg';
-          div.dataset.messageId = messageId;
+          messagesDiv.innerHTML = '';
           
-          if (msg.uid === currentUser?.uid) {
-            div.classList.add('own');
-          } else {
-            div.style.backgroundColor = getUserColor(msg.uid);
+          if (snapshot.empty) {
+            messagesDiv.innerHTML = '<div style="color:var(--text-secondary); text-align:center; padding:20px;">لا توجد رسائل بعد...</div>';
+            isUpdatingMessages = false;
+            return;
           }
           
-          let time = '';
-          if (msg.createdAt?.toDate) {
-            try {
-              const d = msg.createdAt.toDate();
-              time = `${d.getHours()}:${d.getMinutes().toString().padStart(2,'0')}`;
-            } catch(e) {
-              time = '';
+          const fragment = document.createDocumentFragment();
+          
+          snapshot.forEach(doc => {
+            const msg = doc.data();
+            if (!msg.text && !msg.imageUrl) return;
+            
+            const messageId = doc.id;
+            const div = document.createElement('div');
+            div.className = 'msg';
+            div.dataset.messageId = messageId;
+            
+            if (msg.uid === currentUser?.uid) {
+              div.classList.add('own');
+            } else {
+              div.style.backgroundColor = getUserColor(msg.uid);
             }
+            
+            let time = '';
+            if (msg.createdAt?.toDate) {
+              try {
+                const d = msg.createdAt.toDate();
+                time = `${d.getHours()}:${d.getMinutes().toString().padStart(2,'0')}`;
+              } catch(e) {
+                time = '';
+              }
+            }
+            
+            let content = '';
+            content += `<span class="sender">${escapeHtml(msg.username || 'مجهول')}</span>`;
+            
+            if (msg.replyTo) {
+              content += `
+                <div class="reply-indicator" style="margin-bottom: 5px; padding: 5px; background: rgba(0,0,0,0.2); border-radius: 5px;">
+                  <span style="color: var(--accent-secondary);">↩️ ${escapeHtml(msg.replyTo.username)}:</span>
+                  <span style="opacity: 0.8;">${escapeHtml(msg.replyTo.text.substring(0, 30))}${msg.replyTo.text.length > 30 ? '...' : ''}</span>
+                </div>
+              `;
+            }
+            
+            if (msg.text) {
+              content += `<span class="text">${escapeHtml(msg.text)}</span>`;
+            }
+            
+            if (msg.imageUrl) {
+              content += `<img src="${escapeHtml(msg.imageUrl)}" class="image-message" onclick="showFullImage('${escapeHtml(msg.imageUrl)}')">`;
+            }
+            
+            content += `<div class="reactions-container" id="reactions-${messageId}"></div>`;
+            content += `<span class="time">${time}</span>`;
+            
+            div.innerHTML = content;
+            fragment.appendChild(div);
+          });
+          
+          messagesDiv.appendChild(fragment);
+          
+          snapshot.forEach(doc => {
+            const messageId = doc.id;
+            const container = document.getElementById(`reactions-${messageId}`);
+            if (container) {
+              loadReactions(messageId, container);
+            }
+          });
+          
+          if (messagesDiv.lastElementChild) {
+            publicMessagesObserver.observe(messagesDiv.lastElementChild);
           }
           
-          let content = '';
-          content += `<span class="sender">${escapeHtml(msg.username || 'مجهول')}</span>`;
-          
-          if (msg.replyTo) {
-            content += `
-              <div class="reply-indicator" style="margin-bottom: 5px; padding: 5px; background: rgba(0,0,0,0.2); border-radius: 5px;">
-                <span style="color: var(--accent-secondary);">↩️ ${escapeHtml(msg.replyTo.username)}:</span>
-                <span style="opacity: 0.8;">${escapeHtml(msg.replyTo.text.substring(0, 30))}${msg.replyTo.text.length > 30 ? '...' : ''}</span>
-              </div>
-            `;
-          }
-          
-          if (msg.text) {
-            content += `<span class="text">${escapeHtml(msg.text)}</span>`;
-          }
-          
-          if (msg.imageUrl) {
-            content += `<img src="${escapeHtml(msg.imageUrl)}" class="image-message" onclick="showFullImage('${escapeHtml(msg.imageUrl)}')">`;
-          }
-          
-          content += `<div class="reactions-container" id="reactions-${messageId}"></div>`;
-          content += `<span class="time">${time}</span>`;
-          
-          div.innerHTML = content;
-          messagesDiv.appendChild(div);
-          
-          loadReactions(messageId, document.getElementById(`reactions-${messageId}`));
+          requestAnimationFrame(() => {
+            scrollToBottom(messagesDiv, wasNearBottom);
+            isUpdatingMessages = false;
+          });
         });
-        
-        // استخدام الدالة المحسنة للسكرول
-        setTimeout(() => {
-          scrollToBottom(messagesDiv, wasNearBottom);
-        }, 50); // تأخير بسيط لضمان تحميل الصور
-        
       }, error => {
         console.error('خطأ في تحميل الرسائل العامة:', error);
+        isUpdatingMessages = false;
       });
   }
 
@@ -3075,10 +3198,16 @@
         snapshot.forEach(doc => {
           const data = doc.data();
           if (doc.id !== currentUser?.uid) {
+            const unreadCount = unreadPrivateMessages[doc.id] || 0;
+            const badgeHtml = unreadCount > 0 
+              ? `<span class="notification-badge">${unreadCount > 9 ? '9+' : unreadCount}</span>` 
+              : '';
+            
             html += `
-              <div class="online-user" onclick="openPrivateChat('${doc.id}', '${escapeHtml(data.username)}')">
+              <div class="online-user" data-uid="${doc.id}" onclick="openPrivateChat('${doc.id}', '${escapeHtml(data.username)}')">
                 <span class="status"></span>
                 <span class="name">${escapeHtml(data.username)}</span>
+                ${badgeHtml}
               </div>
             `;
           }
@@ -3097,6 +3226,14 @@
     privatePartnerName.textContent = username;
     privatePage.classList.add('show');
     onlinePanel.classList.remove('show');
+    
+    // تحديث توقيت القراءة للمحادثة الحالية
+    const roomId = currentUser.uid < uid 
+      ? currentUser.uid + '_' + uid 
+      : uid + '_' + currentUser.uid;
+    currentPrivateRoomId = roomId;
+    
+    markMessagesAsRead(uid);
 
     if (unsubscribePartner) unsubscribePartner();
     unsubscribePartner = db.collection('users').doc(uid)
@@ -3114,6 +3251,7 @@
 
   window.closePrivateChat = function() {
     activePartner = null;
+    currentPrivateRoomId = null;
     privatePage.classList.remove('show');
     
     if (unsubscribePrivate) {
@@ -3137,7 +3275,6 @@
       .where('roomId', '==', roomId)
       .orderBy('createdAt', 'asc')
       .onSnapshot(snapshot => {
-        // حفظ حالة السكرول
         const wasNearBottom = privateMessages.scrollHeight - privateMessages.scrollTop - privateMessages.clientHeight < 100;
         
         privateMessages.innerHTML = '';
@@ -3147,9 +3284,16 @@
           return;
         }
         
+        const fragment = document.createDocumentFragment();
+        
         snapshot.forEach(doc => {
           const msg = doc.data();
           if (!msg.text && !msg.imageUrl) return;
+          
+          // تحديث عداد الرسائل غير المقروءة
+          if (msg.uid !== currentUser.uid) {
+            updateUnreadCount(msg.uid, roomId, msg.createdAt);
+          }
           
           const messageId = doc.id;
           const div = document.createElement('div');
@@ -3180,13 +3324,18 @@
           content += `<span class="time">${time}</span>`;
           
           div.innerHTML = content;
-          privateMessages.appendChild(div);
+          fragment.appendChild(div);
         });
         
-        // سكرول محسن للخاص
-        setTimeout(() => {
+        privateMessages.appendChild(fragment);
+        
+        if (privateMessages.lastElementChild) {
+          privateMessagesObserver.observe(privateMessages.lastElementChild);
+        }
+        
+        requestAnimationFrame(() => {
           scrollToBottom(privateMessages, wasNearBottom);
-        }, 50);
+        });
         
       }, error => {
         console.error('❌ خطأ في تحميل الرسائل الخاصة:', error);
@@ -3224,8 +3373,9 @@
       .then(() => {
         privateInput.value = '';
         cancelReply();
-        // سكرول قسري بعد الإرسال
-        setTimeout(() => scrollToBottom(privateMessages, true), 100);
+        // تحديث توقيت آخر قراءة عند إرسال رسالة
+        lastReadTimestamps[roomId] = Date.now();
+        setTimeout(() => scrollToBottom(privateMessages, true), 10);
       })
       .catch(err => {
         console.error('❌ خطأ في الإرسال:', err);
@@ -3297,11 +3447,17 @@
   };
 
   messageInput.addEventListener('keypress', e => {
-    if (e.key === 'Enter' && !isButtonsDisabled) sendWithReply();
+    if (e.key === 'Enter' && !isButtonsDisabled) {
+      e.preventDefault();
+      sendWithReply();
+    }
   });
   
   privateInput.addEventListener('keypress', e => {
-    if (e.key === 'Enter' && !isButtonsDisabled) sendPrivateMessage();
+    if (e.key === 'Enter' && !isButtonsDisabled) {
+      e.preventDefault();
+      sendPrivateMessage();
+    }
   });
 
   document.addEventListener('keydown', (e) => {
@@ -3406,4 +3562,4 @@
   });
 </script>
 </body>
-              </html>
+            </html>
