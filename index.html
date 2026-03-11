@@ -98,7 +98,7 @@
     .header-actions {
       display: flex;
       gap: 8px;
-      margin-left: 0; /* RTL: margin-right auto */
+      margin-left: 0;
       margin-right: auto;
     }
     
@@ -762,7 +762,7 @@
     .online-panel {
       position: absolute;
       top: 80px;
-      left: 20px; /* RTL: right: 20px */
+      left: 20px;
       right: auto;
       width: 320px;
       max-height: 400px;
@@ -1723,6 +1723,25 @@
     VERIFICATION_START: 'chat_verification_start'
   };
 
+  // ===== دالة السكرول المحسنة =====
+  function scrollToBottom(element, force = false) {
+    if (!element) return;
+    
+    // التحقق إذا كان المستخدم قريب من الأسفل (في آخر 150 بكسل)
+    const isNearBottom = element.scrollHeight - element.scrollTop - element.clientHeight < 150;
+    
+    // إذا كان المستخدم قريب من الأسفل أو القوة مفعلة، نقوم بالسكرول
+    if (isNearBottom || force) {
+      // استخدام requestAnimationFrame لسلاسة الحركة
+      requestAnimationFrame(() => {
+        element.scrollTo({
+          top: element.scrollHeight,
+          behavior: force ? 'auto' : 'smooth' // سلس إذا كان تلقائياً، فوري إذا كان قسرياً
+        });
+      });
+    }
+  }
+
   // ===== دوال الميزات الجديدة (بدون تغيير في الوظيفة) =====
 
   function showToast(message, type = 'success') {
@@ -1864,6 +1883,8 @@
       .then(() => {
         messageInput.value = '';
         cancelReply();
+        // سكرول قسري بعد الإرسال مباشرة
+        setTimeout(() => scrollToBottom(messagesDiv, true), 100);
       })
       .catch(err => {
         console.error('❌ خطأ في إرسال الرسالة:', err);
@@ -2934,12 +2955,45 @@
     return userColors[uid];
   }
 
+  // إضافة مراقب لتغيير حجم الصور للعام
+  const publicMessagesObserver = new ResizeObserver(() => {
+    if (messagesDiv) {
+      const isNearBottom = messagesDiv.scrollHeight - messagesDiv.scrollTop - messagesDiv.clientHeight < 100;
+      if (isNearBottom) {
+        scrollToBottom(messagesDiv, true);
+      }
+    }
+  });
+
+  // إضافة مراقب لتغيير حجم الصور للخاص
+  const privateMessagesObserver = new ResizeObserver(() => {
+    if (privateMessages) {
+      const isNearBottom = privateMessages.scrollHeight - privateMessages.scrollTop - privateMessages.clientHeight < 100;
+      if (isNearBottom) {
+        scrollToBottom(privateMessages, true);
+      }
+    }
+  });
+
+  // بدء مراقبة العناصر بعد تحميلها
+  setTimeout(() => {
+    if (messagesDiv) {
+      publicMessagesObserver.observe(messagesDiv);
+    }
+    if (privateMessages) {
+      privateMessagesObserver.observe(privateMessages);
+    }
+  }, 1000);
+
   function loadPublicMessages() {
     if (unsubscribePublic) unsubscribePublic();
     
     unsubscribePublic = db.collection('messages')
       .orderBy('createdAt', 'asc')
       .onSnapshot(snapshot => {
+        // حفظ حالة السكرول قبل التحديث
+        const wasNearBottom = messagesDiv.scrollHeight - messagesDiv.scrollTop - messagesDiv.clientHeight < 100;
+        
         messagesDiv.innerHTML = '';
         
         if (snapshot.empty) {
@@ -3001,7 +3055,11 @@
           loadReactions(messageId, document.getElementById(`reactions-${messageId}`));
         });
         
-        messagesDiv.scrollTop = messagesDiv.scrollHeight;
+        // استخدام الدالة المحسنة للسكرول
+        setTimeout(() => {
+          scrollToBottom(messagesDiv, wasNearBottom);
+        }, 50); // تأخير بسيط لضمان تحميل الصور
+        
       }, error => {
         console.error('خطأ في تحميل الرسائل العامة:', error);
       });
@@ -3079,6 +3137,9 @@
       .where('roomId', '==', roomId)
       .orderBy('createdAt', 'asc')
       .onSnapshot(snapshot => {
+        // حفظ حالة السكرول
+        const wasNearBottom = privateMessages.scrollHeight - privateMessages.scrollTop - privateMessages.clientHeight < 100;
+        
         privateMessages.innerHTML = '';
         
         if (snapshot.empty) {
@@ -3122,7 +3183,11 @@
           privateMessages.appendChild(div);
         });
         
-        privateMessages.scrollTop = privateMessages.scrollHeight;
+        // سكرول محسن للخاص
+        setTimeout(() => {
+          scrollToBottom(privateMessages, wasNearBottom);
+        }, 50);
+        
       }, error => {
         console.error('❌ خطأ في تحميل الرسائل الخاصة:', error);
         privateMessages.innerHTML = '<div style="color:red; text-align:center; padding:20px;">خطأ في تحميل الرسائل</div>';
@@ -3159,6 +3224,8 @@
       .then(() => {
         privateInput.value = '';
         cancelReply();
+        // سكرول قسري بعد الإرسال
+        setTimeout(() => scrollToBottom(privateMessages, true), 100);
       })
       .catch(err => {
         console.error('❌ خطأ في الإرسال:', err);
@@ -3339,4 +3406,4 @@
   });
 </script>
 </body>
-  </html>
+              </html>
