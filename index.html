@@ -460,7 +460,7 @@
       background: var(--bg-secondary);
     }
     
-    .online-btn, .search-toggle, .logout-btn, .reports-btn {
+    .online-btn, .search-toggle, .logout-btn {
       padding: 8px 16px;
       border: 1px solid var(--border-color);
       border-radius: 30px;
@@ -476,12 +476,12 @@
       position: relative;
     }
     
-    .online-btn:hover, .search-toggle:hover, .logout-btn:hover:not(:disabled), .reports-btn:hover:not(:disabled) {
+    .online-btn:hover, .search-toggle:hover, .logout-btn:hover:not(:disabled) {
       background: var(--accent-primary);
       border-color: var(--accent-primary);
     }
     
-    .online-btn:disabled, .search-toggle:disabled, .logout-btn:disabled, .reports-btn:disabled {
+    .online-btn:disabled, .search-toggle:disabled, .logout-btn:disabled {
       opacity: 0.5;
       cursor: not-allowed;
     }
@@ -1381,73 +1381,6 @@
       color: var(--text-primary);
       border: 1px solid var(--border-color);
     }
-    
-    /* نافذة عرض البلاغات */
-    .reports-modal {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(0,0,0,0.8);
-      backdrop-filter: blur(5px);
-      z-index: 6000;
-      display: none;
-      justify-content: center;
-      align-items: center;
-    }
-    .reports-modal.show {
-      display: flex;
-    }
-    .reports-content {
-      background: var(--bg-tertiary);
-      border-radius: 24px;
-      padding: 20px;
-      max-width: 600px;
-      width: 90%;
-      max-height: 80vh;
-      overflow-y: auto;
-      border: 1px solid var(--border-color);
-    }
-    .reports-content h2 {
-      color: var(--warning-color);
-      text-align: center;
-      margin-bottom: 20px;
-    }
-    .report-item {
-      background: var(--bg-secondary);
-      border-radius: 12px;
-      padding: 15px;
-      margin-bottom: 10px;
-      border: 1px solid var(--border-color);
-    }
-    .report-item p {
-      margin: 5px 0;
-      color: var(--text-primary);
-    }
-    .report-item button {
-      background: var(--danger-color);
-      color: white;
-      border: none;
-      padding: 5px 10px;
-      border-radius: 20px;
-      cursor: pointer;
-      margin-top: 10px;
-    }
-    .report-item button:hover {
-      opacity: 0.8;
-    }
-    .close-reports {
-      display: block;
-      width: 100%;
-      padding: 10px;
-      background: var(--accent-primary);
-      color: white;
-      border: none;
-      border-radius: 30px;
-      margin-top: 15px;
-      cursor: pointer;
-    }
   </style>
 </head>
 <body>
@@ -1594,7 +1527,6 @@
         </button>
         <button class="search-toggle" onclick="toggleSearch()" id="searchToggleBtn">🔍 بحث</button>
         <button class="logout-btn" onclick="logout()" id="logoutBtn">خروج</button>
-        <button class="reports-btn" id="reportsBtn" style="display: none;" onclick="showReportsModal()">🚨 البلاغات</button>
       </div>
     </div>
 
@@ -1707,15 +1639,6 @@
 
 <!-- معاينة الصور المتقدمة -->
 <div id="advancedPreviewModal" class="advanced-preview-modal" style="display: none;"></div>
-
-<!-- نافذة عرض البلاغات (للمالك) -->
-<div class="reports-modal" id="reportsModal">
-  <div class="reports-content">
-    <h2>📋 البلاغات الواردة</h2>
-    <div id="reportsList"></div>
-    <button class="close-reports" onclick="document.getElementById('reportsModal').classList.remove('show')">إغلاق</button>
-  </div>
-</div>
 
 <script>
   // ✅ تهيئة Firebase
@@ -1839,61 +1762,6 @@
     VERIFICATION_TIME: 'chat_verification_time',
     VERIFICATION_START: 'chat_verification_start'
   };
-
-  // --- تعريف المالك (عدّل البريد الإلكتروني أو UID حسب رغبتك) ---
-  const ADMIN_UID = '';          // اتركه فارغاً لاستخدام البريد الإلكتروني
-  const ADMIN_EMAIL = 'admin@admin.com'; // غيّر إلى بريدك الإلكتروني
-
-  // ===== دوال التخزين المحلي للتفاعلات والبلاغات =====
-  function getReactions(messageId) {
-    const data = localStorage.getItem(`reactions_${messageId}`);
-    return data ? JSON.parse(data) : {};
-  }
-
-  function saveReactions(messageId, reactions) {
-    localStorage.setItem(`reactions_${messageId}`, JSON.stringify(reactions));
-  }
-
-  function addLocalReaction(messageId, reaction, username) {
-    const reactions = getReactions(messageId);
-    if (!reactions[reaction]) reactions[reaction] = [];
-    // إذا كان المستخدم قد أضاف نفس التفاعل مسبقاً، نحذفه (toggle)
-    const userIndex = reactions[reaction].indexOf(username);
-    if (userIndex > -1) {
-      reactions[reaction].splice(userIndex, 1);
-      if (reactions[reaction].length === 0) delete reactions[reaction];
-    } else {
-      reactions[reaction].push(username);
-    }
-    saveReactions(messageId, reactions);
-    return reactions;
-  }
-
-  function getReports() {
-    const data = localStorage.getItem('reports');
-    return data ? JSON.parse(data) : [];
-  }
-
-  function saveReports(reports) {
-    localStorage.setItem('reports', JSON.stringify(reports));
-  }
-
-  function addReport(messageId, reportedBy, reportedByUsername) {
-    const reports = getReports();
-    reports.push({
-      messageId,
-      reportedBy,
-      reportedByUsername,
-      timestamp: new Date().toISOString()
-    });
-    saveReports(reports);
-  }
-
-  function removeReport(index) {
-    const reports = getReports();
-    reports.splice(index, 1);
-    saveReports(reports);
-  }
 
   // ===== دالة السكرول المحسنة بشكل كبير للقضاء على الرعشة =====
   function scrollToBottom(element, force = false) {
@@ -2161,48 +2029,53 @@
     }, 5000);
   }
 
-  // ✅ دالة التفاعل المعدلة (تخزين محلي)
   function addReaction(reaction) {
     if (!selectedMessageForReaction || !currentUser) return;
     
-    const messageId = selectedMessageForReaction;
-    const username = currentUsername;
+    const reactionRef = db.collection('messages').doc(selectedMessageForReaction).collection('reactions').doc(currentUser.uid);
     
-    // تخزين في localStorage
-    addLocalReaction(messageId, reaction, username);
-    
-    // تحديث واجهة التفاعلات لهذه الرسالة
-    const container = document.getElementById(`reactions-${messageId}`);
-    if (container) {
-      loadReactions(messageId, container);
-    }
-    
-    showToast('✅ تم إضافة التفاعل');
-    reactionPicker.style.display = 'none';
+    reactionRef.get().then(doc => {
+      if (doc.exists) {
+        return reactionRef.delete();
+      } else {
+        return reactionRef.set({
+          reaction: reaction,
+          username: currentUsername,
+          createdAt: firebase.firestore.FieldValue.serverTimestamp()
+        });
+      }
+    }).then(() => {
+      showToast('✅ تم إضافة التفاعل');
+      reactionPicker.style.display = 'none';
+    }).catch(err => {
+      console.error('خطأ في إضافة التفاعل:', err);
+      showToast('❌ فشل إضافة التفاعل', 'error');
+    });
   }
 
-  // ✅ دالة تحميل التفاعلات من localStorage
   function loadReactions(messageId, container) {
-    const reactions = getReactions(messageId);
-    let html = '';
-    for (const [reaction, users] of Object.entries(reactions)) {
-      html += `
-        <div class="reaction-badge" onclick="toggleReaction('${messageId}', '${reaction}')">
-          ${reaction} <span class="count">${users.length}</span>
-        </div>
-      `;
-    }
-    container.innerHTML = html;
+    db.collection('messages').doc(messageId).collection('reactions').onSnapshot(snapshot => {
+      const reactions = {};
+      snapshot.forEach(doc => {
+        const data = doc.data();
+        if (!reactions[data.reaction]) {
+          reactions[data.reaction] = [];
+        }
+        reactions[data.reaction].push(data.username);
+      });
+      
+      let html = '';
+      for (const [reaction, users] of Object.entries(reactions)) {
+        html += `
+          <div class="reaction-badge" onclick="toggleReaction('${messageId}', '${reaction}')">
+            ${reaction} <span class="count">${users.length}</span>
+          </div>
+        `;
+      }
+      
+      container.innerHTML = html;
+    });
   }
-
-  // دالة إضافية لتبديل التفاعل عند النقر على الشارة
-  window.toggleReaction = function(messageId, reaction) {
-    if (!currentUser) return;
-    const username = currentUsername;
-    addLocalReaction(messageId, reaction, username);
-    const container = document.getElementById(`reactions-${messageId}`);
-    if (container) loadReactions(messageId, container);
-  };
 
   function toggleSearch() {
     if (searchBar.style.display === 'none' || searchBar.style.display === '') {
@@ -2325,59 +2198,20 @@
     }
   }
 
-  // ✅ دالة الإبلاغ المعدلة (تخزين محلي)
   function reportMessage(messageId) {
-    if (!currentUser) return;
-    
-    addReport(messageId, currentUser.uid, currentUsername);
-    showToast('✅ تم إرسال البلاغ');
-    contextMenu.style.display = 'none';
-    
-    // إذا كان المستخدم هو المالك، نقوم بتحديث قائمة البلاغات فوراً
-    if (isAdmin()) {
-      updateReportsList();
-    }
-  }
-
-  // دوال التحقق من المالك
-  function isAdmin() {
-    if (!currentUser) return false;
-    if (ADMIN_UID && currentUser.uid === ADMIN_UID) return true;
-    if (ADMIN_EMAIL && currentUser.email === y83298252@gmail.com) return true;
-    return false;
-  }
-
-  function showReportsModal() {
-    updateReportsList();
-    document.getElementById('reportsModal').classList.add('show');
-  }
-
-  function updateReportsList() {
-    const reports = getReports();
-    const container = document.getElementById('reportsList');
-    if (reports.length === 0) {
-      container.innerHTML = '<p style="color:var(--text-secondary); text-align:center;">لا توجد بلاغات حالياً</p>';
-      return;
-    }
-    let html = '';
-    reports.forEach((rep, index) => {
-      html += `
-        <div class="report-item">
-          <p><strong>معرف الرسالة:</strong> ${rep.messageId}</p>
-          <p><strong>المبلغ:</strong> ${rep.reportedByUsername} (${rep.reportedBy})</p>
-          <p><strong>التاريخ:</strong> ${new Date(rep.timestamp).toLocaleString('ar-EG')}</p>
-          <button onclick="deleteReport(${index})">✓ تمت المعالجة</button>
-        </div>
-      `;
+    db.collection('reports').add({
+      messageId: messageId,
+      reportedBy: currentUser.uid,
+      reportedByUsername: currentUsername,
+      createdAt: firebase.firestore.FieldValue.serverTimestamp()
+    }).then(() => {
+      showToast('✅ تم إرسال البلاغ');
+      contextMenu.style.display = 'none';
+    }).catch(err => {
+      console.error('خطأ في إرسال البلاغ:', err);
+      showToast('❌ فشل إرسال البلاغ', 'error');
     });
-    container.innerHTML = html;
   }
-
-  window.deleteReport = function(index) {
-    removeReport(index);
-    updateReportsList();
-    showToast('✅ تم حذف البلاغ');
-  };
 
   function handleAdvancedImageSelect(file) {
     if (!file) return;
@@ -2387,62 +2221,40 @@
       return;
     }
     
+    // إظهار معاينة الصورة مباشرة
     const reader = new FileReader();
     reader.onload = function(e) {
-      showAdvancedPreview(e.target.result, file);
+      // تخزين الصورة المحددة
+      selectedImageFile = file;
+      imagePreviewUrl = e.target.result;
+      
+      // إظهار معاينة الصورة
+      const previewImg = document.getElementById('imagePreview');
+      previewImg.src = e.target.result;
+      document.getElementById('imagePreviewContainer').classList.add('show');
+      
+      // تعيين السياق الحالي (عام أو خاص)
+      currentImageMessageContext = privatePage.classList.contains('show') ? 'private' : 'public';
     };
     reader.readAsDataURL(file);
   }
 
-  function showAdvancedPreview(imageData, file) {
-    advancedPreviewModal.innerHTML = `
-      <div class="preview-content">
-        <h3>معاينة الصورة</h3>
-        <img src="${imageData}" class="preview-image" alt="معاينة">
-        <div class="preview-options">
-          <label>
-            <input type="checkbox" id="compressImage"> ضغط الصورة
-          </label>
-          <select id="imageQuality">
-            <option value="1">جودة عالية</option>
-            <option value="0.7" selected>جودة متوسطة</option>
-            <option value="0.4">جودة منخفضة</option>
-          </select>
-        </div>
-        <div class="preview-actions">
-          <button onclick="sendOptimizedImage()" class="send-image-btn">✓ إرسال</button>
-          <button onclick="closeAdvancedPreview()" class="cancel-image-btn">✗ إلغاء</button>
-        </div>
-      </div>
-    `;
-    
-    advancedPreviewModal.style.display = 'flex';
-    selectedImageFile = file;
-  }
-
-  function closeAdvancedPreview() {
-    advancedPreviewModal.style.display = 'none';
-    selectedImageFile = null;
-  }
-
-  async function sendOptimizedImage() {
-    if (!selectedImageFile) return;
-    
-    const compress = document.getElementById('compressImage')?.checked || false;
-    const quality = parseFloat(document.getElementById('imageQuality')?.value || '0.7');
+  // دالة جديدة لإرسال الصورة
+  window.sendImageMessage = async function() {
+    if (!selectedImageFile || !currentUser) {
+      showToast('❌ لا توجد صورة محددة', 'error');
+      return;
+    }
     
     document.getElementById('uploadProgress').classList.add('show');
+    document.getElementById('imagePreviewContainer').classList.remove('show');
     
     try {
-      let fileToUpload = selectedImageFile;
-      
-      if (compress) {
-        fileToUpload = await compressImage(selectedImageFile, quality);
-      }
-      
-      const imageUrl = await uploadImageToCloudinary(fileToUpload);
+      // رفع الصورة إلى Cloudinary
+      const imageUrl = await uploadImageToCloudinary(selectedImageFile);
       
       if (imageUrl) {
+        // إرسال الصورة حسب السياق
         if (currentImageMessageContext === 'private' && activePartner) {
           const roomId = currentUser.uid < activePartner.uid 
             ? currentUser.uid + '_' + activePartner.uid 
@@ -2457,6 +2269,8 @@
             imageUrl: imageUrl,
             createdAt: firebase.firestore.FieldValue.serverTimestamp()
           });
+          
+          showToast('✅ تم إرسال الصورة بنجاح');
         } else {
           await db.collection('messages').add({
             text: '',
@@ -2465,94 +2279,68 @@
             imageUrl: imageUrl,
             createdAt: firebase.firestore.FieldValue.serverTimestamp()
           });
+          
+          showToast('✅ تم إرسال الصورة بنجاح');
         }
-        
-        showToast('✅ تم إرسال الصورة بنجاح');
       }
     } catch (error) {
       console.error('❌ خطأ في إرسال الصورة:', error);
-      showToast('❌ فشل إرسال الصورة', 'error');
+      showToast('❌ فشل إرسال الصورة: ' + error.message, 'error');
     } finally {
       document.getElementById('uploadProgress').classList.remove('show');
-      closeAdvancedPreview();
       cancelImageUpload();
     }
-  }
+  };
 
-  function compressImage(file, quality) {
-    return new Promise((resolve, reject) => {
-      const reader = new FileReader();
-      reader.readAsDataURL(file);
-      reader.onload = (event) => {
-        const img = new Image();
-        img.src = event.target.result;
-        img.onload = () => {
-          const canvas = document.createElement('canvas');
-          const ctx = canvas.getContext('2d');
-          
-          let width = img.width;
-          let height = img.height;
-          const maxSize = 1024;
-          
-          if (width > maxSize || height > maxSize) {
-            if (width > height) {
-              height = Math.round((height * maxSize) / width);
-              width = maxSize;
-            } else {
-              width = Math.round((width * maxSize) / height);
-              height = maxSize;
-            }
-          }
-          
-          canvas.width = width;
-          canvas.height = height;
-          
-          ctx.drawImage(img, 0, 0, width, height);
-          
-          canvas.toBlob((blob) => {
-            resolve(blob);
-          }, file.type, quality);
-        };
-        img.onerror = reject;
-      };
-      reader.onerror = reject;
-    });
-  }
+  window.cancelImageUpload = function() {
+    selectedImageFile = null;
+    imagePreviewUrl = null;
+    currentImageMessageContext = null;
+    document.getElementById('imagePreviewContainer').classList.remove('show');
+    document.getElementById('imageFileInput').value = '';
+  };
 
+  // دالة محسنة لرفع الصور إلى Cloudinary
   async function uploadImageToCloudinary(file) {
     if (!file) return null;
     
+    // التحقق من حجم الصورة
     if (file.size > 10 * 1024 * 1024) {
-      showToast("❌ حجم الصورة كبير جداً. الحد الأقصى 10 ميجابايت", 'error');
-      return null;
+      throw new Error('حجم الصورة كبير جداً. الحد الأقصى 10 ميجابايت');
     }
     
+    // التحقق من نوع الملف
     if (!file.type.startsWith('image/')) {
-      showToast("❌ هذا الملف ليس صورة", 'error');
-      return null;
+      throw new Error('هذا الملف ليس صورة');
     }
 
     const formData = new FormData();
-    formData.append("file", file);
-    formData.append("upload_preset", UPLOAD_PRESET);
+    formData.append('file', file);
+    formData.append('upload_preset', UPLOAD_PRESET);
+    formData.append('cloud_name', CLOUD_NAME);
 
     try {
-      const res = await fetch(`https://api.cloudinary.com/v1_1/${CLOUD_NAME}/image/upload`, {
-        method: "POST",
-        body: formData
+      console.log('جاري رفع الصورة إلى Cloudinary...');
+      
+      const response = await fetch(`https://api.cloudinary.com/v1_1/${CLOUD_NAME}/image/upload`, {
+        method: 'POST',
+        body: formData,
+        mode: 'cors'
       });
 
-      if (!res.ok) {
-        throw new Error('فشل رفع الصورة');
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error('❌ خطأ من Cloudinary:', errorText);
+        throw new Error(`فشل رفع الصورة: ${response.status} ${response.statusText}`);
       }
 
-      const data = await res.json();
+      const data = await response.json();
+      console.log('✅ تم رفع الصورة بنجاح:', data.secure_url);
       return data.secure_url;
       
     } catch (error) {
       console.error('❌ خطأ في رفع الصورة:', error);
-      showToast('❌ فشل رفع الصورة: ' + error.message, 'error');
-      return null;
+      throw error;
     }
   }
 
@@ -3559,7 +3347,6 @@
     publicUploadBtn.type = 'button';
     publicUploadBtn.onclick = () => {
       if (isButtonsDisabled) return;
-      currentImageMessageContext = 'public';
       document.getElementById('imageFileInput').click();
     };
     publicContainer.appendChild(publicUploadBtn);
@@ -3578,7 +3365,6 @@
           showToast('❌ لا توجد محادثة خاصة نشطة', 'error');
           return;
         }
-        currentImageMessageContext = 'private';
         document.getElementById('imageFileInput').click();
       };
       privateContainer.appendChild(privateUploadBtn);
@@ -3594,13 +3380,6 @@
       document.body.appendChild(fileInput);
     }
   }
-
-  window.cancelImageUpload = function() {
-    selectedImageFile = null;
-    imagePreviewUrl = null;
-    document.getElementById('imagePreviewContainer').classList.remove('show');
-    document.getElementById('imageFileInput').value = '';
-  };
 
   window.showFullImage = function(imageUrl) {
     document.getElementById('fullImage').src = imageUrl;
@@ -3642,6 +3421,9 @@
       }
       if (searchBar.style.display === 'flex') {
         closeSearch();
+      }
+      if (document.getElementById('imagePreviewContainer').classList.contains('show')) {
+        cancelImageUpload();
       }
     }
   });
@@ -3707,14 +3489,6 @@
           
           chatDiv.style.display = 'flex';
           disableAllButtons(false);
-
-          // إظهار زر البلاغات إذا كان المستخدم هو المالك
-          const reportsBtn = document.getElementById('reportsBtn');
-          if (isAdmin()) {
-            reportsBtn.style.display = 'flex';
-          } else {
-            reportsBtn.style.display = 'none';
-          }
           
         } else {
           authDiv.style.display = 'flex';
@@ -3736,4 +3510,4 @@
   });
 </script>
 </body>
-          </html>
+        </html>
