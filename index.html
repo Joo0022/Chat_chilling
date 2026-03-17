@@ -906,6 +906,22 @@
       border: 1px solid var(--success-color);
     }
     
+    .clear-chat-btn {
+      background: var(--danger-color);
+      padding: 5px 10px;
+      border-radius: 20px;
+      border: none;
+      color: white;
+      cursor: pointer;
+      font-size: 0.9rem;
+      transition: all 0.2s ease;
+    }
+    
+    .clear-chat-btn:hover {
+      background: #dc2626;
+      transform: scale(1.05);
+    }
+    
     .private-messages {
       flex: 1;
       overflow-y: auto;
@@ -1381,6 +1397,45 @@
       color: var(--text-primary);
       border: 1px solid var(--border-color);
     }
+
+    @media (max-width: 600px) {
+      .header {
+        flex-direction: column;
+        gap: 10px;
+        padding: 12px;
+      }
+      
+      .header-title {
+        position: static;
+        transform: none;
+        margin-bottom: 5px;
+      }
+      
+      .header-actions {
+        width: 100%;
+        justify-content: center;
+      }
+      
+      .online-panel {
+        width: 90%;
+        left: 5%;
+        right: 5%;
+      }
+      
+      .msg {
+        max-width: 85%;
+      }
+      
+      .input-area button, .private-input button {
+        padding: 12px 15px;
+        font-size: 0.9rem;
+      }
+      
+      .image-upload-btn {
+        width: 40px;
+        height: 40px;
+      }
+    }
   </style>
 </head>
 <body>
@@ -1573,6 +1628,7 @@
     <button onclick="closePrivateChat()" id="closePrivateBtn">←</button>
     <h3>محادثة مع: <span id="privatePartnerName"></span></h3>
     <span class="private-status" id="privateStatus">متصل</span>
+    <button class="clear-chat-btn" onclick="clearPrivateChat()" id="clearPrivateChatBtn">🗑️ مسح</button>
   </div>
   
   <!-- مؤشر الكتابة للخاص -->
@@ -1628,8 +1684,9 @@
 </div>
 
 <div class="upload-progress" id="uploadProgress">
-  <div>جاري رفع الصورة...</div>
+  <div>⏫ جاري رفع الصورة...</div>
   <div class="spinner"></div>
+  <div style="font-size: 0.8rem; margin-top: 10px;">قد يستغرق هذا بضع ثوانٍ</div>
 </div>
 
 <div class="full-image-modal" id="fullImageModal">
@@ -1751,6 +1808,11 @@
   let scrollAnimationFrame = null;
   let isUpdatingMessages = false;
   
+  // ✅ متغيرات Pagination
+  let lastVisible = null;
+  let loadingMore = false;
+  const MESSAGES_LIMIT = 50;
+  
   // ✅ ألوان مختلفة للمستخدمين
   const userColors = {};
   
@@ -1831,6 +1893,14 @@
       }
       
       updateOnlineListWithNotifications();
+      
+      // إشعار سطح المكتب إذا كانت الصفحة مخفية
+      if (document.hidden && Notification.permission === 'granted') {
+        new Notification('📨 رسالة جديدة', {
+          body: 'لديك رسالة خاصة جديدة',
+          icon: 'https://i.postimg.cc/rsbg47X7/8f55b377-3e6f-4bc9-bbc5-9b1ed3057599.png'
+        });
+      }
     }
   }
 
@@ -1867,6 +1937,12 @@
     toast.setAttribute('data-type', type);
     document.body.appendChild(toast);
     setTimeout(() => toast.remove(), 2000);
+  }
+
+  function requestNotificationPermission() {
+    if ('Notification' in window && Notification.permission !== 'granted' && Notification.permission !== 'denied') {
+      Notification.requestPermission();
+    }
   }
 
   function handleTyping() {
@@ -2053,6 +2129,31 @@
     });
   }
 
+  window.toggleReaction = async function(messageId, reaction) {
+    if (!currentUser) return;
+    
+    const reactionRef = db.collection('messages').doc(messageId)
+      .collection('reactions').doc(currentUser.uid);
+    
+    try {
+      const doc = await reactionRef.get();
+      if (doc.exists && doc.data().reaction === reaction) {
+        await reactionRef.delete();
+        showToast('✅ تم إزالة التفاعل');
+      } else {
+        await reactionRef.set({
+          reaction: reaction,
+          username: currentUsername,
+          createdAt: firebase.firestore.FieldValue.serverTimestamp()
+        });
+        showToast('✅ تم إضافة التفاعل');
+      }
+    } catch (err) {
+      console.error('خطأ في تبديل التفاعل:', err);
+      showToast('❌ فشل تحديث التفاعل', 'error');
+    }
+  };
+
   function loadReactions(messageId, container) {
     db.collection('messages').doc(messageId).collection('reactions').onSnapshot(snapshot => {
       const reactions = {};
@@ -2093,33 +2194,43 @@
 
   function searchMessages(searchTerm) {
     if (!searchTerm.trim()) {
-      document.querySelectorAll('.msg').forEach(msg => {
-        msg.style.backgroundColor = '';
-        msg.style.border = '';
-      });
+      clearSearch();
       return;
     }
     
-    const messages = document.querySelectorAll('.msg');
+    const messages = document.querySelectorAll('.msg .text');
     let found = false;
     let firstFound = null;
     
-    messages.forEach(msg => {
-      const text = msg.querySelector('.text')?.textContent || '';
-      if (text.toLowerCase().includes(searchTerm.toLowerCase())) {
-        msg.style.backgroundColor = 'rgba(234, 179, 8, 0.2)';
-        msg.style.border = '2px solid #eab308';
-        if (!firstFound) firstFound = msg;
-        found = true;
+    messages.forEach(msgElement => {
+      const msgDiv = msgElement.closest('.msg');
+      const originalText = msgElement.textContent;
+      
+      // إزالة أي تنسيق سابق
+      msgElement.innerHTML = escapeHtml(originalText);
+      
+      if (originalText.toLowerCase().includes(searchTerm.toLowerCase())) {
+        // تمييز النص
+        const regex = new RegExp(`(${searchTerm.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})`, 'gi');
+        const highlighted = originalText.replace(regex, '<mark style="background: #eab308; color: black;">$1</mark>');
+        msgElement.innerHTML = highlighted;
+        
+        msgDiv.style.backgroundColor = 'rgba(234, 179, 8, 0.1)';
+        msgDiv.style.border = '2px solid #eab308';
+        
+        if (!firstFound) {
+          firstFound = msgDiv;
+          found = true;
+        }
       } else {
-        msg.style.backgroundColor = '';
-        msg.style.border = '';
+        msgDiv.style.backgroundColor = '';
+        msgDiv.style.border = '';
       }
     });
     
     if (found && firstFound) {
       firstFound.scrollIntoView({ behavior: 'smooth', block: 'center' });
-      showToast(`✅ تم العثور على رسائل`, 'success');
+      showToast('✅ تم العثور على رسائل', 'success');
     } else {
       showToast('❌ لا توجد رسائل تطابق بحثك', 'warning');
     }
@@ -2127,9 +2238,14 @@
 
   function clearSearch() {
     searchInput.value = '';
-    document.querySelectorAll('.msg').forEach(msg => {
-      msg.style.backgroundColor = '';
-      msg.style.border = '';
+    document.querySelectorAll('.msg .text').forEach(msgElement => {
+      const originalText = msgElement.textContent;
+      msgElement.innerHTML = escapeHtml(originalText);
+      const msgDiv = msgElement.closest('.msg');
+      if (msgDiv) {
+        msgDiv.style.backgroundColor = '';
+        msgDiv.style.border = '';
+      }
     });
   }
 
@@ -2184,19 +2300,33 @@
     });
   }
 
-  function deleteMessage(messageId) {
-    if (confirm('هل أنت متأكد من حذف هذه الرسالة؟')) {
-      db.collection('messages').doc(messageId).delete()
-        .then(() => {
-          showToast('✅ تم حذف الرسالة');
-          contextMenu.style.display = 'none';
-        })
-        .catch(err => {
-          console.error('خطأ في حذف الرسالة:', err);
-          showToast('❌ فشل الحذف', 'error');
-        });
+  window.deleteMessage = async function(messageId) {
+    if (!currentUser) return;
+    
+    try {
+      const msgDoc = await db.collection('messages').doc(messageId).get();
+      if (!msgDoc.exists) {
+        showToast('❌ الرسالة غير موجودة', 'error');
+        return;
+      }
+      
+      const msgData = msgDoc.data();
+      if (msgData.uid !== currentUser.uid) {
+        showToast('❌ لا يمكنك حذف رسائل الآخرين', 'error');
+        contextMenu.style.display = 'none';
+        return;
+      }
+      
+      if (confirm('هل أنت متأكد من حذف هذه الرسالة؟')) {
+        await db.collection('messages').doc(messageId).delete();
+        showToast('✅ تم حذف الرسالة');
+        contextMenu.style.display = 'none';
+      }
+    } catch (err) {
+      console.error('خطأ في حذف الرسالة:', err);
+      showToast('❌ فشل الحذف', 'error');
     }
-  }
+  };
 
   function reportMessage(messageId) {
     db.collection('reports').add({
@@ -2212,6 +2342,12 @@
       showToast('❌ فشل إرسال البلاغ', 'error');
     });
   }
+
+  window.closeAdvancedPreview = function() {
+    if (advancedPreviewModal) {
+      advancedPreviewModal.style.display = 'none';
+    }
+  };
 
   function handleAdvancedImageSelect(file) {
     if (!file) return;
@@ -2239,6 +2375,31 @@
     reader.readAsDataURL(file);
   }
 
+  function setupDragAndDrop() {
+    const dropZone = document.body;
+    
+    dropZone.addEventListener('dragover', (e) => {
+      e.preventDefault();
+      dropZone.style.opacity = '0.8';
+    });
+    
+    dropZone.addEventListener('dragleave', () => {
+      dropZone.style.opacity = '1';
+    });
+    
+    dropZone.addEventListener('drop', (e) => {
+      e.preventDefault();
+      dropZone.style.opacity = '1';
+      
+      const files = e.dataTransfer.files;
+      if (files.length > 0 && files[0].type.startsWith('image/')) {
+        handleAdvancedImageSelect(files[0]);
+      } else {
+        showToast('❌ الرجاء إسقاط ملف صورة فقط', 'error');
+      }
+    });
+  }
+
   // دالة جديدة لإرسال الصورة
   window.sendImageMessage = async function() {
     if (!selectedImageFile || !currentUser) {
@@ -2246,7 +2407,13 @@
       return;
     }
     
-    document.getElementById('uploadProgress').classList.add('show');
+    const progressDiv = document.getElementById('uploadProgress');
+    progressDiv.classList.add('show');
+    progressDiv.innerHTML = `
+      <div>⏫ جاري رفع الصورة...</div>
+      <div class="spinner"></div>
+      <div style="font-size: 0.8rem; margin-top: 10px;">قد يستغرق هذا بضع ثوانٍ</div>
+    `;
     document.getElementById('imagePreviewContainer').classList.remove('show');
     
     try {
@@ -2297,7 +2464,8 @@
     imagePreviewUrl = null;
     currentImageMessageContext = null;
     document.getElementById('imagePreviewContainer').classList.remove('show');
-    document.getElementById('imageFileInput').value = '';
+    const fileInput = document.getElementById('imageFileInput');
+    if (fileInput) fileInput.value = '';
   };
 
   // دالة محسنة لرفع الصور إلى Cloudinary
@@ -2822,6 +2990,13 @@
     
     disableAllButtons(true);
     
+    // إلغاء جميع الاشتراكات
+    if (unsubscribePublic) unsubscribePublic();
+    if (unsubscribePrivate) unsubscribePrivate();
+    if (unsubscribeOnline) unsubscribeOnline();
+    if (unsubscribePartner) unsubscribePartner();
+    if (unsubscribeTyping) unsubscribeTyping();
+    
     if (auth.currentUser) {
       db.collection('typing').doc(auth.currentUser.uid).delete().catch(() => {});
       
@@ -2836,6 +3011,13 @@
           }
           disableAllButtons(false);
           isVerificationMode = false;
+          
+          // تنظيف المتغيرات
+          currentUser = null;
+          currentUsername = '';
+          activePartner = null;
+          messagesDiv.innerHTML = '';
+          onlineList.innerHTML = '';
         });
     }
   }
@@ -2978,6 +3160,7 @@
       document.getElementById('cancelResetBtn'),
       document.getElementById('searchToggleBtn'),
       document.getElementById('closeSearchBtn'),
+      document.getElementById('clearPrivateChatBtn'),
       loginTab,
       registerTab
     ];
@@ -3043,103 +3226,206 @@
     });
   }, { threshold: 0.1 });
 
+  // دالة لتحميل المزيد من الرسائل
+  async function loadMoreMessages() {
+    if (loadingMore || !lastVisible) return;
+    loadingMore = true;
+    
+    try {
+      const nextQuery = db.collection('messages')
+        .orderBy('createdAt', 'asc')
+        .startAfter(lastVisible)
+        .limit(MESSAGES_LIMIT);
+      
+      const snapshot = await nextQuery.get();
+      
+      if (!snapshot.empty) {
+        const fragment = document.createDocumentFragment();
+        const oldScrollHeight = messagesDiv.scrollHeight;
+        
+        snapshot.forEach(doc => {
+          const msg = doc.data();
+          if (!msg.text && !msg.imageUrl) return;
+          
+          const messageId = doc.id;
+          const div = document.createElement('div');
+          div.className = 'msg';
+          div.dataset.messageId = messageId;
+          
+          if (msg.uid === currentUser?.uid) {
+            div.classList.add('own');
+          } else {
+            div.style.backgroundColor = getUserColor(msg.uid);
+          }
+          
+          let time = '';
+          if (msg.createdAt?.toDate) {
+            try {
+              const d = msg.createdAt.toDate();
+              time = `${d.getHours()}:${d.getMinutes().toString().padStart(2,'0')}`;
+            } catch(e) {
+              time = '';
+            }
+          }
+          
+          let content = '';
+          content += `<span class="sender">${escapeHtml(msg.username || 'مجهول')}</span>`;
+          
+          if (msg.replyTo) {
+            content += `
+              <div class="reply-indicator" style="margin-bottom: 5px; padding: 5px; background: rgba(0,0,0,0.2); border-radius: 5px;">
+                <span style="color: var(--accent-secondary);">↩️ ${escapeHtml(msg.replyTo.username)}:</span>
+                <span style="opacity: 0.8;">${escapeHtml(msg.replyTo.text.substring(0, 30))}${msg.replyTo.text.length > 30 ? '...' : ''}</span>
+              </div>
+            `;
+          }
+          
+          if (msg.text) {
+            content += `<span class="text">${escapeHtml(msg.text)}</span>`;
+          }
+          
+          if (msg.imageUrl) {
+            content += `<img src="${escapeHtml(msg.imageUrl)}" class="image-message" onclick="showFullImage('${escapeHtml(msg.imageUrl)}')">`;
+          }
+          
+          content += `<div class="reactions-container" id="reactions-${messageId}"></div>`;
+          content += `<span class="time">${time}</span>`;
+          
+          div.innerHTML = content;
+          fragment.appendChild(div);
+        });
+        
+        messagesDiv.insertBefore(fragment, messagesDiv.firstChild);
+        
+        snapshot.forEach(doc => {
+          const messageId = doc.id;
+          const container = document.getElementById(`reactions-${messageId}`);
+          if (container) {
+            loadReactions(messageId, container);
+          }
+        });
+        
+        // الحفاظ على موضع السكرول
+        const newScrollHeight = messagesDiv.scrollHeight;
+        messagesDiv.scrollTop = newScrollHeight - oldScrollHeight;
+        
+        lastVisible = snapshot.docs[snapshot.docs.length - 1];
+      }
+    } catch (err) {
+      console.error('خطأ في تحميل المزيد من الرسائل:', err);
+    } finally {
+      loadingMore = false;
+    }
+  }
+
   function loadPublicMessages() {
     if (unsubscribePublic) unsubscribePublic();
     
-    unsubscribePublic = db.collection('messages')
+    let firstQuery = db.collection('messages')
       .orderBy('createdAt', 'asc')
-      .onSnapshot(snapshot => {
-        if (isUpdatingMessages) return;
-        isUpdatingMessages = true;
+      .limit(MESSAGES_LIMIT);
+    
+    unsubscribePublic = firstQuery.onSnapshot(snapshot => {
+      if (isUpdatingMessages) return;
+      isUpdatingMessages = true;
+      
+      requestAnimationFrame(() => {
+        const wasNearBottom = messagesDiv.scrollHeight - messagesDiv.scrollTop - messagesDiv.clientHeight < 100;
+        
+        messagesDiv.innerHTML = '';
+        
+        if (snapshot.empty) {
+          messagesDiv.innerHTML = '<div style="color:var(--text-secondary); text-align:center; padding:20px;">لا توجد رسائل بعد...</div>';
+          isUpdatingMessages = false;
+          return;
+        }
+        
+        const fragment = document.createDocumentFragment();
+        
+        snapshot.forEach(doc => {
+          const msg = doc.data();
+          if (!msg.text && !msg.imageUrl) return;
+          
+          const messageId = doc.id;
+          const div = document.createElement('div');
+          div.className = 'msg';
+          div.dataset.messageId = messageId;
+          
+          if (msg.uid === currentUser?.uid) {
+            div.classList.add('own');
+          } else {
+            div.style.backgroundColor = getUserColor(msg.uid);
+          }
+          
+          let time = '';
+          if (msg.createdAt?.toDate) {
+            try {
+              const d = msg.createdAt.toDate();
+              time = `${d.getHours()}:${d.getMinutes().toString().padStart(2,'0')}`;
+            } catch(e) {
+              time = '';
+            }
+          }
+          
+          let content = '';
+          content += `<span class="sender">${escapeHtml(msg.username || 'مجهول')}</span>`;
+          
+          if (msg.replyTo) {
+            content += `
+              <div class="reply-indicator" style="margin-bottom: 5px; padding: 5px; background: rgba(0,0,0,0.2); border-radius: 5px;">
+                <span style="color: var(--accent-secondary);">↩️ ${escapeHtml(msg.replyTo.username)}:</span>
+                <span style="opacity: 0.8;">${escapeHtml(msg.replyTo.text.substring(0, 30))}${msg.replyTo.text.length > 30 ? '...' : ''}</span>
+              </div>
+            `;
+          }
+          
+          if (msg.text) {
+            content += `<span class="text">${escapeHtml(msg.text)}</span>`;
+          }
+          
+          if (msg.imageUrl) {
+            content += `<img src="${escapeHtml(msg.imageUrl)}" class="image-message" onclick="showFullImage('${escapeHtml(msg.imageUrl)}')">`;
+          }
+          
+          content += `<div class="reactions-container" id="reactions-${messageId}"></div>`;
+          content += `<span class="time">${time}</span>`;
+          
+          div.innerHTML = content;
+          fragment.appendChild(div);
+        });
+        
+        messagesDiv.appendChild(fragment);
+        
+        snapshot.forEach(doc => {
+          const messageId = doc.id;
+          const container = document.getElementById(`reactions-${messageId}`);
+          if (container) {
+            loadReactions(messageId, container);
+          }
+        });
+        
+        if (messagesDiv.lastElementChild) {
+          publicMessagesObserver.observe(messagesDiv.lastElementChild);
+        }
+        
+        lastVisible = snapshot.docs[snapshot.docs.length - 1];
         
         requestAnimationFrame(() => {
-          const wasNearBottom = messagesDiv.scrollHeight - messagesDiv.scrollTop - messagesDiv.clientHeight < 100;
-          
-          messagesDiv.innerHTML = '';
-          
-          if (snapshot.empty) {
-            messagesDiv.innerHTML = '<div style="color:var(--text-secondary); text-align:center; padding:20px;">لا توجد رسائل بعد...</div>';
-            isUpdatingMessages = false;
-            return;
-          }
-          
-          const fragment = document.createDocumentFragment();
-          
-          snapshot.forEach(doc => {
-            const msg = doc.data();
-            if (!msg.text && !msg.imageUrl) return;
-            
-            const messageId = doc.id;
-            const div = document.createElement('div');
-            div.className = 'msg';
-            div.dataset.messageId = messageId;
-            
-            if (msg.uid === currentUser?.uid) {
-              div.classList.add('own');
-            } else {
-              div.style.backgroundColor = getUserColor(msg.uid);
-            }
-            
-            let time = '';
-            if (msg.createdAt?.toDate) {
-              try {
-                const d = msg.createdAt.toDate();
-                time = `${d.getHours()}:${d.getMinutes().toString().padStart(2,'0')}`;
-              } catch(e) {
-                time = '';
-              }
-            }
-            
-            let content = '';
-            content += `<span class="sender">${escapeHtml(msg.username || 'مجهول')}</span>`;
-            
-            if (msg.replyTo) {
-              content += `
-                <div class="reply-indicator" style="margin-bottom: 5px; padding: 5px; background: rgba(0,0,0,0.2); border-radius: 5px;">
-                  <span style="color: var(--accent-secondary);">↩️ ${escapeHtml(msg.replyTo.username)}:</span>
-                  <span style="opacity: 0.8;">${escapeHtml(msg.replyTo.text.substring(0, 30))}${msg.replyTo.text.length > 30 ? '...' : ''}</span>
-                </div>
-              `;
-            }
-            
-            if (msg.text) {
-              content += `<span class="text">${escapeHtml(msg.text)}</span>`;
-            }
-            
-            if (msg.imageUrl) {
-              content += `<img src="${escapeHtml(msg.imageUrl)}" class="image-message" onclick="showFullImage('${escapeHtml(msg.imageUrl)}')">`;
-            }
-            
-            content += `<div class="reactions-container" id="reactions-${messageId}"></div>`;
-            content += `<span class="time">${time}</span>`;
-            
-            div.innerHTML = content;
-            fragment.appendChild(div);
-          });
-          
-          messagesDiv.appendChild(fragment);
-          
-          snapshot.forEach(doc => {
-            const messageId = doc.id;
-            const container = document.getElementById(`reactions-${messageId}`);
-            if (container) {
-              loadReactions(messageId, container);
-            }
-          });
-          
-          if (messagesDiv.lastElementChild) {
-            publicMessagesObserver.observe(messagesDiv.lastElementChild);
-          }
-          
-          requestAnimationFrame(() => {
-            scrollToBottom(messagesDiv, wasNearBottom);
-            isUpdatingMessages = false;
-          });
+          scrollToBottom(messagesDiv, wasNearBottom);
+          isUpdatingMessages = false;
         });
-      }, error => {
-        console.error('خطأ في تحميل الرسائل العامة:', error);
-        isUpdatingMessages = false;
       });
+    }, error => {
+      console.error('خطأ في تحميل الرسائل العامة:', error);
+      isUpdatingMessages = false;
+    });
+
+    // إضافة مستمع للسكرول لتحميل المزيد
+    messagesDiv.addEventListener('scroll', () => {
+      if (messagesDiv.scrollTop === 0 && !loadingMore) {
+        loadMoreMessages();
+      }
+    });
   }
 
   function loadOnlineUsers() {
@@ -3215,6 +3501,31 @@
     if (unsubscribePartner) {
       unsubscribePartner();
       unsubscribePartner = null;
+    }
+  };
+
+  window.clearPrivateChat = async function() {
+    if (!activePartner || !currentUser) return;
+    
+    if (!confirm('هل أنت متأكد من مسح جميع رسائل هذه المحادثة؟')) return;
+    
+    const roomId = currentUser.uid < activePartner.uid 
+      ? currentUser.uid + '_' + activePartner.uid 
+      : activePartner.uid + '_' + currentUser.uid;
+    
+    try {
+      const messages = await db.collection('private_messages')
+        .where('roomId', '==', roomId)
+        .get();
+      
+      const batch = db.batch();
+      messages.forEach(doc => batch.delete(doc.ref));
+      await batch.commit();
+      
+      showToast('✅ تم مسح المحادثة');
+    } catch (err) {
+      console.error('خطأ في مسح المحادثة:', err);
+      showToast('❌ فشل مسح المحادثة', 'error');
     }
   };
 
@@ -3391,6 +3702,18 @@
     onlinePanel.classList.toggle('show');
   };
 
+  function escapeHtml(unsafe) {
+    if (!unsafe) return '';
+    return String(unsafe)
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;")
+      .replace(/'/g, "&#039;")
+      .replace(/`/g, "&#96;")
+      .replace(/\//g, "&#47;");
+  }
+
   messageInput.addEventListener('keypress', e => {
     if (e.key === 'Enter' && !isButtonsDisabled) {
       e.preventDefault();
@@ -3416,7 +3739,7 @@
       if (contextMenu.style.display === 'block') {
         contextMenu.style.display = 'none';
       }
-      if (advancedPreviewModal.style.display === 'flex') {
+      if (advancedPreviewModal && advancedPreviewModal.style.display === 'flex') {
         closeAdvancedPreview();
       }
       if (searchBar.style.display === 'flex') {
@@ -3427,16 +3750,6 @@
       }
     }
   });
-
-  function escapeHtml(unsafe) {
-    if (!unsafe) return '';
-    return String(unsafe)
-      .replace(/&/g, "&amp;")
-      .replace(/</g, "&lt;")
-      .replace(/>/g, "&gt;")
-      .replace(/"/g, "&quot;")
-      .replace(/'/g, "&#039;");
-  }
 
   document.addEventListener('click', (e) => {
     if (!onlinePanel.contains(e.target) && !e.target.classList.contains('online-btn')) {
@@ -3482,9 +3795,11 @@
           loadPublicMessages();
           loadOnlineUsers();
           loadTypingIndicators();
+          requestNotificationPermission();
           
           setTimeout(() => {
             addImageUploadButtons();
+            setupDragAndDrop();
           }, 500);
           
           chatDiv.style.display = 'flex';
@@ -3510,4 +3825,4 @@
   });
 </script>
 </body>
-        </html>
+              </html>
