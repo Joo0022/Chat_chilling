@@ -12,7 +12,7 @@
   <!-- Font Awesome -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
-    /* جميع الأنماط كما هي من الملف السابق مع إضافة شاشة التحميل */
+    /* جميع الأنماط كما هي من الملف السابق */
     * {
       margin: 0;
       padding: 0;
@@ -1367,6 +1367,53 @@
     let loadingMore = false;
     const MESSAGES_LIMIT = 50;
 
+    // ===== دوال مساعدة =====
+    function showToast(message, type = 'success') {
+      const toast = document.createElement('div');
+      toast.style.cssText = `
+        position: fixed;
+        bottom: 20px;
+        left: 50%;
+        transform: translateX(-50%);
+        background: ${type === 'success' ? '#48bb78' : type === 'warning' ? '#f56565' : '#48bb78'};
+        color: white;
+        padding: 15px 30px;
+        border-radius: 50px;
+        z-index: 10000;
+        animation: slideIn 0.3s ease;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        font-weight: 500;
+      `;
+      toast.textContent = message;
+      document.body.appendChild(toast);
+      setTimeout(() => toast.remove(), 2000);
+    }
+
+    function escapeHtml(unsafe) {
+      if (!unsafe) return '';
+      return String(unsafe)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;")
+        .replace(/`/g, "&#96;")
+        .replace(/\//g, "&#47;");
+    }
+
+    function scrollToBottom(element, force = false) {
+      if (!element) return;
+      if (scrollAnimationFrame) cancelAnimationFrame(scrollAnimationFrame);
+      
+      scrollAnimationFrame = requestAnimationFrame(() => {
+        const distanceFromBottom = element.scrollHeight - element.scrollTop - element.clientHeight;
+        if (distanceFromBottom < 150 || force) {
+          element.scrollTop = element.scrollHeight;
+        }
+        scrollAnimationFrame = null;
+      });
+    }
+
     // ===== نظام الثيم =====
     function toggleTheme() {
       const html = document.documentElement;
@@ -1467,54 +1514,7 @@
       }
     });
 
-    // ===== الدوال المساعدة =====
-    function showToast(message, type = 'success') {
-      const toast = document.createElement('div');
-      toast.style.cssText = `
-        position: fixed;
-        bottom: 20px;
-        left: 50%;
-        transform: translateX(-50%);
-        background: ${type === 'success' ? '#48bb78' : type === 'warning' ? '#f56565' : '#48bb78'};
-        color: white;
-        padding: 15px 30px;
-        border-radius: 50px;
-        z-index: 10000;
-        animation: slideIn 0.3s ease;
-        box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-        font-weight: 500;
-      `;
-      toast.textContent = message;
-      document.body.appendChild(toast);
-      setTimeout(() => toast.remove(), 2000);
-    }
-
-    function escapeHtml(unsafe) {
-      if (!unsafe) return '';
-      return String(unsafe)
-        .replace(/&/g, "&amp;")
-        .replace(/</g, "&lt;")
-        .replace(/>/g, "&gt;")
-        .replace(/"/g, "&quot;")
-        .replace(/'/g, "&#039;")
-        .replace(/`/g, "&#96;")
-        .replace(/\//g, "&#47;");
-    }
-
-    function scrollToBottom(element, force = false) {
-      if (!element) return;
-      if (scrollAnimationFrame) cancelAnimationFrame(scrollAnimationFrame);
-      
-      scrollAnimationFrame = requestAnimationFrame(() => {
-        const distanceFromBottom = element.scrollHeight - element.scrollTop - element.clientHeight;
-        if (distanceFromBottom < 150 || force) {
-          element.scrollTop = element.scrollHeight;
-        }
-        scrollAnimationFrame = null;
-      });
-    }
-
-    // ===== دوال المصادقة المحسنة =====
+    // ===== دوال المصادقة =====
     window.switchAuthTab = function(tab) {
       if (tab === 'login') {
         loginTab.classList.add('active');
@@ -1626,7 +1626,7 @@
       }, 500);
     };
 
-    // دالة تسجيل الدخول المحسنة
+    // دالة تسجيل الدخول
     window.login = async function() {
       const emailVal = loginEmail.value.trim();
       const passVal = loginPassword.value.trim();
@@ -1688,7 +1688,7 @@
       }
     };
 
-    // دالة التسجيل المحسنة
+    // دالة التسجيل
     window.register = async function() {
       const emailVal = email.value.trim();
       const passVal = password.value.trim();
@@ -1794,7 +1794,7 @@
       }
     };
 
-    // دالة تسجيل الخروج المحسنة
+    // دالة تسجيل الخروج
     window.logout = async function() {
       try {
         if (currentUser) {
@@ -1915,13 +1915,13 @@
               count++;
               const data = doc.data();
               const unreadCount = unreadPrivateMessages[doc.id] || 0;
-              const initial = data.username.charAt(0).toUpperCase();
+              const initial = data.username ? data.username.charAt(0).toUpperCase() : '?';
               
               html += `
-                <div class="user-item" onclick="openPrivateChat('${doc.id}', '${escapeHtml(data.username)}')">
+                <div class="user-item" onclick="openPrivateChat('${doc.id}', '${escapeHtml(data.username || 'مستخدم')}')">
                   <div class="user-avatar">${initial}</div>
                   <div class="user-info">
-                    <div class="user-name">${escapeHtml(data.username)}</div>
+                    <div class="user-name">${escapeHtml(data.username || 'مستخدم')}</div>
                     <div class="user-status">
                       <span class="status-dot"></span>
                       متصل
@@ -2199,10 +2199,14 @@
       replyIndicator.style.display = 'flex';
     }
 
+    window.setReply = setReply;
+
     function cancelReply() {
       replyingTo = null;
       replyIndicator.style.display = 'none';
     }
+
+    window.cancelReply = cancelReply;
 
     function toggleSearch() {
       searchBar.classList.toggle('show');
@@ -2211,10 +2215,14 @@
       }
     }
 
+    window.toggleSearch = toggleSearch;
+
     function closeSearch() {
       searchBar.classList.remove('show');
       clearSearch();
     }
+
+    window.closeSearch = closeSearch;
 
     function searchMessages(term) {
       if (!term.trim()) {
@@ -2245,6 +2253,8 @@
       if (!found) showToast('❌ لا توجد رسائل مطابقة', 'warning');
     }
 
+    window.searchMessages = searchMessages;
+
     function clearSearch() {
       searchInput.value = '';
       document.querySelectorAll('.message-bubble').forEach(msg => {
@@ -2252,6 +2262,8 @@
         msg.style.transform = '';
       });
     }
+
+    window.clearSearch = clearSearch;
 
     window.showFullImage = function(url) {
       document.getElementById('fullImage').src = url;
@@ -2457,6 +2469,8 @@
       document.querySelector('.users-sidebar').classList.toggle('show');
     }
 
+    window.toggleSidebar = toggleSidebar;
+
     function createAnimatedBg() {
       const bg = document.getElementById('animatedBg');
       for (let i = 0; i < 50; i++) {
@@ -2470,7 +2484,7 @@
       }
     }
 
-    // ===== دوال حذف الرسائل المحسنة مع التحقق من الصلاحيات =====
+    // ===== دوال حذف الرسائل =====
     window.copyMessage = function(text) {
       navigator.clipboard.writeText(text);
       showToast('✅ تم النسخ');
@@ -2549,7 +2563,8 @@
       
       const messageId = messageElement.dataset.messageId;
       const messageText = messageElement.querySelector('.message-text')?.textContent || '';
-      const senderName = messageElement.querySelector('.message-sender')?.textContent || '';
+      const senderElement = messageElement.querySelector('.message-sender');
+      const senderName = senderElement ? senderElement.textContent : '';
       const messageOwnerId = messageElement.dataset.uid;
       
       const menu = document.createElement('div');
@@ -2619,7 +2634,7 @@
       // نخفي شاشة التحميل بعد الانتهاء من التحقق
       setTimeout(() => {
         splashScreen.classList.add('hidden');
-      }, 500); // تأخير بسيط لإعطاء انطباع بالتحميل
+      }, 500);
 
       if (user && user.emailVerified) {
         console.log('✅ مستخدم مسجل الدخول:', user.email);
@@ -2642,7 +2657,7 @@
           }
           
           await updateUserOnlineStatus(true);
-          setupConnectionMonitor(); // يحتوي على onDisconnect
+          setupConnectionMonitor();
           
           loadPublicMessages();
           loadOnlineUsers();
@@ -2685,4 +2700,4 @@
     createAnimatedBg();
   </script>
 </body>
-      </html>
+  </html>
