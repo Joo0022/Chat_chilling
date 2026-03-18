@@ -791,6 +791,222 @@
         max-width: 85%;
       }
     }
+    /* ثيمات الألوان */
+:root {
+  /* الثيم النهاري (افتراضي) */
+  --bg-gradient-start: #667eea;
+  --bg-gradient-end: #764ba2;
+  --container-bg: rgba(255, 255, 255, 0.1);
+  --auth-side-bg: linear-gradient(135deg, rgba(102, 126, 234, 0.95), rgba(118, 75, 162, 0.95));
+  --auth-main-bg: rgba(255, 255, 255, 0.95);
+  --text-primary: #2d3748;
+  --text-secondary: #4a5568;
+  --text-light: #718096;
+  --bg-white: #ffffff;
+  --bg-light: #f7fafc;
+  --border-color: #e2e8f0;
+  --shadow-color: rgba(0, 0, 0, 0.1);
+  --message-own: linear-gradient(135deg, #667eea, #764ba2);
+  --message-other: #ffffff;
+  --sidebar-bg: #ffffff;
+  --input-bg: #ffffff;
+  --icon-color: #4a5568;
+}
+
+[data-theme="dark"] {
+  --bg-gradient-start: #1a202c;
+  --bg-gradient-end: #2d3748;
+  --container-bg: rgba(0, 0, 0, 0.3);
+  --auth-side-bg: linear-gradient(135deg, #2d3748, #1a202c);
+  --auth-main-bg: rgba(26, 32, 44, 0.95);
+  --text-primary: #f7fafc;
+  --text-secondary: #e2e8f0;
+  --text-light: #a0aec0;
+  --bg-white: #1a202c;
+  --bg-light: #2d3748;
+  --border-color: #4a5568;
+  --shadow-color: rgba(0, 0, 0, 0.3);
+  --message-own: linear-gradient(135deg, #4a5568, #2d3748);
+  --message-other: #2d3748;
+  --sidebar-bg: #1a202c;
+  --input-bg: #2d3748;
+  --icon-color: #e2e8f0;
+}
+
+/* تحديث الأنماط لاستخدام المتغيرات */
+body {
+  background: linear-gradient(135deg, var(--bg-gradient-start), var(--bg-gradient-end));
+  transition: background 0.3s ease;
+}
+
+.container {
+  background: var(--container-bg);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.auth-side {
+  background: var(--auth-side-bg);
+}
+
+.auth-main {
+  background: var(--auth-main-bg);
+}
+
+.auth-tab {
+  color: var(--text-primary);
+}
+
+.input-modern {
+  background: var(--input-bg);
+  color: var(--text-primary);
+  border-color: var(--border-color);
+}
+
+.input-modern:focus {
+  border-color: var(--bg-gradient-start);
+}
+
+.users-sidebar {
+  background: var(--sidebar-bg);
+  border-left-color: var(--border-color);
+}
+
+.sidebar-header {
+  background: var(--auth-side-bg);
+}
+
+.user-item {
+  background: var(--bg-light);
+  color: var(--text-primary);
+}
+
+.user-name {
+  color: var(--text-primary);
+}
+
+.chat-main {
+  background: var(--bg-light);
+}
+
+.chat-header {
+  background: var(--bg-white);
+  border-bottom-color: var(--border-color);
+}
+
+.chat-header h2 {
+  color: var(--text-primary);
+}
+
+.btn-icon {
+  background: var(--bg-light);
+  color: var(--icon-color);
+}
+
+.search-area {
+  background: var(--bg-white);
+  border-bottom-color: var(--border-color);
+}
+
+.search-input {
+  background: var(--input-bg);
+  color: var(--text-primary);
+  border-color: var(--border-color);
+}
+
+.message-bubble.other {
+  background: var(--message-other);
+  color: var(--text-primary);
+  box-shadow: 0 5px 15px var(--shadow-color);
+}
+
+.message-bubble.own {
+  background: var(--message-own);
+}
+
+.message-time {
+  color: var(--text-light);
+}
+
+.typing-indicator-new {
+  background: var(--bg-white);
+  color: var(--text-primary);
+}
+
+.input-area-new {
+  background: var(--bg-white);
+  border-top-color: var(--border-color);
+}
+
+.message-input {
+  background: var(--input-bg);
+  color: var(--text-primary);
+  border-color: var(--border-color);
+}
+
+.private-page-new {
+  background: var(--bg-white);
+}
+
+.private-header-new {
+  background: var(--auth-side-bg);
+}
+
+.private-messages-new {
+  background: var(--bg-light);
+}
+
+/* زر الثيم */
+.theme-toggle {
+  position: relative;
+  width: 45px;
+  height: 45px;
+  border-radius: 12px;
+  background: var(--bg-light);
+  border: none;
+  cursor: pointer;
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+
+.theme-toggle i {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 1.2rem;
+  transition: all 0.3s ease;
+  color: var(--icon-color);
+}
+
+.theme-toggle .sun-icon {
+  opacity: 0;
+  transform: translate(-50%, -50%) rotate(90deg);
+}
+
+.theme-toggle .moon-icon {
+  opacity: 1;
+  transform: translate(-50%, -50%) rotate(0);
+}
+
+[data-theme="dark"] .theme-toggle .sun-icon {
+  opacity: 1;
+  transform: translate(-50%, -50%) rotate(0);
+}
+
+[data-theme="dark"] .theme-toggle .moon-icon {
+  opacity: 0;
+  transform: translate(-50%, -50%) rotate(-90deg);
+}
+
+.theme-toggle:hover {
+  transform: rotate(15deg);
+  background: var(--bg-gradient-start);
+}
+
+.theme-toggle:hover i {
+  color: white;
+    }
   </style>
 </head>
 <body>
@@ -897,17 +1113,20 @@
               المحادثة العامة
             </h2>
             <div class="header-actions-new">
-              <button class="btn-icon" onclick="toggleSearch()" title="بحث">
-                <i class="fas fa-search"></i>
-              </button>
-              <button class="btn-icon" onclick="toggleSidebar()" title="المتصلون">
-                <i class="fas fa-users"></i>
-              </button>
-              <button class="btn-icon" onclick="logout()" title="خروج">
-                <i class="fas fa-sign-out-alt"></i>
-              </button>
+  <button class="btn-icon theme-toggle" onclick="toggleTheme()" title="تغيير الثيم">
+    <i class="fas fa-sun sun-icon"></i>
+    <i class="fas fa-moon moon-icon"></i>
+  </button>
+  <button class="btn-icon" onclick="toggleSearch()" title="بحث">
+    <i class="fas fa-search"></i>
+  </button>
+  <button class="btn-icon" onclick="toggleSidebar()" title="المتصلون">
+    <i class="fas fa-users"></i>
+  </button>
+  <button class="btn-icon" onclick="logout()" title="خروج">
+    <i class="fas fa-sign-out-alt"></i>
+  </button>
             </div>
-          </div>
 
           <!-- شريط البحث -->
           <div class="search-area" id="searchBar">
@@ -1284,7 +1503,29 @@
         }
       }, 500);
     };
+// ===== نظام الثيم =====
+function toggleTheme() {
+  const html = document.documentElement;
+  const currentTheme = html.getAttribute('data-theme') || 'light';
+  const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+  
+  html.setAttribute('data-theme', newTheme);
+  localStorage.setItem('chat-theme', newTheme);
+  
+  // تحديث أيقونة الزر
+  showToast(newTheme === 'dark' ? '🌙 تم تفعيل الوضع الليلي' : '☀️ تم تفعيل الوضع النهاري');
+}
 
+// تحميل الثيم المحفوظ
+function loadSavedTheme() {
+  const savedTheme = localStorage.getItem('chat-theme');
+  if (savedTheme) {
+    document.documentElement.setAttribute('data-theme', savedTheme);
+  }
+}
+
+// أضف هذا السطر في بداية الكود بعد تعريف المتغيرات
+loadSavedTheme();
     // ===== الدوال الرئيسية =====
     function register() {
       if (isButtonsDisabled) return;
