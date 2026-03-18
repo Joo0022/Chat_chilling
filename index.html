@@ -39,8 +39,6 @@
       --input-bg: #ffffff;
       --icon-color: #4a5568;
       --hover-bg: #edf2f7;
-      --toast-bg: #48bb78;
-      --toast-error: #f56565;
       --online-status: #48bb78;
       --offline-status: #a0aec0;
     }
@@ -64,8 +62,6 @@
       --input-bg: #2d3748;
       --icon-color: #e2e8f0;
       --hover-bg: #4a5568;
-      --toast-bg: #2f855a;
-      --toast-error: #c53030;
       --online-status: #48bb78;
       --offline-status: #718096;
     }
@@ -442,12 +438,27 @@
       gap: 5px;
     }
 
+    .user-status.offline {
+      color: var(--offline-status);
+    }
+
     .status-dot {
       width: 8px;
       height: 8px;
       background: var(--online-status);
       border-radius: 50%;
       animation: pulse 2s infinite;
+    }
+
+    .status-dot.offline {
+      background: var(--offline-status);
+      animation: none;
+    }
+
+    .user-last-seen {
+      font-size: 0.7rem;
+      color: var(--text-light);
+      margin-top: 2px;
     }
 
     .notification-badge-new {
@@ -1310,11 +1321,9 @@
       html.setAttribute('data-theme', newTheme);
       localStorage.setItem('chat-theme', newTheme);
       
-      // تحديث أيقونة الزر
       showToast(newTheme === 'dark' ? '🌙 تم تفعيل الوضع الليلي' : '☀️ تم تفعيل الوضع النهاري');
     }
 
-    // تحميل الثيم المحفوظ
     function loadSavedTheme() {
       const savedTheme = localStorage.getItem('chat-theme');
       if (savedTheme) {
@@ -1322,8 +1331,66 @@
       }
     }
 
-    // تحميل الثيم عند بدء التشغيل
     loadSavedTheme();
+
+    // ===== إدارة حالة الاتصال =====
+    function updateUserOnlineStatus(status) {
+      if (!currentUser) return;
+      
+      db.collection('users').doc(currentUser.uid).update({
+        online: status,
+        lastSeen: firebase.firestore.FieldValue.serverTimestamp()
+      }).catch(err => console.error('خطأ في تحديث حالة الاتصال:', err));
+    }
+
+    function setupConnectionMonitor() {
+      window.addEventListener('online', () => {
+        console.log('✅ اتصال الإنترنت عاد');
+        if (currentUser) {
+          updateUserOnlineStatus(true);
+          showToast('🟢 تم استعادة الاتصال بالإنترنت');
+        }
+      });
+
+      window.addEventListener('offline', () => {
+        console.log('❌ فقد اتصال الإنترنت');
+        if (currentUser) {
+          updateUserOnlineStatus(false);
+          showToast('🔴 فقد الاتصال بالإنترنت', 'warning');
+        }
+      });
+
+      let inactivityTimeout;
+      
+      function resetInactivityTimer() {
+        clearTimeout(inactivityTimeout);
+        if (currentUser) {
+          updateUserOnlineStatus(true);
+          
+          inactivityTimeout = setTimeout(() => {
+            console.log('⏰ المستخدم غير نشط');
+            if (currentUser) {
+              updateUserOnlineStatus(false);
+            }
+          }, 5 * 60 * 1000);
+        }
+      }
+
+      ['mousedown', 'keydown', 'touchstart', 'scroll', 'mousemove'].forEach(event => {
+        document.addEventListener(event, resetInactivityTimer);
+      });
+
+      resetInactivityTimer();
+    }
+
+    window.addEventListener('beforeunload', () => {
+      if (currentUser) {
+        db.collection('users').doc(currentUser.uid).update({
+          online: false,
+          lastSeen: firebase.firestore.FieldValue.serverTimestamp()
+        });
+      }
+    });
 
     // ===== الدوال المساعدة =====
     function showToast(message, type = 'success') {
@@ -1333,7 +1400,7 @@
         bottom: 20px;
         left: 50%;
         transform: translateX(-50%);
-        background: ${type === 'success' ? '#48bb78' : '#f56565'};
+        background: ${type === 'success' ? '#48bb78' : type === 'warning' ? '#f56565' : '#48bb78'};
         color: white;
         padding: 15px 30px;
         border-radius: 50px;
@@ -1578,7 +1645,7 @@
             email: email,
             online: true,
             emailVerified: true,
-            lastLogin: firebase.firestore.FieldValue.serverTimestamp()
+            lastSeen: firebase.firestore.FieldValue.serverTimestamp()
           }, { merge: true });
         })
         .then(() => {
@@ -1604,14 +1671,20 @@
       if (auth.currentUser) {
         db.collection('typing').doc(auth.currentUser.uid).delete().catch(() => {});
         
-        db.collection('users').doc(auth.currentUser.uid).update({ online: false })
-          .finally(() => {
-            auth.signOut();
-            disableAllButtons(false);
-            currentUser = null;
-            currentUsername = '';
-            activePartner = null;
-          });
+        db.collection('users').doc(auth.currentUser.uid).update({
+          online: false,
+          lastSeen: firebase.firestore.FieldValue.serverTimestamp()
+        }).finally(() => {
+          auth.signOut();
+          disableAllButtons(false);
+          currentUser = null;
+          currentUsername = '';
+          activePartner = null;
+          
+          if (onlineList) {
+            onlineList.innerHTML = '<div class="no-messages">جاري تحميل المتصلين...</div>';
+          }
+        });
       }
     }
 
@@ -1700,12 +1773,34 @@
           let html = '';
           let count = 0;
           
+          if (snapshot.empty) {
+            onlineList.innerHTML = '<div class="no-messages">لا يوجد متصلين حالياً</div>';
+            document.getElementById('onlineCount').textContent = '0';
+            return;
+          }
+          
           snapshot.forEach(doc => {
             if (doc.id !== currentUser?.uid) {
               count++;
               const data = doc.data();
               const unreadCount = unreadPrivateMessages[doc.id] || 0;
               const initial = data.username.charAt(0).toUpperCase();
+              
+              let lastSeenText = '';
+              if (data.lastSeen) {
+                const lastSeen = data.lastSeen.toDate();
+                const now = new Date();
+                const diffMinutes = Math.floor((now - lastSeen) / 60000);
+                
+                if (diffMinutes < 1) {
+                  lastSeenText = 'الآن';
+                } else if (diffMinutes < 60) {
+                  lastSeenText = `منذ ${diffMinutes} دقيقة`;
+                } else {
+                  const hours = Math.floor(diffMinutes / 60);
+                  lastSeenText = `منذ ${hours} ساعة`;
+                }
+              }
               
               html += `
                 <div class="user-item" onclick="openPrivateChat('${doc.id}', '${escapeHtml(data.username)}')">
@@ -1714,7 +1809,7 @@
                     <div class="user-name">${escapeHtml(data.username)}</div>
                     <div class="user-status">
                       <span class="status-dot"></span>
-                      متصل
+                      متصل ${lastSeenText ? `• ${lastSeenText}` : ''}
                     </div>
                   </div>
                   ${unreadCount > 0 ? `<span class="notification-badge-new">${unreadCount}</span>` : ''}
@@ -1723,8 +1818,16 @@
             }
           });
           
-          onlineList.innerHTML = html || '<div class="no-messages">لا يوجد متصلين آخرين</div>';
+          if (count === 0) {
+            onlineList.innerHTML = '<div class="no-messages">لا يوجد متصلين آخرين</div>';
+          } else {
+            onlineList.innerHTML = html;
+          }
+          
           document.getElementById('onlineCount').textContent = count;
+        }, error => {
+          console.error('خطأ في تحميل المتصلين:', error);
+          onlineList.innerHTML = '<div class="no-messages">خطأ في تحميل المتصلين</div>';
         });
     }
 
@@ -1744,7 +1847,9 @@
       if (unsubscribePartner) unsubscribePartner();
       unsubscribePartner = db.collection('users').doc(uid).onSnapshot(doc => {
         if (doc.exists) {
-          privateStatus.textContent = doc.data().online ? '🟢 متصل' : '🔴 غير متصل';
+          const data = doc.data();
+          privateStatus.textContent = data.online ? '🟢 متصل' : '🔴 غير متصل';
+          privateStatus.style.background = data.online ? 'rgba(72, 187, 120, 0.2)' : 'rgba(160, 174, 192, 0.2)';
         }
       });
     };
@@ -2301,35 +2406,55 @@
       if (user && user.emailVerified) {
         currentUser = user;
         
-        const userDoc = await db.collection('users').doc(user.uid).get();
-        if (userDoc.exists) {
-          currentUsername = userDoc.data().username;
-        } else {
-          currentUsername = user.email.split('@')[0];
-          await db.collection('users').doc(user.uid).set({
-            username: currentUsername,
-            email: user.email,
+        try {
+          const userDoc = await db.collection('users').doc(user.uid).get();
+          if (userDoc.exists) {
+            currentUsername = userDoc.data().username;
+          } else {
+            currentUsername = user.email.split('@')[0];
+            await db.collection('users').doc(user.uid).set({
+              username: currentUsername,
+              email: user.email,
+              online: true,
+              emailVerified: true,
+              lastSeen: firebase.firestore.FieldValue.serverTimestamp()
+            });
+          }
+          
+          await db.collection('users').doc(user.uid).update({
             online: true,
-            emailVerified: true
+            lastSeen: firebase.firestore.FieldValue.serverTimestamp()
           });
+          
+          loadPublicMessages();
+          loadOnlineUsers();
+          loadTypingIndicators();
+          
+          setupConnectionMonitor();
+          
+          setInterval(() => {
+            if (currentUser) {
+              db.collection('users').doc(currentUser.uid).update({
+                lastSeen: firebase.firestore.FieldValue.serverTimestamp()
+              });
+            }
+          }, 60000);
+          
+          chatDiv.style.display = 'block';
+          disableAllButtons(false);
+          
+        } catch (error) {
+          console.error('خطأ في تسجيل الدخول:', error);
+          authDiv.style.display = 'flex';
+          disableAllButtons(false);
         }
-        
-        await db.collection('users').doc(user.uid).update({ online: true });
-        
-        loadPublicMessages();
-        loadOnlineUsers();
-        loadTypingIndicators();
-        
-        chatDiv.style.display = 'block';
-        disableAllButtons(false);
       } else {
         authDiv.style.display = 'flex';
         disableAllButtons(false);
       }
     });
 
-    // تشغيل الخلفية المتحركة
     createAnimatedBg();
   </script>
 </body>
-  </html>
+        </html>
