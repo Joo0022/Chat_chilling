@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="ar">
+<html lang="ar" data-theme="light">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
@@ -19,13 +19,65 @@
       font-family: 'Cairo', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     }
 
+    /* ثيمات الألوان */
+    :root[data-theme="light"] {
+      --bg-gradient-start: #667eea;
+      --bg-gradient-end: #764ba2;
+      --container-bg: rgba(255, 255, 255, 0.1);
+      --auth-side-bg: linear-gradient(135deg, rgba(102, 126, 234, 0.95), rgba(118, 75, 162, 0.95));
+      --auth-main-bg: rgba(255, 255, 255, 0.95);
+      --text-primary: #2d3748;
+      --text-secondary: #4a5568;
+      --text-light: #718096;
+      --bg-white: #ffffff;
+      --bg-light: #f7fafc;
+      --border-color: #e2e8f0;
+      --shadow-color: rgba(0, 0, 0, 0.1);
+      --message-own: linear-gradient(135deg, #667eea, #764ba2);
+      --message-other: #ffffff;
+      --sidebar-bg: #ffffff;
+      --input-bg: #ffffff;
+      --icon-color: #4a5568;
+      --hover-bg: #edf2f7;
+      --toast-bg: #48bb78;
+      --toast-error: #f56565;
+      --online-status: #48bb78;
+      --offline-status: #a0aec0;
+    }
+
+    :root[data-theme="dark"] {
+      --bg-gradient-start: #1a202c;
+      --bg-gradient-end: #2d3748;
+      --container-bg: rgba(0, 0, 0, 0.3);
+      --auth-side-bg: linear-gradient(135deg, #2d3748, #1a202c);
+      --auth-main-bg: rgba(26, 32, 44, 0.95);
+      --text-primary: #f7fafc;
+      --text-secondary: #e2e8f0;
+      --text-light: #a0aec0;
+      --bg-white: #1a202c;
+      --bg-light: #2d3748;
+      --border-color: #4a5568;
+      --shadow-color: rgba(0, 0, 0, 0.3);
+      --message-own: linear-gradient(135deg, #4a5568, #2d3748);
+      --message-other: #2d3748;
+      --sidebar-bg: #1a202c;
+      --input-bg: #2d3748;
+      --icon-color: #e2e8f0;
+      --hover-bg: #4a5568;
+      --toast-bg: #2f855a;
+      --toast-error: #c53030;
+      --online-status: #48bb78;
+      --offline-status: #718096;
+    }
+
     body {
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      background: linear-gradient(135deg, var(--bg-gradient-start), var(--bg-gradient-end));
       min-height: 100vh;
       display: flex;
       align-items: center;
       justify-content: center;
       padding: 20px;
+      transition: background 0.3s ease;
     }
 
     /* تأثير الخلفية المتحركة */
@@ -64,7 +116,7 @@
       width: 100%;
       max-width: 1400px;
       height: 90vh;
-      background: rgba(255, 255, 255, 0.1);
+      background: var(--container-bg);
       backdrop-filter: blur(20px);
       -webkit-backdrop-filter: blur(20px);
       border-radius: 40px;
@@ -72,18 +124,18 @@
       border: 1px solid rgba(255, 255, 255, 0.2);
       overflow: hidden;
       position: relative;
+      transition: background 0.3s ease;
     }
 
-    /* ===== Auth Page تصميم جديد ===== */
+    /* ===== Auth Page ===== */
     #auth {
       height: 100%;
       display: flex;
-      background: rgba(255, 255, 255, 0.05);
     }
 
     .auth-side {
       flex: 1;
-      background: linear-gradient(135deg, rgba(102, 126, 234, 0.9), rgba(118, 75, 162, 0.9));
+      background: var(--auth-side-bg);
       display: flex;
       flex-direction: column;
       justify-content: center;
@@ -93,6 +145,7 @@
       text-align: center;
       position: relative;
       overflow: hidden;
+      transition: background 0.3s ease;
     }
 
     .auth-side::before {
@@ -133,8 +186,9 @@
       align-items: center;
       justify-content: center;
       padding: 40px;
-      background: rgba(255, 255, 255, 0.95);
+      background: var(--auth-main-bg);
       backdrop-filter: blur(10px);
+      transition: background 0.3s ease;
     }
 
     .auth-form-container {
@@ -157,7 +211,7 @@
       border: none;
       border-radius: 16px;
       background: transparent;
-      color: #667eea;
+      color: var(--text-primary);
       font-weight: 600;
       font-size: 1rem;
       cursor: pointer;
@@ -176,7 +230,7 @@
 
     .input-group-modern label {
       display: block;
-      color: #4a5568;
+      color: var(--text-primary);
       margin-bottom: 8px;
       font-weight: 500;
       font-size: 0.95rem;
@@ -185,10 +239,10 @@
     .input-modern {
       width: 100%;
       padding: 15px 20px;
-      border: 2px solid #e2e8f0;
+      border: 2px solid var(--border-color);
       border-radius: 16px;
-      background: white;
-      color: #2d3748;
+      background: var(--input-bg);
+      color: var(--text-primary);
       font-size: 1rem;
       transition: all 0.3s ease;
     }
@@ -210,7 +264,7 @@
       transform: translateY(-50%);
       background: none;
       border: none;
-      color: #a0aec0;
+      color: var(--text-light);
       cursor: pointer;
       font-size: 1.2rem;
     }
@@ -235,9 +289,9 @@
     }
 
     .btn-modern.google {
-      background: white;
-      color: #4a5568;
-      border: 2px solid #e2e8f0;
+      background: var(--bg-white);
+      color: var(--text-primary);
+      border: 2px solid var(--border-color);
       display: flex;
       align-items: center;
       justify-content: center;
@@ -245,13 +299,13 @@
     }
 
     .btn-modern.google:hover {
-      background: #f7fafc;
+      background: var(--hover-bg);
     }
 
     .separator-modern {
       text-align: center;
       margin: 20px 0;
-      color: #a0aec0;
+      color: var(--text-light);
       position: relative;
     }
 
@@ -262,17 +316,37 @@
       top: 50%;
       width: 45%;
       height: 1px;
-      background: #e2e8f0;
+      background: var(--border-color);
     }
 
     .separator-modern::before { right: 0; }
     .separator-modern::after { left: 0; }
 
-    /* ===== Chat Page تصميم جديد ===== */
+    .validation-message {
+      font-size: 0.85rem;
+      margin-top: 5px;
+      display: none;
+    }
+
+    .validation-message.success {
+      color: #48bb78;
+      display: block;
+    }
+
+    .validation-message.error {
+      color: #f56565;
+      display: block;
+    }
+
+    .username-check {
+      font-size: 0.85rem;
+      margin-top: 5px;
+    }
+
+    /* ===== Chat Page ===== */
     #chat {
       height: 100%;
       display: none;
-      background: rgba(255, 255, 255, 0.95);
     }
 
     .chat-container {
@@ -283,17 +357,19 @@
     /* سايدبار المتصلين */
     .users-sidebar {
       width: 300px;
-      background: white;
-      border-left: 1px solid #e2e8f0;
+      background: var(--sidebar-bg);
+      border-left: 1px solid var(--border-color);
       display: flex;
       flex-direction: column;
       overflow: hidden;
+      transition: background 0.3s ease, border-color 0.3s ease;
     }
 
     .sidebar-header {
       padding: 20px;
-      background: linear-gradient(135deg, #667eea, #764ba2);
+      background: var(--auth-side-bg);
       color: white;
+      transition: background 0.3s ease;
     }
 
     .sidebar-header h3 {
@@ -321,7 +397,7 @@
       align-items: center;
       gap: 15px;
       padding: 15px;
-      background: #f7fafc;
+      background: var(--bg-light);
       border-radius: 16px;
       margin-bottom: 10px;
       cursor: pointer;
@@ -332,8 +408,8 @@
     .user-item:hover {
       transform: translateX(-5px);
       border-color: #667eea;
-      background: white;
-      box-shadow: 0 10px 20px -10px rgba(102, 126, 234, 0.3);
+      background: var(--hover-bg);
+      box-shadow: 0 10px 20px -10px var(--shadow-color);
     }
 
     .user-avatar {
@@ -355,12 +431,12 @@
 
     .user-name {
       font-weight: 600;
-      color: #2d3748;
+      color: var(--text-primary);
     }
 
     .user-status {
       font-size: 0.8rem;
-      color: #48bb78;
+      color: var(--online-status);
       display: flex;
       align-items: center;
       gap: 5px;
@@ -369,7 +445,7 @@
     .status-dot {
       width: 8px;
       height: 8px;
-      background: #48bb78;
+      background: var(--online-status);
       border-radius: 50%;
       animation: pulse 2s infinite;
     }
@@ -389,20 +465,22 @@
       flex: 1;
       display: flex;
       flex-direction: column;
-      background: #f7fafc;
+      background: var(--bg-light);
+      transition: background 0.3s ease;
     }
 
     .chat-header {
       padding: 20px 30px;
-      background: white;
-      border-bottom: 1px solid #e2e8f0;
+      background: var(--bg-white);
+      border-bottom: 1px solid var(--border-color);
       display: flex;
       align-items: center;
       justify-content: space-between;
+      transition: background 0.3s ease, border-color 0.3s ease;
     }
 
     .chat-header h2 {
-      color: #2d3748;
+      color: var(--text-primary);
       font-size: 1.3rem;
       display: flex;
       align-items: center;
@@ -419,8 +497,8 @@
       height: 45px;
       border: none;
       border-radius: 12px;
-      background: #f7fafc;
-      color: #4a5568;
+      background: var(--bg-light);
+      color: var(--icon-color);
       cursor: pointer;
       transition: all 0.3s ease;
       font-size: 1.2rem;
@@ -432,12 +510,65 @@
       transform: scale(1.1);
     }
 
+    /* زر الثيم */
+    .theme-toggle {
+      position: relative;
+      width: 45px;
+      height: 45px;
+      border-radius: 12px;
+      background: var(--bg-light);
+      border: none;
+      cursor: pointer;
+      overflow: hidden;
+      transition: all 0.3s ease;
+    }
+
+    .theme-toggle i {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 1.2rem;
+      transition: all 0.3s ease;
+      color: var(--icon-color);
+    }
+
+    .theme-toggle .sun-icon {
+      opacity: 0;
+      transform: translate(-50%, -50%) rotate(90deg);
+    }
+
+    .theme-toggle .moon-icon {
+      opacity: 1;
+      transform: translate(-50%, -50%) rotate(0);
+    }
+
+    [data-theme="dark"] .theme-toggle .sun-icon {
+      opacity: 1;
+      transform: translate(-50%, -50%) rotate(0);
+    }
+
+    [data-theme="dark"] .theme-toggle .moon-icon {
+      opacity: 0;
+      transform: translate(-50%, -50%) rotate(-90deg);
+    }
+
+    .theme-toggle:hover {
+      transform: rotate(15deg);
+      background: linear-gradient(135deg, #667eea, #764ba2);
+    }
+
+    .theme-toggle:hover i {
+      color: white;
+    }
+
     /* منطقة البحث */
     .search-area {
       padding: 15px 30px;
-      background: white;
-      border-bottom: 1px solid #e2e8f0;
+      background: var(--bg-white);
+      border-bottom: 1px solid var(--border-color);
       display: none;
+      transition: background 0.3s ease, border-color 0.3s ease;
     }
 
     .search-area.show {
@@ -452,8 +583,10 @@
     .search-input {
       flex: 1;
       padding: 12px 20px;
-      border: 2px solid #e2e8f0;
+      border: 2px solid var(--border-color);
       border-radius: 12px;
+      background: var(--input-bg);
+      color: var(--text-primary);
       font-size: 1rem;
     }
 
@@ -487,20 +620,21 @@
       border-radius: 25px 25px 25px 5px;
       animation: slideIn 0.3s ease;
       position: relative;
+      transition: background 0.3s ease, color 0.3s ease;
     }
 
     .message-bubble.own {
       align-self: flex-end;
-      background: linear-gradient(135deg, #667eea, #764ba2);
+      background: var(--message-own);
       color: white;
       border-radius: 25px 25px 5px 25px;
     }
 
     .message-bubble.other {
       align-self: flex-start;
-      background: white;
-      color: #2d3748;
-      box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+      background: var(--message-other);
+      color: var(--text-primary);
+      box-shadow: 0 5px 15px var(--shadow-color);
     }
 
     .message-sender {
@@ -520,6 +654,7 @@
       opacity: 0.6;
       margin-top: 5px;
       text-align: left;
+      color: var(--text-light);
     }
 
     .message-image {
@@ -564,11 +699,13 @@
       align-items: center;
       gap: 8px;
       padding: 10px 20px;
-      background: white;
+      background: var(--bg-white);
       border-radius: 30px;
       width: fit-content;
       margin: 10px 30px;
-      box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+      box-shadow: 0 5px 15px var(--shadow-color);
+      color: var(--text-primary);
+      transition: background 0.3s ease, color 0.3s ease;
     }
 
     .typing-dots {
@@ -590,18 +727,21 @@
     /* منطقة الإدخال */
     .input-area-new {
       padding: 20px 30px;
-      background: white;
-      border-top: 1px solid #e2e8f0;
+      background: var(--bg-white);
+      border-top: 1px solid var(--border-color);
       display: flex;
       gap: 15px;
       align-items: center;
+      transition: background 0.3s ease, border-color 0.3s ease;
     }
 
     .message-input {
       flex: 1;
       padding: 15px 25px;
-      border: 2px solid #e2e8f0;
+      border: 2px solid var(--border-color);
       border-radius: 30px;
+      background: var(--input-bg);
+      color: var(--text-primary);
       font-size: 1rem;
       transition: all 0.3s ease;
     }
@@ -633,8 +773,8 @@
       height: 50px;
       border: none;
       border-radius: 50%;
-      background: #f7fafc;
-      color: #4a5568;
+      background: var(--bg-light);
+      color: var(--icon-color);
       cursor: pointer;
       transition: all 0.3s ease;
       font-size: 1.2rem;
@@ -654,13 +794,14 @@
       width: 90%;
       max-width: 800px;
       height: 80vh;
-      background: white;
+      background: var(--bg-white);
       border-radius: 30px;
       box-shadow: 0 30px 60px -15px rgba(0,0,0,0.5);
       display: none;
       flex-direction: column;
       z-index: 2000;
       overflow: hidden;
+      transition: background 0.3s ease;
     }
 
     .private-page-new.show {
@@ -670,11 +811,12 @@
 
     .private-header-new {
       padding: 20px 30px;
-      background: linear-gradient(135deg, #667eea, #764ba2);
+      background: var(--auth-side-bg);
       color: white;
       display: flex;
       align-items: center;
       gap: 20px;
+      transition: background 0.3s ease;
     }
 
     .private-header-new button {
@@ -704,7 +846,8 @@
       flex: 1;
       overflow-y: auto;
       padding: 30px;
-      background: #f7fafc;
+      background: var(--bg-light);
+      transition: background 0.3s ease;
     }
 
     /* معاينة الصور */
@@ -768,6 +911,11 @@
       30% { transform: translateY(-10px); }
     }
 
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.5; }
+    }
+
     /* تحسينات للشاشات الصغيرة */
     @media (max-width: 768px) {
       .auth-side {
@@ -791,221 +939,13 @@
         max-width: 85%;
       }
     }
-    /* ثيمات الألوان */
-:root {
-  /* الثيم النهاري (افتراضي) */
-  --bg-gradient-start: #667eea;
-  --bg-gradient-end: #764ba2;
-  --container-bg: rgba(255, 255, 255, 0.1);
-  --auth-side-bg: linear-gradient(135deg, rgba(102, 126, 234, 0.95), rgba(118, 75, 162, 0.95));
-  --auth-main-bg: rgba(255, 255, 255, 0.95);
-  --text-primary: #2d3748;
-  --text-secondary: #4a5568;
-  --text-light: #718096;
-  --bg-white: #ffffff;
-  --bg-light: #f7fafc;
-  --border-color: #e2e8f0;
-  --shadow-color: rgba(0, 0, 0, 0.1);
-  --message-own: linear-gradient(135deg, #667eea, #764ba2);
-  --message-other: #ffffff;
-  --sidebar-bg: #ffffff;
-  --input-bg: #ffffff;
-  --icon-color: #4a5568;
-}
 
-[data-theme="dark"] {
-  --bg-gradient-start: #1a202c;
-  --bg-gradient-end: #2d3748;
-  --container-bg: rgba(0, 0, 0, 0.3);
-  --auth-side-bg: linear-gradient(135deg, #2d3748, #1a202c);
-  --auth-main-bg: rgba(26, 32, 44, 0.95);
-  --text-primary: #f7fafc;
-  --text-secondary: #e2e8f0;
-  --text-light: #a0aec0;
-  --bg-white: #1a202c;
-  --bg-light: #2d3748;
-  --border-color: #4a5568;
-  --shadow-color: rgba(0, 0, 0, 0.3);
-  --message-own: linear-gradient(135deg, #4a5568, #2d3748);
-  --message-other: #2d3748;
-  --sidebar-bg: #1a202c;
-  --input-bg: #2d3748;
-  --icon-color: #e2e8f0;
-}
-
-/* تحديث الأنماط لاستخدام المتغيرات */
-body {
-  background: linear-gradient(135deg, var(--bg-gradient-start), var(--bg-gradient-end));
-  transition: background 0.3s ease;
-}
-
-.container {
-  background: var(--container-bg);
-  backdrop-filter: blur(20px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-}
-
-.auth-side {
-  background: var(--auth-side-bg);
-}
-
-.auth-main {
-  background: var(--auth-main-bg);
-}
-
-.auth-tab {
-  color: var(--text-primary);
-}
-
-.input-modern {
-  background: var(--input-bg);
-  color: var(--text-primary);
-  border-color: var(--border-color);
-}
-
-.input-modern:focus {
-  border-color: var(--bg-gradient-start);
-}
-
-.users-sidebar {
-  background: var(--sidebar-bg);
-  border-left-color: var(--border-color);
-}
-
-.sidebar-header {
-  background: var(--auth-side-bg);
-}
-
-.user-item {
-  background: var(--bg-light);
-  color: var(--text-primary);
-}
-
-.user-name {
-  color: var(--text-primary);
-}
-
-.chat-main {
-  background: var(--bg-light);
-}
-
-.chat-header {
-  background: var(--bg-white);
-  border-bottom-color: var(--border-color);
-}
-
-.chat-header h2 {
-  color: var(--text-primary);
-}
-
-.btn-icon {
-  background: var(--bg-light);
-  color: var(--icon-color);
-}
-
-.search-area {
-  background: var(--bg-white);
-  border-bottom-color: var(--border-color);
-}
-
-.search-input {
-  background: var(--input-bg);
-  color: var(--text-primary);
-  border-color: var(--border-color);
-}
-
-.message-bubble.other {
-  background: var(--message-other);
-  color: var(--text-primary);
-  box-shadow: 0 5px 15px var(--shadow-color);
-}
-
-.message-bubble.own {
-  background: var(--message-own);
-}
-
-.message-time {
-  color: var(--text-light);
-}
-
-.typing-indicator-new {
-  background: var(--bg-white);
-  color: var(--text-primary);
-}
-
-.input-area-new {
-  background: var(--bg-white);
-  border-top-color: var(--border-color);
-}
-
-.message-input {
-  background: var(--input-bg);
-  color: var(--text-primary);
-  border-color: var(--border-color);
-}
-
-.private-page-new {
-  background: var(--bg-white);
-}
-
-.private-header-new {
-  background: var(--auth-side-bg);
-}
-
-.private-messages-new {
-  background: var(--bg-light);
-}
-
-/* زر الثيم */
-.theme-toggle {
-  position: relative;
-  width: 45px;
-  height: 45px;
-  border-radius: 12px;
-  background: var(--bg-light);
-  border: none;
-  cursor: pointer;
-  overflow: hidden;
-  transition: all 0.3s ease;
-}
-
-.theme-toggle i {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  font-size: 1.2rem;
-  transition: all 0.3s ease;
-  color: var(--icon-color);
-}
-
-.theme-toggle .sun-icon {
-  opacity: 0;
-  transform: translate(-50%, -50%) rotate(90deg);
-}
-
-.theme-toggle .moon-icon {
-  opacity: 1;
-  transform: translate(-50%, -50%) rotate(0);
-}
-
-[data-theme="dark"] .theme-toggle .sun-icon {
-  opacity: 1;
-  transform: translate(-50%, -50%) rotate(0);
-}
-
-[data-theme="dark"] .theme-toggle .moon-icon {
-  opacity: 0;
-  transform: translate(-50%, -50%) rotate(-90deg);
-}
-
-.theme-toggle:hover {
-  transform: rotate(15deg);
-  background: var(--bg-gradient-start);
-}
-
-.theme-toggle:hover i {
-  color: white;
+    /* تذييل الرسائل */
+    .no-messages {
+      text-align: center;
+      padding: 40px;
+      color: var(--text-light);
+      font-size: 1.1rem;
     }
   </style>
 </head>
@@ -1077,6 +1017,15 @@ body {
               </div>
             </div>
 
+            <div style="margin: 15px 0; padding: 15px; background: var(--bg-light); border-radius: 12px;">
+              <p style="color: var(--text-secondary); margin-bottom: 8px;">📋 يجب أن تحتوي كلمة المرور على:</p>
+              <div style="display: flex; flex-direction: column; gap: 5px;">
+                <div id="req-length" style="color: var(--text-light);">❌ 8 أحرف على الأقل</div>
+                <div id="req-capital" style="color: var(--text-light);">❌ حرف كبير (A-Z)</div>
+                <div id="req-number" style="color: var(--text-light);">❌ رقم (0-9)</div>
+              </div>
+            </div>
+
             <button class="btn-modern" onclick="register()">إنشاء حساب</button>
           </div>
 
@@ -1113,20 +1062,21 @@ body {
               المحادثة العامة
             </h2>
             <div class="header-actions-new">
-  <button class="btn-icon theme-toggle" onclick="toggleTheme()" title="تغيير الثيم">
-    <i class="fas fa-sun sun-icon"></i>
-    <i class="fas fa-moon moon-icon"></i>
-  </button>
-  <button class="btn-icon" onclick="toggleSearch()" title="بحث">
-    <i class="fas fa-search"></i>
-  </button>
-  <button class="btn-icon" onclick="toggleSidebar()" title="المتصلون">
-    <i class="fas fa-users"></i>
-  </button>
-  <button class="btn-icon" onclick="logout()" title="خروج">
-    <i class="fas fa-sign-out-alt"></i>
-  </button>
+              <button class="theme-toggle" onclick="toggleTheme()" title="تغيير الثيم">
+                <i class="fas fa-sun sun-icon"></i>
+                <i class="fas fa-moon moon-icon"></i>
+              </button>
+              <button class="btn-icon" onclick="toggleSearch()" title="بحث">
+                <i class="fas fa-search"></i>
+              </button>
+              <button class="btn-icon" onclick="toggleSidebar()" title="المتصلون">
+                <i class="fas fa-users"></i>
+              </button>
+              <button class="btn-icon" onclick="logout()" title="خروج">
+                <i class="fas fa-sign-out-alt"></i>
+              </button>
             </div>
+          </div>
 
           <!-- شريط البحث -->
           <div class="search-area" id="searchBar">
@@ -1147,7 +1097,7 @@ body {
           </div>
 
           <!-- مؤشر الرد -->
-          <div id="replyIndicator" class="typing-indicator-new" style="display: none; background: #e2e8f0;">
+          <div id="replyIndicator" class="typing-indicator-new" style="display: none;">
             <i class="fas fa-reply" style="color: #667eea;"></i>
             <span>الرد على <span id="replyToName"></span></span>
             <span style="opacity: 0.7;">"<span id="replyText"></span>"</span>
@@ -1180,7 +1130,11 @@ body {
       <button onclick="closePrivateChat()"><i class="fas fa-arrow-right"></i></button>
       <h3>محادثة مع: <span id="privatePartnerName"></span></h3>
       <span class="private-status-new" id="privateStatus">متصل</span>
-      <button onclick="clearPrivateChat()" style="margin-right: auto;"><i class="fas fa-trash"></i></button>
+      <button class="theme-toggle" onclick="toggleTheme()" title="تغيير الثيم" style="margin-right: auto;">
+        <i class="fas fa-sun sun-icon"></i>
+        <i class="fas fa-moon moon-icon"></i>
+      </button>
+      <button onclick="clearPrivateChat()"><i class="fas fa-trash"></i></button>
     </div>
     
     <div id="privateTypingIndicator" class="typing-indicator-new" style="display: none; margin: 10px 30px;">
@@ -1217,7 +1171,7 @@ body {
 
   <!-- معاينة الصورة قبل الرفع -->
   <div class="image-preview-modal" id="imagePreviewContainer" style="z-index: 3500;">
-    <div style="background: white; border-radius: 30px; padding: 30px; max-width: 500px;">
+    <div style="background: var(--bg-white); border-radius: 30px; padding: 30px; max-width: 500px; transition: background 0.3s ease;">
       <img id="imagePreview" class="preview-image" src="" alt="" style="max-width: 100%; max-height: 300px; border-radius: 15px;">
       <div style="display: flex; gap: 10px; margin-top: 20px; justify-content: center;">
         <button class="btn-modern" onclick="sendImageMessage()" style="width: auto; padding: 12px 30px;">
@@ -1232,23 +1186,23 @@ body {
 
   <!-- مؤشر تحميل الصور -->
   <div class="image-preview-modal" id="uploadProgress" style="background: rgba(0,0,0,0.7);">
-    <div style="background: white; border-radius: 30px; padding: 40px; text-align: center;">
-      <div class="spinner" style="width: 50px; height: 50px; border: 4px solid #e2e8f0; border-top-color: #667eea; border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto 20px;"></div>
-      <p style="color: #4a5568; font-size: 1.1rem;">جاري رفع الصورة...</p>
+    <div style="background: var(--bg-white); border-radius: 30px; padding: 40px; text-align: center; transition: background 0.3s ease;">
+      <div style="width: 50px; height: 50px; border: 4px solid var(--border-color); border-top-color: #667eea; border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto 20px;"></div>
+      <p style="color: var(--text-primary); font-size: 1.1rem;">جاري رفع الصورة...</p>
     </div>
   </div>
 
   <!-- نافذة نسيت كلمة السر -->
   <div class="image-preview-modal" id="forgotPasswordModal">
-    <div style="background: white; border-radius: 30px; padding: 40px; max-width: 400px;">
-      <h3 style="color: #2d3748; margin-bottom: 20px;">استعادة كلمة المرور</h3>
-      <p style="color: #718096; margin-bottom: 20px;">أدخل بريدك الإلكتروني وسنرسل لك رابط إعادة التعيين</p>
+    <div style="background: var(--bg-white); border-radius: 30px; padding: 40px; max-width: 400px; transition: background 0.3s ease;">
+      <h3 style="color: var(--text-primary); margin-bottom: 20px;">استعادة كلمة المرور</h3>
+      <p style="color: var(--text-secondary); margin-bottom: 20px;">أدخل بريدك الإلكتروني وسنرسل لك رابط إعادة التعيين</p>
       <input type="email" id="resetEmail" placeholder="البريد الإلكتروني" class="input-modern" oninput="validateResetEmail()">
       <div id="resetEmailValidation" class="validation-message"></div>
-      <div id="forgotPasswordMessage" style="margin: 15px 0;"></div>
+      <div id="forgotPasswordMessage" style="margin: 15px 0; color: var(--text-primary);"></div>
       
       <div id="resetLoading" style="display: none; text-align: center; margin: 15px 0;">
-        <div class="spinner" style="width: 30px; height: 30px; border: 3px solid #e2e8f0; border-top-color: #667eea; border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto;"></div>
+        <div style="width: 30px; height: 30px; border: 3px solid var(--border-color); border-top-color: #667eea; border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto;"></div>
       </div>
       
       <div style="display: flex; gap: 10px;">
@@ -1262,10 +1216,6 @@ body {
   <input type="file" id="imageFileInput" accept="image/*" style="display: none;" onchange="handleAdvancedImageSelect(this.files[0])">
 
   <script>
-    // هنا نضع نفس كود JavaScript من النسخة السابقة مع الحفاظ على جميع الوظائف
-    // (نفس الكود بالكامل مع الحفاظ على جميع الدوال والمتغيرات)
-    // سأقوم بنسخ الكود بالكامل هنا
-    
     // ✅ تهيئة Firebase
     const firebaseConfig = {
       apiKey: "AIzaSyANJjbTOFTKUAuT-g1BKY7LU9a4OabSEDQ",
@@ -1283,7 +1233,6 @@ body {
     const UPLOAD_PRESET = "chat-app";
 
     // ✅ تهيئة العناصر
-    const loader = document.getElementById('loader');
     const authDiv = document.getElementById('auth');
     const chatDiv = document.getElementById('chat');
     const messagesDiv = document.getElementById('messages');
@@ -1351,6 +1300,30 @@ body {
     let loadingMore = false;
     const MESSAGES_LIMIT = 50;
     const userColors = {};
+
+    // ===== نظام الثيم =====
+    function toggleTheme() {
+      const html = document.documentElement;
+      const currentTheme = html.getAttribute('data-theme') || 'light';
+      const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+      
+      html.setAttribute('data-theme', newTheme);
+      localStorage.setItem('chat-theme', newTheme);
+      
+      // تحديث أيقونة الزر
+      showToast(newTheme === 'dark' ? '🌙 تم تفعيل الوضع الليلي' : '☀️ تم تفعيل الوضع النهاري');
+    }
+
+    // تحميل الثيم المحفوظ
+    function loadSavedTheme() {
+      const savedTheme = localStorage.getItem('chat-theme');
+      if (savedTheme) {
+        document.documentElement.setAttribute('data-theme', savedTheme);
+      }
+    }
+
+    // تحميل الثيم عند بدء التشغيل
+    loadSavedTheme();
 
     // ===== الدوال المساعدة =====
     function showToast(message, type = 'success') {
@@ -1472,9 +1445,13 @@ body {
 
     window.validatePassword = function() {
       const passVal = password.value;
-      document.getElementById('req-length').classList.toggle('met', passVal.length >= 8);
-      document.getElementById('req-capital').classList.toggle('met', /[A-Z]/.test(passVal));
-      document.getElementById('req-number').classList.toggle('met', /\d/.test(passVal));
+      document.getElementById('req-length').style.color = passVal.length >= 8 ? '#48bb78' : 'var(--text-light)';
+      document.getElementById('req-capital').style.color = /[A-Z]/.test(passVal) ? '#48bb78' : 'var(--text-light)';
+      document.getElementById('req-number').style.color = /\d/.test(passVal) ? '#48bb78' : 'var(--text-light)';
+      
+      document.getElementById('req-length').innerHTML = (passVal.length >= 8 ? '✅' : '❌') + ' 8 أحرف على الأقل';
+      document.getElementById('req-capital').innerHTML = (/[A-Z]/.test(passVal) ? '✅' : '❌') + ' حرف كبير (A-Z)';
+      document.getElementById('req-number').innerHTML = (/\d/.test(passVal) ? '✅' : '❌') + ' رقم (0-9)';
     };
 
     window.checkUsernameAvailability = async function() {
@@ -1485,6 +1462,7 @@ body {
       }
       
       usernameCheck.innerHTML = '⏳ جاري التحقق...';
+      usernameCheck.style.color = 'var(--text-light)';
       
       clearTimeout(window.usernameCheckTimeout);
       window.usernameCheckTimeout = setTimeout(async () => {
@@ -1503,30 +1481,7 @@ body {
         }
       }, 500);
     };
-// ===== نظام الثيم =====
-function toggleTheme() {
-  const html = document.documentElement;
-  const currentTheme = html.getAttribute('data-theme') || 'light';
-  const newTheme = currentTheme === 'light' ? 'dark' : 'light';
-  
-  html.setAttribute('data-theme', newTheme);
-  localStorage.setItem('chat-theme', newTheme);
-  
-  // تحديث أيقونة الزر
-  showToast(newTheme === 'dark' ? '🌙 تم تفعيل الوضع الليلي' : '☀️ تم تفعيل الوضع النهاري');
-}
 
-// تحميل الثيم المحفوظ
-function loadSavedTheme() {
-  const savedTheme = localStorage.getItem('chat-theme');
-  if (savedTheme) {
-    document.documentElement.setAttribute('data-theme', savedTheme);
-  }
-}
-
-// أضف هذا السطر في بداية الكود بعد تعريف المتغيرات
-loadSavedTheme();
-    // ===== الدوال الرئيسية =====
     function register() {
       if (isButtonsDisabled) return;
       
@@ -1682,7 +1637,7 @@ loadSavedTheme();
           messagesDiv.innerHTML = '';
           
           if (snapshot.empty) {
-            messagesDiv.innerHTML = '<div style="text-align: center; padding: 40px; color: #a0aec0;">لا توجد رسائل بعد...</div>';
+            messagesDiv.innerHTML = '<div class="no-messages">لا توجد رسائل بعد...</div>';
             isUpdatingMessages = false;
             return;
           }
@@ -1768,7 +1723,7 @@ loadSavedTheme();
             }
           });
           
-          onlineList.innerHTML = html || '<div style="text-align: center; padding: 20px; color: #a0aec0;">لا يوجد متصلين آخرين</div>';
+          onlineList.innerHTML = html || '<div class="no-messages">لا يوجد متصلين آخرين</div>';
           document.getElementById('onlineCount').textContent = count;
         });
     }
@@ -1816,7 +1771,7 @@ loadSavedTheme();
           privateMessages.innerHTML = '';
           
           if (snapshot.empty) {
-            privateMessages.innerHTML = '<div style="text-align: center; padding: 40px; color: #a0aec0;">لا توجد رسائل بعد...</div>';
+            privateMessages.innerHTML = '<div class="no-messages">لا توجد رسائل بعد...</div>';
             return;
           }
           
@@ -2286,18 +2241,19 @@ loadSavedTheme();
         position: fixed;
         left: ${e.pageX}px;
         top: ${e.pageY}px;
-        background: white;
+        background: var(--bg-white);
         border-radius: 12px;
-        box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        box-shadow: 0 10px 30px var(--shadow-color);
         padding: 5px;
         z-index: 10000;
+        border: 1px solid var(--border-color);
       `;
       
       menu.innerHTML = `
-        <button onclick="copyMessage('${escapeHtml(messageText)}')" style="display: block; width: 100%; padding: 10px 20px; border: none; background: none; text-align: right; cursor: pointer; border-radius: 8px;">
+        <button onclick="copyMessage('${escapeHtml(messageText)}')" style="display: block; width: 100%; padding: 10px 20px; border: none; background: none; text-align: right; cursor: pointer; border-radius: 8px; color: var(--text-primary);">
           <i class="fas fa-copy"></i> نسخ
         </button>
-        <button onclick="setReply('${messageId}', '${escapeHtml(messageText)}', '${escapeHtml(senderName)}')" style="display: block; width: 100%; padding: 10px 20px; border: none; background: none; text-align: right; cursor: pointer; border-radius: 8px;">
+        <button onclick="setReply('${messageId}', '${escapeHtml(messageText)}', '${escapeHtml(senderName)}')" style="display: block; width: 100%; padding: 10px 20px; border: none; background: none; text-align: right; cursor: pointer; border-radius: 8px; color: var(--text-primary);">
           <i class="fas fa-reply"></i> رد
         </button>
         ${messageElement.classList.contains('own') ? `
