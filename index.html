@@ -9,9 +9,10 @@
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
-  <!-- Font Awesome للايقونات -->
+  <!-- Font Awesome -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
+    /* جميع الأنماط كما هي من الملف السابق */
     * {
       margin: 0;
       padding: 0;
@@ -19,7 +20,6 @@
       font-family: 'Cairo', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     }
 
-    /* ثيمات الألوان */
     :root[data-theme="light"] {
       --bg-gradient-start: #667eea;
       --bg-gradient-end: #764ba2;
@@ -41,6 +41,9 @@
       --hover-bg: #edf2f7;
       --online-status: #48bb78;
       --offline-status: #a0aec0;
+      --danger-color: #f56565;
+      --success-color: #48bb78;
+      --warning-color: #ecc94b;
     }
 
     :root[data-theme="dark"] {
@@ -64,6 +67,9 @@
       --hover-bg: #4a5568;
       --online-status: #48bb78;
       --offline-status: #718096;
+      --danger-color: #fc8181;
+      --success-color: #68d391;
+      --warning-color: #f6e05e;
     }
 
     body {
@@ -76,7 +82,6 @@
       transition: background 0.3s ease;
     }
 
-    /* تأثير الخلفية المتحركة */
     .animated-bg {
       position: fixed;
       top: 0;
@@ -120,10 +125,9 @@
       border: 1px solid rgba(255, 255, 255, 0.2);
       overflow: hidden;
       position: relative;
-      transition: background 0.3s ease;
     }
 
-    /* ===== Auth Page ===== */
+    /* Auth Styles */
     #auth {
       height: 100%;
       display: flex;
@@ -141,7 +145,6 @@
       text-align: center;
       position: relative;
       overflow: hidden;
-      transition: background 0.3s ease;
     }
 
     .auth-side::before {
@@ -184,7 +187,6 @@
       padding: 40px;
       background: var(--auth-main-bg);
       backdrop-filter: blur(10px);
-      transition: background 0.3s ease;
     }
 
     .auth-form-container {
@@ -325,12 +327,12 @@
     }
 
     .validation-message.success {
-      color: #48bb78;
+      color: var(--success-color);
       display: block;
     }
 
     .validation-message.error {
-      color: #f56565;
+      color: var(--danger-color);
       display: block;
     }
 
@@ -339,7 +341,7 @@
       margin-top: 5px;
     }
 
-    /* ===== Chat Page ===== */
+    /* Chat Styles */
     #chat {
       height: 100%;
       display: none;
@@ -350,7 +352,6 @@
       height: 100%;
     }
 
-    /* سايدبار المتصلين */
     .users-sidebar {
       width: 300px;
       background: var(--sidebar-bg);
@@ -358,14 +359,12 @@
       display: flex;
       flex-direction: column;
       overflow: hidden;
-      transition: background 0.3s ease, border-color 0.3s ease;
     }
 
     .sidebar-header {
       padding: 20px;
       background: var(--auth-side-bg);
       color: white;
-      transition: background 0.3s ease;
     }
 
     .sidebar-header h3 {
@@ -462,7 +461,7 @@
     }
 
     .notification-badge-new {
-      background: #f56565;
+      background: var(--danger-color);
       color: white;
       border-radius: 20px;
       padding: 2px 8px;
@@ -471,13 +470,11 @@
       text-align: center;
     }
 
-    /* منطقة الدردشة الرئيسية */
     .chat-main {
       flex: 1;
       display: flex;
       flex-direction: column;
       background: var(--bg-light);
-      transition: background 0.3s ease;
     }
 
     .chat-header {
@@ -487,7 +484,6 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
-      transition: background 0.3s ease, border-color 0.3s ease;
     }
 
     .chat-header h2 {
@@ -521,7 +517,6 @@
       transform: scale(1.1);
     }
 
-    /* زر الثيم */
     .theme-toggle {
       position: relative;
       width: 45px;
@@ -573,13 +568,11 @@
       color: white;
     }
 
-    /* منطقة البحث */
     .search-area {
       padding: 15px 30px;
       background: var(--bg-white);
       border-bottom: 1px solid var(--border-color);
       display: none;
-      transition: background 0.3s ease, border-color 0.3s ease;
     }
 
     .search-area.show {
@@ -607,7 +600,7 @@
     }
 
     .btn-close {
-      background: #f56565;
+      background: var(--danger-color);
       color: white;
       border: none;
       border-radius: 12px;
@@ -615,7 +608,6 @@
       cursor: pointer;
     }
 
-    /* منطقة الرسائل */
     .messages-area {
       flex: 1;
       overflow-y: auto;
@@ -631,7 +623,6 @@
       border-radius: 25px 25px 25px 5px;
       animation: slideIn 0.3s ease;
       position: relative;
-      transition: background 0.3s ease, color 0.3s ease;
     }
 
     .message-bubble.own {
@@ -676,7 +667,6 @@
       margin-top: 5px;
     }
 
-    /* ردود الفعل */
     .reactions-wrapper {
       display: flex;
       gap: 5px;
@@ -704,7 +694,6 @@
       transform: scale(1.1);
     }
 
-    /* مؤشر الكتابة */
     .typing-indicator-new {
       display: flex;
       align-items: center;
@@ -716,7 +705,6 @@
       margin: 10px 30px;
       box-shadow: 0 5px 15px var(--shadow-color);
       color: var(--text-primary);
-      transition: background 0.3s ease, color 0.3s ease;
     }
 
     .typing-dots {
@@ -735,7 +723,6 @@
     .typing-dots span:nth-child(2) { animation-delay: 0.2s; }
     .typing-dots span:nth-child(3) { animation-delay: 0.4s; }
 
-    /* منطقة الإدخال */
     .input-area-new {
       padding: 20px 30px;
       background: var(--bg-white);
@@ -743,7 +730,6 @@
       display: flex;
       gap: 15px;
       align-items: center;
-      transition: background 0.3s ease, border-color 0.3s ease;
     }
 
     .message-input {
@@ -796,7 +782,6 @@
       color: white;
     }
 
-    /* صفحة المحادثة الخاصة */
     .private-page-new {
       position: fixed;
       top: 50%;
@@ -812,7 +797,6 @@
       flex-direction: column;
       z-index: 2000;
       overflow: hidden;
-      transition: background 0.3s ease;
     }
 
     .private-page-new.show {
@@ -827,7 +811,6 @@
       display: flex;
       align-items: center;
       gap: 20px;
-      transition: background 0.3s ease;
     }
 
     .private-header-new button {
@@ -858,10 +841,8 @@
       overflow-y: auto;
       padding: 30px;
       background: var(--bg-light);
-      transition: background 0.3s ease;
     }
 
-    /* معاينة الصور */
     .image-preview-modal {
       position: fixed;
       top: 0;
@@ -895,7 +876,7 @@
       position: absolute;
       top: 20px;
       right: 20px;
-      background: #f56565;
+      background: var(--danger-color);
       color: white;
       border: none;
       width: 50px;
@@ -905,7 +886,6 @@
       cursor: pointer;
     }
 
-    /* تأثيرات متحركة */
     @keyframes slideIn {
       from {
         opacity: 0;
@@ -927,7 +907,6 @@
       50% { opacity: 0.5; }
     }
 
-    /* تحسينات للشاشات الصغيرة */
     @media (max-width: 768px) {
       .auth-side {
         display: none;
@@ -951,17 +930,22 @@
       }
     }
 
-    /* تذييل الرسائل */
     .no-messages {
       text-align: center;
       padding: 40px;
       color: var(--text-light);
       font-size: 1.1rem;
     }
+
+    .error-message {
+      color: var(--danger-color);
+      font-size: 0.9rem;
+      margin-top: 5px;
+      text-align: center;
+    }
   </style>
 </head>
 <body>
-  <!-- خلفية متحركة -->
   <div class="animated-bg" id="animatedBg"></div>
 
   <div class="container">
@@ -980,10 +964,10 @@
           </div>
 
           <!-- نموذج تسجيل الدخول -->
-          <div id="loginForm" style="display: block;">
+          <div id="loginForm">
             <div class="input-group-modern">
               <label>📧 البريد الإلكتروني</label>
-              <input type="email" id="loginEmail" placeholder="example@domain.com" class="input-modern" oninput="validateLoginEmail()">
+              <input type="email" id="loginEmail" placeholder="example@domain.com" class="input-modern">
               <div id="loginEmailValidation" class="validation-message"></div>
             </div>
 
@@ -997,7 +981,9 @@
               </div>
             </div>
 
-            <button class="btn-modern" onclick="login()">تسجيل الدخول</button>
+            <div id="loginError" class="error-message" style="display: none;"></div>
+
+            <button class="btn-modern" onclick="login()" id="loginBtn">تسجيل الدخول</button>
 
             <div style="text-align: center; margin-top: 15px;">
               <button onclick="showForgotPasswordModal()" style="background: none; border: none; color: #667eea; cursor: pointer;">نسيت كلمة المرور؟</button>
@@ -1037,12 +1023,14 @@
               </div>
             </div>
 
-            <button class="btn-modern" onclick="register()">إنشاء حساب</button>
+            <div id="registerError" class="error-message" style="display: none;"></div>
+
+            <button class="btn-modern" onclick="register()" id="registerBtn">إنشاء حساب</button>
           </div>
 
           <div class="separator-modern">أو</div>
 
-          <button class="btn-modern google" onclick="googleLogin()">
+          <button class="btn-modern google" onclick="googleLogin()" id="googleBtn">
             <i class="fab fa-google"></i>
             تسجيل بحساب Google
           </button>
@@ -1112,7 +1100,7 @@
             <i class="fas fa-reply" style="color: #667eea;"></i>
             <span>الرد على <span id="replyToName"></span></span>
             <span style="opacity: 0.7;">"<span id="replyText"></span>"</span>
-            <button onclick="cancelReply()" style="background: none; border: none; color: #f56565; cursor: pointer; margin-right: auto;">
+            <button onclick="cancelReply()" style="background: none; border: none; color: var(--danger-color); cursor: pointer; margin-right: auto;">
               <i class="fas fa-times"></i>
             </button>
           </div>
@@ -1122,11 +1110,11 @@
 
           <!-- منطقة الإدخال -->
           <div class="input-area-new">
-            <button class="btn-upload" onclick="document.getElementById('imageFileInput').click()">
+            <button class="btn-upload" onclick="document.getElementById('imageFileInput').click()" id="uploadBtn">
               <i class="fas fa-image"></i>
             </button>
             <input type="text" id="messageInput" placeholder="اكتب رسالة..." class="message-input" oninput="handleTyping()">
-            <button class="btn-send" onclick="sendWithReply()">
+            <button class="btn-send" onclick="sendWithReply()" id="sendPublicBtn">
               <i class="fas fa-paper-plane"></i>
             </button>
           </div>
@@ -1145,7 +1133,7 @@
         <i class="fas fa-sun sun-icon"></i>
         <i class="fas fa-moon moon-icon"></i>
       </button>
-      <button onclick="clearPrivateChat()"><i class="fas fa-trash"></i></button>
+      <button onclick="clearPrivateChat()" id="clearPrivateBtn"><i class="fas fa-trash"></i></button>
     </div>
     
     <div id="privateTypingIndicator" class="typing-indicator-new" style="display: none; margin: 10px 30px;">
@@ -1160,11 +1148,11 @@
     <div class="private-messages-new" id="privateMessages"></div>
     
     <div class="input-area-new">
-      <button class="btn-upload" onclick="document.getElementById('imageFileInput').click()">
+      <button class="btn-upload" onclick="document.getElementById('imageFileInput').click()" id="privateUploadBtn">
         <i class="fas fa-image"></i>
       </button>
       <input type="text" id="privateInput" placeholder="اكتب رسالة خاصة..." class="message-input" oninput="handlePrivateTyping()">
-      <button class="btn-send" onclick="sendPrivateMessage()">
+      <button class="btn-send" onclick="sendPrivateMessage()" id="sendPrivateBtn">
         <i class="fas fa-paper-plane"></i>
       </button>
     </div>
@@ -1182,13 +1170,13 @@
 
   <!-- معاينة الصورة قبل الرفع -->
   <div class="image-preview-modal" id="imagePreviewContainer" style="z-index: 3500;">
-    <div style="background: var(--bg-white); border-radius: 30px; padding: 30px; max-width: 500px; transition: background 0.3s ease;">
+    <div style="background: var(--bg-white); border-radius: 30px; padding: 30px; max-width: 500px;">
       <img id="imagePreview" class="preview-image" src="" alt="" style="max-width: 100%; max-height: 300px; border-radius: 15px;">
       <div style="display: flex; gap: 10px; margin-top: 20px; justify-content: center;">
-        <button class="btn-modern" onclick="sendImageMessage()" style="width: auto; padding: 12px 30px;">
+        <button class="btn-modern" onclick="sendImageMessage()" style="width: auto; padding: 12px 30px;" id="sendImageBtn">
           <i class="fas fa-check"></i> إرسال
         </button>
-        <button class="btn-modern google" onclick="cancelImageUpload()" style="width: auto; padding: 12px 30px;">
+        <button class="btn-modern google" onclick="cancelImageUpload()" style="width: auto; padding: 12px 30px;" id="cancelImageBtn">
           <i class="fas fa-times"></i> إلغاء
         </button>
       </div>
@@ -1197,7 +1185,7 @@
 
   <!-- مؤشر تحميل الصور -->
   <div class="image-preview-modal" id="uploadProgress" style="background: rgba(0,0,0,0.7);">
-    <div style="background: var(--bg-white); border-radius: 30px; padding: 40px; text-align: center; transition: background 0.3s ease;">
+    <div style="background: var(--bg-white); border-radius: 30px; padding: 40px; text-align: center;">
       <div style="width: 50px; height: 50px; border: 4px solid var(--border-color); border-top-color: #667eea; border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto 20px;"></div>
       <p style="color: var(--text-primary); font-size: 1.1rem;">جاري رفع الصورة...</p>
     </div>
@@ -1205,10 +1193,10 @@
 
   <!-- نافذة نسيت كلمة السر -->
   <div class="image-preview-modal" id="forgotPasswordModal">
-    <div style="background: var(--bg-white); border-radius: 30px; padding: 40px; max-width: 400px; transition: background 0.3s ease;">
+    <div style="background: var(--bg-white); border-radius: 30px; padding: 40px; max-width: 400px;">
       <h3 style="color: var(--text-primary); margin-bottom: 20px;">استعادة كلمة المرور</h3>
       <p style="color: var(--text-secondary); margin-bottom: 20px;">أدخل بريدك الإلكتروني وسنرسل لك رابط إعادة التعيين</p>
-      <input type="email" id="resetEmail" placeholder="البريد الإلكتروني" class="input-modern" oninput="validateResetEmail()">
+      <input type="email" id="resetEmail" placeholder="البريد الإلكتروني" class="input-modern">
       <div id="resetEmailValidation" class="validation-message"></div>
       <div id="forgotPasswordMessage" style="margin: 15px 0; color: var(--text-primary);"></div>
       
@@ -1217,14 +1205,14 @@
       </div>
       
       <div style="display: flex; gap: 10px;">
-        <button class="btn-modern" onclick="sendPasswordReset()" style="flex: 1;">إرسال</button>
-        <button class="btn-modern google" onclick="hideForgotPasswordModal()" style="flex: 1;">إلغاء</button>
+        <button class="btn-modern" onclick="sendPasswordReset()" style="flex: 1;" id="sendResetBtn">إرسال</button>
+        <button class="btn-modern google" onclick="hideForgotPasswordModal()" style="flex: 1;" id="cancelResetBtn">إلغاء</button>
       </div>
     </div>
   </div>
 
   <!-- ملف الصور المخفي -->
-  <input type="file" id="imageFileInput" accept="image/*" style="display: none;" onchange="handleAdvancedImageSelect(this.files[0])">
+  <input type="file" id="imageFileInput" accept="image/*" style="display: none;">
 
   <script>
     // ✅ تهيئة Firebase
@@ -1236,6 +1224,8 @@
       messagingSenderId: "544947944105",
       appId: "1:544947944105:web:f2ac32d485c8ad68b647b8"
     };
+    
+    // تهيئة Firebase
     firebase.initializeApp(firebaseConfig);
     const auth = firebase.auth();
     const db = firebase.firestore();
@@ -1265,6 +1255,8 @@
     const loginEmail = document.getElementById('loginEmail');
     const loginPassword = document.getElementById('loginPassword');
     const loginEmailValidation = document.getElementById('loginEmailValidation');
+    const loginError = document.getElementById('loginError');
+    const registerError = document.getElementById('registerError');
     const username = document.getElementById('username');
     const email = document.getElementById('email');
     const password = document.getElementById('password');
@@ -1280,6 +1272,15 @@
     const privateTypingIndicator = document.getElementById('privateTypingIndicator');
     const privateTypingText = document.getElementById('privateTypingText');
     
+    // عناصر نافذة استعادة كلمة المرور
+    const forgotPasswordModal = document.getElementById('forgotPasswordModal');
+    const resetEmail = document.getElementById('resetEmail');
+    const resetEmailValidation = document.getElementById('resetEmailValidation');
+    const forgotPasswordMessage = document.getElementById('forgotPasswordMessage');
+    const resetLoading = document.getElementById('resetLoading');
+    const sendResetBtn = document.getElementById('sendResetBtn');
+    const cancelResetBtn = document.getElementById('cancelResetBtn');
+
     // متغيرات الحالة
     let currentUser = null;
     let currentUsername = '';
@@ -1289,18 +1290,11 @@
     let unsubscribePartner = null;
     let unsubscribeTyping = null;
     let activePartner = null;
-    let verificationCheckInterval = null;
-    let verificationTimer = null;
-    let verificationTimeLeft = 300;
-    let isVerificationChecked = false;
-    let isButtonsDisabled = false;
-    let isVerificationMode = false;
     let typingTimeout;
     let isTyping = false;
     let replyingTo = null;
     let selectedMessageForReaction = null;
     let selectedImageFile = null;
-    let imagePreviewUrl = null;
     let currentImageMessageContext = null;
     let unreadPrivateMessages = {};
     let lastReadTimestamps = {};
@@ -1310,7 +1304,6 @@
     let lastVisible = null;
     let loadingMore = false;
     const MESSAGES_LIMIT = 50;
-    const userColors = {};
 
     // ===== نظام الثيم =====
     function toggleTheme() {
@@ -1330,22 +1323,27 @@
         document.documentElement.setAttribute('data-theme', savedTheme);
       }
     }
-
     loadSavedTheme();
 
     // ===== إدارة حالة الاتصال =====
-    function updateUserOnlineStatus(status) {
+    async function updateUserOnlineStatus(status) {
       if (!currentUser) return;
       
-      db.collection('users').doc(currentUser.uid).update({
-        online: status,
-        lastSeen: firebase.firestore.FieldValue.serverTimestamp()
-      }).catch(err => console.error('خطأ في تحديث حالة الاتصال:', err));
+      try {
+        await db.collection('users').doc(currentUser.uid).update({
+          online: status,
+          lastSeen: firebase.firestore.FieldValue.serverTimestamp()
+        });
+        console.log(`✅ تم تحديث حالة الاتصال إلى: ${status ? 'متصل' : 'غير متصل'}`);
+      } catch (err) {
+        console.error('❌ خطأ في تحديث حالة الاتصال:', err);
+      }
     }
 
     function setupConnectionMonitor() {
+      // مراقب الاتصال بالإنترنت
       window.addEventListener('online', () => {
-        console.log('✅ اتصال الإنترنت عاد');
+        console.log('✅ عودة الاتصال بالإنترنت');
         if (currentUser) {
           updateUserOnlineStatus(true);
           showToast('🟢 تم استعادة الاتصال بالإنترنت');
@@ -1353,13 +1351,14 @@
       });
 
       window.addEventListener('offline', () => {
-        console.log('❌ فقد اتصال الإنترنت');
+        console.log('❌ فقد الاتصال بالإنترنت');
         if (currentUser) {
           updateUserOnlineStatus(false);
           showToast('🔴 فقد الاتصال بالإنترنت', 'warning');
         }
       });
 
+      // مراقب النشاط
       let inactivityTimeout;
       
       function resetInactivityTimer() {
@@ -1368,11 +1367,11 @@
           updateUserOnlineStatus(true);
           
           inactivityTimeout = setTimeout(() => {
-            console.log('⏰ المستخدم غير نشط');
+            console.log('⏰ المستخدم غير نشط لمدة 5 دقائق');
             if (currentUser) {
               updateUserOnlineStatus(false);
             }
-          }, 5 * 60 * 1000);
+          }, 5 * 60 * 1000); // 5 دقائق
         }
       }
 
@@ -1383,12 +1382,13 @@
       resetInactivityTimer();
     }
 
+    // تحديث الحالة عند إغلاق المتصفح
     window.addEventListener('beforeunload', () => {
       if (currentUser) {
         db.collection('users').doc(currentUser.uid).update({
           online: false,
           lastSeen: firebase.firestore.FieldValue.serverTimestamp()
-        });
+        }).catch(err => console.error('خطأ في تحديث الحالة عند الإغلاق:', err));
       }
     });
 
@@ -1439,20 +1439,22 @@
       });
     }
 
-    // ===== دوال المصادقة =====
+    // ===== دوال المصادقة المحسنة =====
     window.switchAuthTab = function(tab) {
-      if (isButtonsDisabled) return;
-      
       if (tab === 'login') {
         loginTab.classList.add('active');
         registerTab.classList.remove('active');
         loginForm.style.display = 'block';
         registerForm.style.display = 'none';
+        loginError.style.display = 'none';
+        registerError.style.display = 'none';
       } else {
         registerTab.classList.add('active');
         loginTab.classList.remove('active');
         registerForm.style.display = 'block';
         loginForm.style.display = 'none';
+        loginError.style.display = 'none';
+        registerError.style.display = 'none';
       }
     };
 
@@ -1470,7 +1472,7 @@
 
     window.validateEmail = function() {
       const emailVal = email.value.trim();
-      const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
       const isValid = emailRegex.test(emailVal);
       
       if (!emailVal) {
@@ -1491,7 +1493,7 @@
 
     window.validateLoginEmail = function() {
       const emailVal = loginEmail.value.trim();
-      const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
       const isValid = emailRegex.test(emailVal);
       
       if (!emailVal) {
@@ -1549,150 +1551,216 @@
       }, 500);
     };
 
-    function register() {
-      if (isButtonsDisabled) return;
-      
-      const emailVal = email.value.trim();
-      const passVal = password.value.trim();
-      const userVal = username.value.trim();
-      
-      if (!emailVal || !passVal || !userVal) {
-        showToast('❌ الرجاء ملء جميع الحقول', 'error');
-        return;
-      }
-      
-      if (!validateEmail()) {
-        showToast('❌ البريد الإلكتروني غير صالح', 'error');
-        return;
-      }
-      
-      if (passVal.length < 8 || !/[A-Z]/.test(passVal) || !/\d/.test(passVal)) {
-        showToast('❌ كلمة المرور يجب أن تحتوي على 8 أحرف على الأقل، حرف كبير ورقم', 'error');
-        return;
-      }
-      
-      disableAllButtons(true);
-      
-      auth.createUserWithEmailAndPassword(emailVal, passVal)
-        .then(res => {
-          res.user.sendEmailVerification();
-          return db.collection('users').doc(res.user.uid).set({
-            username: userVal,
-            email: emailVal,
-            online: false,
-            emailVerified: false,
-            createdAt: firebase.firestore.FieldValue.serverTimestamp()
-          });
-        })
-        .then(() => {
-          showToast('✅ تم إرسال رابط التحقق إلى بريدك الإلكتروني');
-          switchAuthTab('login');
-          loginEmail.value = emailVal;
-          disableAllButtons(false);
-        })
-        .catch(err => {
-          disableAllButtons(false);
-          showToast('❌ خطأ: ' + err.message, 'error');
-        });
-    }
-
-    function login() {
-      if (isButtonsDisabled) return;
-      
+    // دالة تسجيل الدخول المحسنة
+    window.login = async function() {
       const emailVal = loginEmail.value.trim();
       const passVal = loginPassword.value.trim();
       
+      // إخفاء رسائل الخطأ السابقة
+      if (loginError) loginError.style.display = 'none';
+      
       if (!emailVal || !passVal) {
-        showToast('❌ الرجاء إدخال البريد وكلمة المرور', 'error');
+        if (loginError) {
+          loginError.style.display = 'block';
+          loginError.textContent = '❌ الرجاء إدخال البريد وكلمة المرور';
+        }
         return;
       }
       
       if (!validateLoginEmail()) {
-        showToast('❌ البريد الإلكتروني غير صالح', 'error');
+        if (loginError) {
+          loginError.style.display = 'block';
+          loginError.textContent = '❌ البريد الإلكتروني غير صالح';
+        }
         return;
       }
       
-      disableAllButtons(true);
-      
-      auth.signInWithEmailAndPassword(emailVal, passVal)
-        .then(result => {
-          if (!result.user.emailVerified) {
-            showToast('⚠️ لم يتم تفعيل بريدك الإلكتروني بعد', 'warning');
-            auth.signOut();
-            disableAllButtons(false);
-          } else {
-            disableAllButtons(false);
-          }
-        })
-        .catch(err => {
-          disableAllButtons(false);
-          showToast('❌ خطأ في تسجيل الدخول', 'error');
-        });
-    }
-
-    function googleLogin() {
-      if (isButtonsDisabled) return;
-      
-      disableAllButtons(true);
-      
-      auth.signInWithPopup(googleProvider)
-        .then(result => {
-          const email = result.user.email;
-          const usernameFromEmail = email.split('@')[0];
-          
-          return db.collection('users').doc(result.user.uid).set({
-            username: usernameFromEmail,
-            email: email,
-            online: true,
-            emailVerified: true,
-            lastSeen: firebase.firestore.FieldValue.serverTimestamp()
-          }, { merge: true });
-        })
-        .then(() => {
-          disableAllButtons(false);
-        })
-        .catch(err => {
-          disableAllButtons(false);
-          showToast('❌ خطأ في تسجيل الدخول بحساب Google', 'error');
-        });
-    }
-
-    function logout() {
-      if (isButtonsDisabled) return;
-      
-      disableAllButtons(true);
-      
-      if (unsubscribePublic) unsubscribePublic();
-      if (unsubscribePrivate) unsubscribePrivate();
-      if (unsubscribeOnline) unsubscribeOnline();
-      if (unsubscribePartner) unsubscribePartner();
-      if (unsubscribeTyping) unsubscribeTyping();
-      
-      if (auth.currentUser) {
-        db.collection('typing').doc(auth.currentUser.uid).delete().catch(() => {});
+      try {
+        const result = await auth.signInWithEmailAndPassword(emailVal, passVal);
         
-        db.collection('users').doc(auth.currentUser.uid).update({
-          online: false,
-          lastSeen: firebase.firestore.FieldValue.serverTimestamp()
-        }).finally(() => {
-          auth.signOut();
-          disableAllButtons(false);
-          currentUser = null;
-          currentUsername = '';
-          activePartner = null;
-          
-          if (onlineList) {
-            onlineList.innerHTML = '<div class="no-messages">جاري تحميل المتصلين...</div>';
+        if (!result.user.emailVerified) {
+          if (loginError) {
+            loginError.style.display = 'block';
+            loginError.textContent = '⚠️ لم يتم تفعيل بريدك الإلكتروني بعد. الرجاء التحقق من بريدك الإلكتروني';
           }
-        });
+          await auth.signOut();
+          return;
+        }
+        
+        // تم تسجيل الدخول بنجاح
+        console.log('✅ تم تسجيل الدخول بنجاح');
+        
+      } catch (error) {
+        console.error('❌ خطأ في تسجيل الدخول:', error);
+        if (loginError) {
+          loginError.style.display = 'block';
+          
+          switch (error.code) {
+            case 'auth/user-not-found':
+              loginError.textContent = '❌ لا يوجد حساب بهذا البريد الإلكتروني';
+              break;
+            case 'auth/wrong-password':
+              loginError.textContent = '❌ كلمة المرور غير صحيحة';
+              break;
+            case 'auth/invalid-email':
+              loginError.textContent = '❌ البريد الإلكتروني غير صالح';
+              break;
+            case 'auth/too-many-requests':
+              loginError.textContent = '❌ تم تعطيل الحساب مؤقتاً بسبب محاولات كثيرة';
+              break;
+            default:
+              loginError.textContent = '❌ خطأ في تسجيل الدخول: ' + error.message;
+          }
+        }
       }
-    }
+    };
 
-    function disableAllButtons(disable = true) {
-      isButtonsDisabled = disable;
-      const buttons = document.querySelectorAll('button');
-      buttons.forEach(btn => btn.disabled = disable);
-    }
+    // دالة التسجيل المحسنة
+    window.register = async function() {
+      const emailVal = email.value.trim();
+      const passVal = password.value.trim();
+      const userVal = username.value.trim();
+      
+      if (registerError) registerError.style.display = 'none';
+      
+      if (!emailVal || !passVal || !userVal) {
+        if (registerError) {
+          registerError.style.display = 'block';
+          registerError.textContent = '❌ الرجاء ملء جميع الحقول';
+        }
+        return;
+      }
+      
+      if (!validateEmail()) {
+        if (registerError) {
+          registerError.style.display = 'block';
+          registerError.textContent = '❌ البريد الإلكتروني غير صالح';
+        }
+        return;
+      }
+      
+      if (passVal.length < 8 || !/[A-Z]/.test(passVal) || !/\d/.test(passVal)) {
+        if (registerError) {
+          registerError.style.display = 'block';
+          registerError.textContent = '❌ كلمة المرور يجب أن تحتوي على 8 أحرف على الأقل، حرف كبير ورقم';
+        }
+        return;
+      }
+      
+      if (usernameCheck.innerHTML.includes('غير متاح')) {
+        if (registerError) {
+          registerError.style.display = 'block';
+          registerError.textContent = '❌ اسم المستخدم غير متاح';
+        }
+        return;
+      }
+      
+      try {
+        const result = await auth.createUserWithEmailAndPassword(emailVal, passVal);
+        
+        // إرسال بريد التحقق
+        await result.user.sendEmailVerification();
+        
+        // حفظ بيانات المستخدم
+        await db.collection('users').doc(result.user.uid).set({
+          username: userVal,
+          email: emailVal,
+          online: false,
+          emailVerified: false,
+          createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+          lastSeen: firebase.firestore.FieldValue.serverTimestamp()
+        });
+        
+        showToast('✅ تم إرسال رابط التحقق إلى بريدك الإلكتروني');
+        
+        // التبديل إلى نموذج تسجيل الدخول
+        switchAuthTab('login');
+        loginEmail.value = emailVal;
+        
+        await auth.signOut();
+        
+      } catch (error) {
+        console.error('❌ خطأ في التسجيل:', error);
+        if (registerError) {
+          registerError.style.display = 'block';
+          
+          switch (error.code) {
+            case 'auth/email-already-in-use':
+              registerError.textContent = '❌ هذا البريد الإلكتروني مستخدم بالفعل';
+              break;
+            case 'auth/invalid-email':
+              registerError.textContent = '❌ البريد الإلكتروني غير صالح';
+              break;
+            case 'auth/weak-password':
+              registerError.textContent = '❌ كلمة المرور ضعيفة جداً';
+              break;
+            default:
+              registerError.textContent = '❌ خطأ: ' + error.message;
+          }
+        }
+      }
+    };
+
+    // دالة تسجيل الدخول بحساب Google
+    window.googleLogin = async function() {
+      try {
+        const result = await auth.signInWithPopup(googleProvider);
+        const email = result.user.email;
+        const usernameFromEmail = email.split('@')[0];
+        
+        await db.collection('users').doc(result.user.uid).set({
+          username: usernameFromEmail,
+          email: email,
+          online: true,
+          emailVerified: true,
+          lastSeen: firebase.firestore.FieldValue.serverTimestamp()
+        }, { merge: true });
+        
+        console.log('✅ تم تسجيل الدخول بحساب Google بنجاح');
+        
+      } catch (error) {
+        console.error('❌ خطأ في تسجيل الدخول بحساب Google:', error);
+        showToast('❌ خطأ في تسجيل الدخول بحساب Google', 'error');
+      }
+    };
+
+    // دالة تسجيل الخروج المحسنة
+    window.logout = async function() {
+      try {
+        if (currentUser) {
+          // تحديث الحالة إلى غير متصل
+          await updateUserOnlineStatus(false);
+          
+          // إلغاء الاشتراكات
+          if (unsubscribePublic) unsubscribePublic();
+          if (unsubscribePrivate) unsubscribePrivate();
+          if (unsubscribeOnline) unsubscribeOnline();
+          if (unsubscribePartner) unsubscribePartner();
+          if (unsubscribeTyping) unsubscribeTyping();
+          
+          // حذف حالة الكتابة
+          await db.collection('typing').doc(currentUser.uid).delete().catch(() => {});
+        }
+        
+        await auth.signOut();
+        
+        // إعادة تعيين المتغيرات
+        currentUser = null;
+        currentUsername = '';
+        activePartner = null;
+        
+        // إخفاء الدردشة
+        chatDiv.style.display = 'none';
+        authDiv.style.display = 'flex';
+        privatePage.classList.remove('show');
+        
+        showToast('✅ تم تسجيل الخروج بنجاح');
+        
+      } catch (error) {
+        console.error('❌ خطأ في تسجيل الخروج:', error);
+        showToast('❌ خطأ في تسجيل الخروج', 'error');
+      }
+    };
 
     // ===== دوال الدردشة =====
     function loadPublicMessages() {
@@ -1722,6 +1790,7 @@
             const messageDiv = document.createElement('div');
             messageDiv.className = `message-bubble ${msg.uid === currentUser?.uid ? 'own' : 'other'}`;
             messageDiv.dataset.messageId = doc.id;
+            messageDiv.dataset.uid = msg.uid;
             
             let time = '';
             if (msg.createdAt?.toDate) {
@@ -1761,6 +1830,9 @@
           
           if (wasNearBottom) scrollToBottom(messagesDiv, true);
           isUpdatingMessages = false;
+        }, error => {
+          console.error('❌ خطأ في تحميل الرسائل:', error);
+          isUpdatingMessages = false;
         });
     }
 
@@ -1773,34 +1845,12 @@
           let html = '';
           let count = 0;
           
-          if (snapshot.empty) {
-            onlineList.innerHTML = '<div class="no-messages">لا يوجد متصلين حالياً</div>';
-            document.getElementById('onlineCount').textContent = '0';
-            return;
-          }
-          
           snapshot.forEach(doc => {
             if (doc.id !== currentUser?.uid) {
               count++;
               const data = doc.data();
               const unreadCount = unreadPrivateMessages[doc.id] || 0;
               const initial = data.username.charAt(0).toUpperCase();
-              
-              let lastSeenText = '';
-              if (data.lastSeen) {
-                const lastSeen = data.lastSeen.toDate();
-                const now = new Date();
-                const diffMinutes = Math.floor((now - lastSeen) / 60000);
-                
-                if (diffMinutes < 1) {
-                  lastSeenText = 'الآن';
-                } else if (diffMinutes < 60) {
-                  lastSeenText = `منذ ${diffMinutes} دقيقة`;
-                } else {
-                  const hours = Math.floor(diffMinutes / 60);
-                  lastSeenText = `منذ ${hours} ساعة`;
-                }
-              }
               
               html += `
                 <div class="user-item" onclick="openPrivateChat('${doc.id}', '${escapeHtml(data.username)}')">
@@ -1809,7 +1859,7 @@
                     <div class="user-name">${escapeHtml(data.username)}</div>
                     <div class="user-status">
                       <span class="status-dot"></span>
-                      متصل ${lastSeenText ? `• ${lastSeenText}` : ''}
+                      متصل
                     </div>
                   </div>
                   ${unreadCount > 0 ? `<span class="notification-badge-new">${unreadCount}</span>` : ''}
@@ -1818,15 +1868,10 @@
             }
           });
           
-          if (count === 0) {
-            onlineList.innerHTML = '<div class="no-messages">لا يوجد متصلين آخرين</div>';
-          } else {
-            onlineList.innerHTML = html;
-          }
-          
+          onlineList.innerHTML = html || '<div class="no-messages">لا يوجد متصلين آخرين</div>';
           document.getElementById('onlineCount').textContent = count;
         }, error => {
-          console.error('خطأ في تحميل المتصلين:', error);
+          console.error('❌ خطأ في تحميل المتصلين:', error);
           onlineList.innerHTML = '<div class="no-messages">خطأ في تحميل المتصلين</div>';
         });
     }
@@ -1849,7 +1894,6 @@
         if (doc.exists) {
           const data = doc.data();
           privateStatus.textContent = data.online ? '🟢 متصل' : '🔴 غير متصل';
-          privateStatus.style.background = data.online ? 'rgba(72, 187, 120, 0.2)' : 'rgba(160, 174, 192, 0.2)';
         }
       });
     };
@@ -1886,6 +1930,8 @@
             
             const messageDiv = document.createElement('div');
             messageDiv.className = `message-bubble ${msg.uid === currentUser?.uid ? 'own' : 'other'}`;
+            messageDiv.dataset.messageId = doc.id;
+            messageDiv.dataset.uid = msg.uid;
             
             let time = '';
             if (msg.createdAt?.toDate) {
@@ -1937,6 +1983,7 @@
         privateInput.value = '';
         scrollToBottom(privateMessages, true);
       }).catch(err => {
+        console.error('❌ خطأ في الإرسال:', err);
         showToast('❌ فشل الإرسال', 'error');
       });
     };
@@ -1965,6 +2012,7 @@
           scrollToBottom(messagesDiv, true);
         })
         .catch(err => {
+          console.error('❌ خطأ في الإرسال:', err);
           showToast('❌ فشل الإرسال', 'error');
         });
     }
@@ -2145,11 +2193,17 @@
       document.getElementById('fullImageModal').classList.add('show');
     };
 
-    function handleAdvancedImageSelect(file) {
+    // دالة معالجة اختيار الصورة
+    window.handleAdvancedImageSelect = function(file) {
       if (!file) return;
       
       if (file.size > 5 * 1024 * 1024) {
-        showToast('❌ حجم الصورة كبير جداً', 'error');
+        showToast('❌ حجم الصورة كبير جداً (الحد الأقصى 5 ميجابايت)', 'error');
+        return;
+      }
+      
+      if (!file.type.startsWith('image/')) {
+        showToast('❌ الملف المحدد ليس صورة', 'error');
         return;
       }
       
@@ -2161,7 +2215,12 @@
         currentImageMessageContext = privatePage.classList.contains('show') ? 'private' : 'public';
       };
       reader.readAsDataURL(file);
-    }
+    };
+
+    // ربط دالة اختيار الصورة
+    document.getElementById('imageFileInput').addEventListener('change', function(e) {
+      window.handleAdvancedImageSelect(e.target.files[0]);
+    });
 
     window.sendImageMessage = async function() {
       if (!selectedImageFile || !currentUser) return;
@@ -2178,6 +2237,8 @@
           method: 'POST',
           body: formData
         });
+        
+        if (!response.ok) throw new Error('فشل رفع الصورة');
         
         const data = await response.json();
         
@@ -2205,6 +2266,7 @@
         
         showToast('✅ تم إرسال الصورة');
       } catch (error) {
+        console.error('❌ خطأ في رفع الصورة:', error);
         showToast('❌ فشل إرسال الصورة', 'error');
       } finally {
         document.getElementById('uploadProgress').classList.remove('show');
@@ -2233,70 +2295,104 @@
         await batch.commit();
         showToast('✅ تم مسح المحادثة');
       } catch (err) {
+        console.error('❌ خطأ في مسح المحادثة:', err);
         showToast('❌ فشل المسح', 'error');
       }
     };
 
+    // ===== دوال استعادة كلمة المرور =====
     window.showForgotPasswordModal = function() {
-      document.getElementById('forgotPasswordModal').classList.add('show');
+      forgotPasswordModal.classList.add('show');
+      resetEmail.value = '';
+      resetEmailValidation.style.display = 'none';
+      forgotPasswordMessage.innerHTML = '';
+      resetLoading.style.display = 'none';
     };
 
     window.hideForgotPasswordModal = function() {
-      document.getElementById('forgotPasswordModal').classList.remove('show');
+      forgotPasswordModal.classList.remove('show');
     };
 
     window.validateResetEmail = function() {
-      const emailVal = document.getElementById('resetEmail').value.trim();
-      const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+      const emailVal = resetEmail.value.trim();
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
       const isValid = emailRegex.test(emailVal);
       
-      const validationDiv = document.getElementById('resetEmailValidation');
       if (!emailVal) {
-        validationDiv.style.display = 'none';
+        resetEmailValidation.style.display = 'none';
         return false;
       }
       
-      validationDiv.style.display = 'block';
+      resetEmailValidation.style.display = 'block';
       if (isValid) {
-        validationDiv.className = 'validation-message success';
-        validationDiv.innerHTML = '✅ البريد الإلكتروني صالح';
+        resetEmailValidation.className = 'validation-message success';
+        resetEmailValidation.innerHTML = '✅ البريد الإلكتروني صالح';
       } else {
-        validationDiv.className = 'validation-message error';
-        validationDiv.innerHTML = '❌ البريد الإلكتروني غير صالح';
+        resetEmailValidation.className = 'validation-message error';
+        resetEmailValidation.innerHTML = '❌ البريد الإلكتروني غير صالح';
       }
       return isValid;
     };
 
+    resetEmail.addEventListener('input', validateResetEmail);
+
     window.sendPasswordReset = async function() {
-      const emailVal = document.getElementById('resetEmail').value.trim();
+      const emailVal = resetEmail.value.trim();
       
       if (!emailVal) {
-        document.getElementById('forgotPasswordMessage').innerHTML = '❌ الرجاء إدخال البريد الإلكتروني';
+        forgotPasswordMessage.innerHTML = '❌ الرجاء إدخال البريد الإلكتروني';
+        forgotPasswordMessage.style.color = '#f56565';
         return;
       }
       
       if (!validateResetEmail()) return;
       
-      document.getElementById('resetLoading').style.display = 'block';
-      document.getElementById('sendResetBtn').disabled = true;
+      resetLoading.style.display = 'block';
+      sendResetBtn.disabled = true;
+      cancelResetBtn.disabled = true;
       
       try {
         await auth.sendPasswordResetEmail(emailVal);
-        document.getElementById('forgotPasswordMessage').innerHTML = '✅ تم إرسال رابط إعادة التعيين';
-        setTimeout(hideForgotPasswordModal, 3000);
+        forgotPasswordMessage.innerHTML = '✅ تم إرسال رابط إعادة التعيين إلى بريدك الإلكتروني';
+        forgotPasswordMessage.style.color = '#48bb78';
+        
+        setTimeout(() => {
+          hideForgotPasswordModal();
+        }, 3000);
+        
       } catch (error) {
-        document.getElementById('forgotPasswordMessage').innerHTML = '❌ فشل الإرسال';
+        console.error('❌ خطأ في إرسال رابط إعادة التعيين:', error);
+        
+        let errorMessage = '';
+        switch (error.code) {
+          case 'auth/user-not-found':
+            errorMessage = '❌ لا يوجد حساب بهذا البريد الإلكتروني';
+            break;
+          case 'auth/invalid-email':
+            errorMessage = '❌ البريد الإلكتروني غير صالح';
+            break;
+          case 'auth/too-many-requests':
+            errorMessage = '❌ تم إرسال العديد من الطلبات. الرجاء المحاولة لاحقاً';
+            break;
+          default:
+            errorMessage = '❌ حدث خطأ: ' + error.message;
+        }
+        
+        forgotPasswordMessage.innerHTML = errorMessage;
+        forgotPasswordMessage.style.color = '#f56565';
+        
       } finally {
-        document.getElementById('resetLoading').style.display = 'none';
-        document.getElementById('sendResetBtn').disabled = false;
+        resetLoading.style.display = 'none';
+        sendResetBtn.disabled = false;
+        cancelResetBtn.disabled = false;
       }
     };
 
+    // ===== دوال أخرى =====
     function toggleSidebar() {
       document.querySelector('.users-sidebar').classList.toggle('show');
     }
 
-    // ===== إنشاء الخلفية المتحركة =====
     function createAnimatedBg() {
       const bg = document.getElementById('animatedBg');
       for (let i = 0; i < 50; i++) {
@@ -2310,27 +2406,80 @@
       }
     }
 
-    // ===== التعامل مع أحداث المستخدم =====
-    messageInput.addEventListener('keypress', e => {
-      if (e.key === 'Enter' && !isButtonsDisabled) {
-        e.preventDefault();
-        sendWithReply();
-      }
-    });
+    // ===== دوال حذف الرسائل المحسنة مع التحقق من الصلاحيات =====
+    window.copyMessage = function(text) {
+      navigator.clipboard.writeText(text);
+      showToast('✅ تم النسخ');
+    };
 
-    privateInput.addEventListener('keypress', e => {
-      if (e.key === 'Enter' && !isButtonsDisabled) {
-        e.preventDefault();
-        sendPrivateMessage();
+    window.deleteMessage = async function(messageId) {
+      if (!currentUser) {
+        showToast('❌ يجب تسجيل الدخول أولاً', 'error');
+        return;
       }
-    });
-
-    document.addEventListener('click', (e) => {
-      if (!e.target.closest('.users-sidebar') && !e.target.closest('[onclick="toggleSidebar()"]')) {
-        document.querySelector('.users-sidebar').classList.remove('show');
+      
+      try {
+        // التحقق من وجود الرسالة ومن هو صاحبها
+        const msgDoc = await db.collection('messages').doc(messageId).get();
+        
+        if (!msgDoc.exists) {
+          showToast('❌ الرسالة غير موجودة', 'error');
+          return;
+        }
+        
+        const msgData = msgDoc.data();
+        
+        // التحقق من أن المستخدم الحالي هو صاحب الرسالة فقط
+        if (msgData.uid !== currentUser.uid) {
+          showToast('❌ لا يمكنك حذف رسائل الآخرين', 'error');
+          return;
+        }
+        
+        // تأكيد الحذف
+        if (confirm('هل أنت متأكد من حذف هذه الرسالة؟')) {
+          await db.collection('messages').doc(messageId).delete();
+          showToast('✅ تم حذف الرسالة');
+        }
+        
+      } catch (err) {
+        console.error('❌ خطأ في حذف الرسالة:', err);
+        showToast('❌ فشل الحذف', 'error');
       }
-    });
+    };
 
+    window.deletePrivateMessage = async function(messageId) {
+      if (!currentUser || !activePartner) {
+        showToast('❌ لا يمكن تنفيذ العملية', 'error');
+        return;
+      }
+      
+      try {
+        const msgDoc = await db.collection('private_messages').doc(messageId).get();
+        
+        if (!msgDoc.exists) {
+          showToast('❌ الرسالة غير موجودة', 'error');
+          return;
+        }
+        
+        const msgData = msgDoc.data();
+        
+        if (msgData.uid !== currentUser.uid) {
+          showToast('❌ لا يمكنك حذف رسائل الآخرين', 'error');
+          return;
+        }
+        
+        if (confirm('هل أنت متأكد من حذف هذه الرسالة؟')) {
+          await db.collection('private_messages').doc(messageId).delete();
+          showToast('✅ تم حذف الرسالة');
+        }
+        
+      } catch (err) {
+        console.error('❌ خطأ في حذف الرسالة:', err);
+        showToast('❌ فشل الحذف', 'error');
+      }
+    };
+
+    // ===== قائمة السياق =====
     document.addEventListener('contextmenu', function(e) {
       const messageElement = e.target.closest('.message-bubble');
       if (!messageElement || !currentUser) return;
@@ -2340,6 +2489,7 @@
       const messageId = messageElement.dataset.messageId;
       const messageText = messageElement.querySelector('.message-text')?.textContent || '';
       const senderName = messageElement.querySelector('.message-sender')?.textContent || '';
+      const messageOwnerId = messageElement.dataset.uid;
       
       const menu = document.createElement('div');
       menu.style.cssText = `
@@ -2354,20 +2504,25 @@
         border: 1px solid var(--border-color);
       `;
       
-      menu.innerHTML = `
+      let menuHTML = `
         <button onclick="copyMessage('${escapeHtml(messageText)}')" style="display: block; width: 100%; padding: 10px 20px; border: none; background: none; text-align: right; cursor: pointer; border-radius: 8px; color: var(--text-primary);">
           <i class="fas fa-copy"></i> نسخ
         </button>
         <button onclick="setReply('${messageId}', '${escapeHtml(messageText)}', '${escapeHtml(senderName)}')" style="display: block; width: 100%; padding: 10px 20px; border: none; background: none; text-align: right; cursor: pointer; border-radius: 8px; color: var(--text-primary);">
           <i class="fas fa-reply"></i> رد
         </button>
-        ${messageElement.classList.contains('own') ? `
+      `;
+      
+      // إضافة زر الحذف فقط إذا كان المستخدم هو صاحب الرسالة
+      if (messageOwnerId === currentUser.uid) {
+        menuHTML += `
           <button onclick="deleteMessage('${messageId}')" style="display: block; width: 100%; padding: 10px 20px; border: none; background: none; text-align: right; cursor: pointer; border-radius: 8px; color: #f56565;">
             <i class="fas fa-trash"></i> حذف
           </button>
-        ` : ''}
-      `;
+        `;
+      }
       
+      menu.innerHTML = menuHTML;
       document.body.appendChild(menu);
       
       setTimeout(() => {
@@ -2378,35 +2533,37 @@
       }, 100);
     });
 
-    window.copyMessage = function(text) {
-      navigator.clipboard.writeText(text);
-      showToast('✅ تم النسخ');
-    };
-
-    window.deleteMessage = async function(messageId) {
-      if (!currentUser) return;
-      
-      const msgDoc = await db.collection('messages').doc(messageId).get();
-      if (!msgDoc.exists || msgDoc.data().uid !== currentUser.uid) {
-        showToast('❌ لا يمكنك حذف هذه الرسالة', 'error');
-        return;
+    // ===== أحداث الإدخال =====
+    messageInput.addEventListener('keypress', e => {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        sendWithReply();
       }
-      
-      if (confirm('هل أنت متأكد؟')) {
-        await db.collection('messages').doc(messageId).delete();
-        showToast('✅ تم الحذف');
-      }
-    };
+    });
 
-    // ===== تهيئة Firebase =====
+    privateInput.addEventListener('keypress', e => {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        sendPrivateMessage();
+      }
+    });
+
+    document.addEventListener('click', (e) => {
+      if (!e.target.closest('.users-sidebar') && !e.target.closest('[onclick="toggleSidebar()"]')) {
+        document.querySelector('.users-sidebar').classList.remove('show');
+      }
+    });
+
+    // ===== تهيئة Firebase ومعالجة حالة المصادقة =====
     auth.onAuthStateChanged(async (user) => {
-      authDiv.style.display = 'none';
-      chatDiv.style.display = 'none';
-      
       if (user && user.emailVerified) {
+        // مستخدم مسجل الدخول وبريده مفعل
+        console.log('✅ مستخدم مسجل الدخول:', user.email);
+        
         currentUser = user;
         
         try {
+          // الحصول على اسم المستخدم
           const userDoc = await db.collection('users').doc(user.uid).get();
           if (userDoc.exists) {
             currentUsername = userDoc.data().username;
@@ -2421,40 +2578,56 @@
             });
           }
           
-          await db.collection('users').doc(user.uid).update({
-            online: true,
-            lastSeen: firebase.firestore.FieldValue.serverTimestamp()
-          });
+          // تحديث الحالة إلى متصل
+          await updateUserOnlineStatus(true);
           
+          // تحميل البيانات
           loadPublicMessages();
           loadOnlineUsers();
           loadTypingIndicators();
           
+          // إعداد مراقب الاتصال
           setupConnectionMonitor();
           
+          // تحديث lastSeen كل دقيقة
           setInterval(() => {
             if (currentUser) {
               db.collection('users').doc(currentUser.uid).update({
                 lastSeen: firebase.firestore.FieldValue.serverTimestamp()
-              });
+              }).catch(err => console.error('خطأ في تحديث lastSeen:', err));
             }
           }, 60000);
           
+          // إظهار الدردشة وإخفاء صفحة المصادقة
+          authDiv.style.display = 'none';
           chatDiv.style.display = 'block';
-          disableAllButtons(false);
+          privatePage.classList.remove('show');
+          
+          showToast('✅ تم تسجيل الدخول بنجاح');
           
         } catch (error) {
-          console.error('خطأ في تسجيل الدخول:', error);
-          authDiv.style.display = 'flex';
-          disableAllButtons(false);
+          console.error('❌ خطأ في تحميل بيانات المستخدم:', error);
+          showToast('❌ خطأ في تحميل البيانات', 'error');
         }
+        
       } else {
+        // لا يوجد مستخدم مسجل الدخول أو البريد غير مفعل
+        console.log('👤 لا يوجد مستخدم مسجل الدخول');
+        
+        // إظهار صفحة المصادقة
         authDiv.style.display = 'flex';
-        disableAllButtons(false);
+        chatDiv.style.display = 'none';
+        privatePage.classList.remove('show');
+        
+        // إعادة تعيين المتغيرات
+        currentUser = null;
+        currentUsername = '';
+        activePartner = null;
       }
     });
 
+    // تشغيل الخلفية المتحركة
     createAnimatedBg();
   </script>
 </body>
-</html>
+  </html>
