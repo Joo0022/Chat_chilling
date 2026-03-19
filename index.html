@@ -12,7 +12,7 @@
   <!-- Font Awesome -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
-    /* جميع الأنماط كما هي */
+    /* جميع الأنماط كما هي مع تحسينات بسيطة للخاص */
     * {
       margin: 0;
       padding: 0;
@@ -835,6 +835,7 @@
       color: white;
     }
 
+    /* صفحة المحادثة الخاصة المحسنة */
     .private-page-new {
       position: fixed;
       top: 50%;
@@ -842,7 +843,7 @@
       transform: translate(-50%, -50%);
       width: 90%;
       max-width: 800px;
-      height: 80vh;
+      height: 85vh;
       background: var(--bg-white);
       border-radius: 30px;
       box-shadow: 0 30px 60px -15px rgba(0,0,0,0.5);
@@ -850,11 +851,16 @@
       flex-direction: column;
       z-index: 2000;
       overflow: hidden;
+      animation: fadeScale 0.2s ease;
+    }
+
+    @keyframes fadeScale {
+      from { opacity: 0; transform: translate(-50%, -48%) scale(0.95); }
+      to { opacity: 1; transform: translate(-50%, -50%) scale(1); }
     }
 
     .private-page-new.show {
       display: flex;
-      animation: slideIn 0.3s ease;
     }
 
     .private-header-new {
@@ -864,6 +870,7 @@
       display: flex;
       align-items: center;
       gap: 20px;
+      flex-shrink: 0;
     }
 
     .private-header-new button {
@@ -894,6 +901,14 @@
       overflow-y: auto;
       padding: 30px;
       background: var(--bg-light);
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+    }
+
+    /* تحسين ترتيب الرسائل الخاصة */
+    .private-messages-new .message-bubble {
+      max-width: 75%;
     }
 
     .image-preview-modal {
@@ -1056,7 +1071,7 @@
             </div>
           </div>
 
-          <!-- نموذج التسجيل مع تحديد 15 حرف لاسم المستخدم -->
+          <!-- نموذج التسجيل -->
           <div id="registerForm" style="display: none;">
             <div class="input-group-modern">
               <label>👤 اسم المستخدم (حد أقصى 15 حرف)</label>
@@ -1189,7 +1204,7 @@
     </div>
   </div>
 
-  <!-- صفحة المحادثة الخاصة (تم إزالة زر الحذف) -->
+  <!-- صفحة المحادثة الخاصة (محسنة) -->
   <div class="private-page-new" id="privatePage">
     <div class="private-header-new">
       <button onclick="closePrivateChat()"><i class="fas fa-arrow-right"></i></button>
@@ -1199,7 +1214,6 @@
         <i class="fas fa-sun sun-icon"></i>
         <i class="fas fa-moon moon-icon"></i>
       </button>
-      <!-- تم إزالة زر حذف المحادثة -->
     </div>
     
     <div id="privateTypingIndicator" class="typing-indicator-new" style="display: none; margin: 10px 30px;">
@@ -1291,7 +1305,6 @@
       appId: "1:544947944105:web:f2ac32d485c8ad68b647b8"
     };
     
-    // تهيئة Firebase
     firebase.initializeApp(firebaseConfig);
     const auth = firebase.auth();
     const db = firebase.firestore();
@@ -1368,8 +1381,6 @@
     let currentPrivateRoomId = null;
     let scrollAnimationFrame = null;
     let isUpdatingMessages = false;
-    let lastVisible = null;
-    let loadingMore = false;
     const MESSAGES_LIMIT = 50;
 
     // دالة إخفاء شاشة التحميل
@@ -1397,7 +1408,7 @@
     }
     loadSavedTheme();
 
-    // ===== نظام حالة الاتصال المحسن =====
+    // ===== نظام حالة الاتصال المحسن (تم إصلاح مشكلة البقاء متصل) =====
     async function setupUserPresence() {
       if (!currentUser) return;
 
@@ -1405,6 +1416,7 @@
       const userStatusRef = db.collection('status').doc(currentUser.uid);
       
       try {
+        // تحديث الحالة إلى متصل
         await userRef.update({
           online: true,
           status: 'online',
@@ -1412,6 +1424,7 @@
           lastActive: firebase.firestore.FieldValue.serverTimestamp()
         });
 
+        // إعداد onDisconnect لتحديث الحالة عند قطع الاتصال (إغلاق التبويب أو المتصفح)
         userRef.onDisconnect().update({
           online: false,
           status: 'offline',
@@ -1422,6 +1435,32 @@
           uid: currentUser.uid,
           status: 'offline',
           lastSeen: firebase.firestore.FieldValue.serverTimestamp()
+        });
+
+        // إضافة مستمع لنشاط الشبكة للتحديث الفوري
+        window.addEventListener('online', () => {
+          userRef.update({
+            online: true,
+            status: 'online',
+            lastSeen: firebase.firestore.FieldValue.serverTimestamp()
+          }).catch(() => {});
+        });
+
+        window.addEventListener('offline', () => {
+          userRef.update({
+            online: false,
+            status: 'offline',
+            lastSeen: firebase.firestore.FieldValue.serverTimestamp()
+          }).catch(() => {});
+        });
+
+        // عند إغلاق الصفحة، محاولة تحديث الحالة (قد لا يعمل دائمًا لكن onDisconnect يقوم بالمهمة)
+        window.addEventListener('beforeunload', () => {
+          userRef.update({
+            online: false,
+            status: 'offline',
+            lastSeen: firebase.firestore.FieldValue.serverTimestamp()
+          }).catch(() => {});
         });
 
         console.log('✅ تم إعداد نظام حالة الاتصال');
@@ -1494,36 +1533,11 @@
         }
       });
 
-      window.addEventListener('online', () => {
-        userRef.update({
-          online: true,
-          status: 'online',
-          lastSeen: firebase.firestore.FieldValue.serverTimestamp()
-        }).catch(() => {});
-        showToast('🟢 تم استعادة الاتصال بالإنترنت');
-      });
-
-      window.addEventListener('offline', () => {
-        userRef.update({
-          online: false,
-          status: 'offline',
-          lastSeen: firebase.firestore.FieldValue.serverTimestamp()
-        }).catch(() => {});
-        showToast('🔴 فقد الاتصال بالإنترنت', 'warning');
-      });
-
-      window.addEventListener('beforeunload', () => {
-        userRef.update({
-          online: false,
-          status: 'offline',
-          lastSeen: firebase.firestore.FieldValue.serverTimestamp()
-        }).catch(() => {});
-      });
-
+      // بدء المراقبة
       updateLastActivity();
     }
 
-    // ===== تحميل المستخدمين =====
+    // ===== تحميل المستخدمين مع تحسين عرض الحالة =====
     function loadOnlineUsers() {
       if (unsubscribeOnline) unsubscribeOnline();
       
@@ -1547,16 +1561,24 @@
               let statusDot = '';
               let lastSeenText = '';
               
-              if (data.online && data.status === 'online') {
-                onlineCount++;
-                statusText = '🟢 متصل';
-                statusClass = 'online';
-                statusDot = '<span class="status-dot"></span>';
-              } else if (data.online && data.status === 'away') {
-                awayCount++;
-                statusText = '🟡 غير نشط';
-                statusClass = 'away';
-                statusDot = '<span class="status-dot away"></span>';
+              // التحقق من الحالة بدقة
+              if (data.online === true) {
+                if (data.status === 'online') {
+                  onlineCount++;
+                  statusText = '🟢 متصل';
+                  statusClass = 'online';
+                  statusDot = '<span class="status-dot"></span>';
+                } else if (data.status === 'away') {
+                  awayCount++;
+                  statusText = '🟡 غير نشط';
+                  statusClass = 'away';
+                  statusDot = '<span class="status-dot away"></span>';
+                } else {
+                  onlineCount++; // افتراضي
+                  statusText = '🟢 متصل';
+                  statusClass = 'online';
+                  statusDot = '<span class="status-dot"></span>';
+                }
               } else {
                 statusText = '🔴 غير متصل';
                 statusClass = 'offline';
@@ -1649,7 +1671,7 @@
       });
     }
 
-    // ===== دوال المصادقة =====
+    // ===== دوال المصادقة (كما هي) =====
     window.switchAuthTab = function(tab) {
       if (tab === 'login') {
         loginTab.classList.add('active');
@@ -1736,7 +1758,6 @@
     window.checkUsernameAvailability = async function() {
       const usernameVal = username.value.trim();
       
-      // التحقق من طول اسم المستخدم (حد أقصى 15 حرف)
       if (usernameVal.length > 15) {
         usernameCheck.innerHTML = '❌ اسم المستخدم طويل جداً (الحد الأقصى 15 حرف)';
         usernameCheck.style.color = '#f56565';
@@ -1843,7 +1864,6 @@
         return;
       }
       
-      // التحقق من طول اسم المستخدم (حد أقصى 15 حرف)
       if (userVal.length > 15) {
         if (registerError) {
           registerError.style.display = 'block';
@@ -1924,7 +1944,7 @@
       try {
         const result = await auth.signInWithPopup(googleProvider);
         const email = result.user.email;
-        const usernameFromEmail = email.split('@')[0].substring(0, 15); // تحديد 15 حرف كحد أقصى
+        const usernameFromEmail = email.split('@')[0].substring(0, 15);
         
         await db.collection('users').doc(result.user.uid).set({
           username: usernameFromEmail,
@@ -2714,7 +2734,6 @@
           chatDiv.style.display = 'block';
           privatePage.classList.remove('show');
           
-          // إخفاء شاشة التحميل بعد التحميل الكامل
           hideLoadingScreen();
           
         } catch (error) {
@@ -2723,7 +2742,6 @@
         }
         
       } else {
-        // إخفاء شاشة التحميل وإظهار صفحة تسجيل الدخول
         hideLoadingScreen();
         authDiv.style.display = 'flex';
         chatDiv.style.display = 'none';
@@ -2735,13 +2753,11 @@
       }
     });
 
-    // تشغيل الخلفية المتحركة
     createAnimatedBg();
 
-    // إخفاء شاشة التحميل في حالة وجود خطأ (آلية أمان)
     setTimeout(() => {
       hideLoadingScreen();
     }, 5000);
   </script>
 </body>
-                                    </html>
+    </html>
