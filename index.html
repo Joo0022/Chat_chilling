@@ -12,7 +12,7 @@
   <!-- Font Awesome -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
-    /* جميع الأنماط كما هي مع تحسينات بسيطة للخاص */
+    /* جميع الأنماط مع تحسين البوردر والألوان المميزة للمستخدمين */
     * {
       margin: 0;
       padding: 0;
@@ -45,6 +45,20 @@
       --danger-color: #f56565;
       --success-color: #48bb78;
       --warning-color: #ecc94b;
+      
+      /* ألوان المستخدمين للرسائل العامة - 12 لون مميز */
+      --user-color-1: #FF6B6B;
+      --user-color-2: #4ECDC4;
+      --user-color-3: #45B7D1;
+      --user-color-4: #96CEB4;
+      --user-color-5: #FFEAA7;
+      --user-color-6: #DDA0DD;
+      --user-color-7: #98D8C8;
+      --user-color-8: #F7DC6F;
+      --user-color-9: #BB8FCE;
+      --user-color-10: #82E0AA;
+      --user-color-11: #F1948A;
+      --user-color-12: #85C1E9;
     }
 
     :root[data-theme="dark"] {
@@ -72,6 +86,20 @@
       --danger-color: #fc8181;
       --success-color: #68d391;
       --warning-color: #f6e05e;
+      
+      /* ألوان المستخدمين للوضع الليلي - نسخ معدلة لتناسب الوضع الداكن */
+      --user-color-1: #FF8A8A;
+      --user-color-2: #6ED4CB;
+      --user-color-3: #5FC3E0;
+      --user-color-4: #A8D5BA;
+      --user-color-5: #FFF2B5;
+      --user-color-6: #E6B8E6;
+      --user-color-7: #B0E0D6;
+      --user-color-8: #FCE96A;
+      --user-color-9: #D2B4DE;
+      --user-color-10: #A3E4C0;
+      --user-color-11: #F5B7B1;
+      --user-color-12: #A9D6F0;
     }
 
     body {
@@ -80,7 +108,7 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      padding: 20px;
+      padding: 0;
       transition: background 0.3s ease;
     }
 
@@ -154,16 +182,16 @@
       }
     }
 
+    /* الحاوية الرئيسية */
     .container {
       width: 100%;
-      max-width: 1400px;
-      height: 90vh;
+      height: 100vh;
       background: var(--container-bg);
       backdrop-filter: blur(20px);
       -webkit-backdrop-filter: blur(20px);
-      border-radius: 40px;
-      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
-      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 0;
+      box-shadow: none;
+      border: none;
       overflow: hidden;
       position: relative;
     }
@@ -692,12 +720,31 @@
       box-shadow: 0 5px 15px var(--shadow-color);
     }
 
+    /* تنسيق اسم المرسل مع اللون المميز */
     .message-sender {
       font-size: 0.8rem;
       margin-bottom: 5px;
-      opacity: 0.8;
+      opacity: 0.9;
       font-weight: 600;
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 12px;
+      background: rgba(255, 255, 255, 0.15);
     }
+
+    /* ألوان المستخدمين المختلفة */
+    .user-color-1 .message-sender { background: var(--user-color-1); color: #000; }
+    .user-color-2 .message-sender { background: var(--user-color-2); color: #000; }
+    .user-color-3 .message-sender { background: var(--user-color-3); color: #000; }
+    .user-color-4 .message-sender { background: var(--user-color-4); color: #000; }
+    .user-color-5 .message-sender { background: var(--user-color-5); color: #000; }
+    .user-color-6 .message-sender { background: var(--user-color-6); color: #000; }
+    .user-color-7 .message-sender { background: var(--user-color-7); color: #000; }
+    .user-color-8 .message-sender { background: var(--user-color-8); color: #000; }
+    .user-color-9 .message-sender { background: var(--user-color-9); color: #000; }
+    .user-color-10 .message-sender { background: var(--user-color-10); color: #000; }
+    .user-color-11 .message-sender { background: var(--user-color-11); color: #000; }
+    .user-color-12 .message-sender { background: var(--user-color-12); color: #000; }
 
     .message-text {
       word-break: break-word;
@@ -835,7 +882,7 @@
       color: white;
     }
 
-    /* صفحة المحادثة الخاصة المحسنة */
+    /* صفحة المحادثة الخاصة */
     .private-page-new {
       position: fixed;
       top: 50%;
@@ -906,7 +953,6 @@
       gap: 15px;
     }
 
-    /* تحسين ترتيب الرسائل الخاصة */
     .private-messages-new .message-bubble {
       max-width: 75%;
     }
@@ -1204,7 +1250,7 @@
     </div>
   </div>
 
-  <!-- صفحة المحادثة الخاصة (محسنة) -->
+  <!-- صفحة المحادثة الخاصة -->
   <div class="private-page-new" id="privatePage">
     <div class="private-header-new">
       <button onclick="closePrivateChat()"><i class="fas fa-arrow-right"></i></button>
@@ -1383,6 +1429,20 @@
     let isUpdatingMessages = false;
     const MESSAGES_LIMIT = 50;
 
+    // خريطة ألوان المستخدمين
+    const userColors = new Map();
+    const availableColors = Array.from({ length: 12 }, (_, i) => `user-color-${i + 1}`);
+    let colorIndex = 0;
+
+    // دالة للحصول على لون المستخدم
+    function getUserColorClass(userId) {
+      if (!userColors.has(userId)) {
+        userColors.set(userId, availableColors[colorIndex % availableColors.length]);
+        colorIndex++;
+      }
+      return userColors.get(userId);
+    }
+
     // دالة إخفاء شاشة التحميل
     function hideLoadingScreen() {
       loadingScreen.classList.add('hidden');
@@ -1408,7 +1468,7 @@
     }
     loadSavedTheme();
 
-    // ===== نظام حالة الاتصال المحسن (تم إصلاح مشكلة البقاء متصل) =====
+    // ===== نظام حالة الاتصال المحسن =====
     async function setupUserPresence() {
       if (!currentUser) return;
 
@@ -1416,7 +1476,6 @@
       const userStatusRef = db.collection('status').doc(currentUser.uid);
       
       try {
-        // تحديث الحالة إلى متصل
         await userRef.update({
           online: true,
           status: 'online',
@@ -1424,7 +1483,6 @@
           lastActive: firebase.firestore.FieldValue.serverTimestamp()
         });
 
-        // إعداد onDisconnect لتحديث الحالة عند قطع الاتصال (إغلاق التبويب أو المتصفح)
         userRef.onDisconnect().update({
           online: false,
           status: 'offline',
@@ -1437,7 +1495,6 @@
           lastSeen: firebase.firestore.FieldValue.serverTimestamp()
         });
 
-        // إضافة مستمع لنشاط الشبكة للتحديث الفوري
         window.addEventListener('online', () => {
           userRef.update({
             online: true,
@@ -1454,7 +1511,6 @@
           }).catch(() => {});
         });
 
-        // عند إغلاق الصفحة، محاولة تحديث الحالة (قد لا يعمل دائمًا لكن onDisconnect يقوم بالمهمة)
         window.addEventListener('beforeunload', () => {
           userRef.update({
             online: false,
@@ -1533,11 +1589,10 @@
         }
       });
 
-      // بدء المراقبة
       updateLastActivity();
     }
 
-    // ===== تحميل المستخدمين مع تحسين عرض الحالة =====
+    // ===== تحميل المستخدمين =====
     function loadOnlineUsers() {
       if (unsubscribeOnline) unsubscribeOnline();
       
@@ -1561,7 +1616,6 @@
               let statusDot = '';
               let lastSeenText = '';
               
-              // التحقق من الحالة بدقة
               if (data.online === true) {
                 if (data.status === 'online') {
                   onlineCount++;
@@ -1574,7 +1628,7 @@
                   statusClass = 'away';
                   statusDot = '<span class="status-dot away"></span>';
                 } else {
-                  onlineCount++; // افتراضي
+                  onlineCount++;
                   statusText = '🟢 متصل';
                   statusClass = 'online';
                   statusDot = '<span class="status-dot"></span>';
@@ -2025,6 +2079,13 @@
             
             const messageDiv = document.createElement('div');
             messageDiv.className = `message-bubble ${msg.uid === currentUser?.uid ? 'own' : 'other'}`;
+            
+            // إضافة كلاس اللون للمستخدم غير نفسه
+            if (msg.uid !== currentUser?.uid) {
+              const colorClass = getUserColorClass(msg.uid);
+              messageDiv.classList.add(colorClass);
+            }
+            
             messageDiv.dataset.messageId = doc.id;
             messageDiv.dataset.uid = msg.uid;
             
@@ -2760,4 +2821,4 @@
     }, 5000);
   </script>
 </body>
-    </html>
+          </html>
