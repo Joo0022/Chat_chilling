@@ -5,14 +5,14 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
   <title>Chat_With_Us 💬</title>
   <link rel="icon" type="image/png" href="https://i.postimg.cc/rsbg47X7/8f55b377-3e6f-4bc9-bbc5-9b1ed3057599.png">
-  <!-- Firebase SDK -->
-  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
-  <!-- Font Awesome -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <!-- Firebase SDK (defer لتحسين السرعة) -->
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js" defer></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js" defer></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js" defer></script>
+  <!-- Font Awesome (defer) -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" media="print" onload="this.media='all'">
   <style>
-    /* جميع الأنماط كما هي من الملف السابق */
+    /* جميع الأنماط كما هي مع إضافات تحسين الأداء */
     * {
       margin: 0;
       padding: 0;
@@ -74,6 +74,7 @@
       --warning-color: #f6e05e;
     }
 
+    /* تحسينات الأداء */
     body {
       background: linear-gradient(135deg, var(--bg-gradient-start), var(--bg-gradient-end));
       min-height: 100vh;
@@ -82,6 +83,8 @@
       justify-content: center;
       padding: 20px;
       transition: background 0.3s ease;
+      will-change: background;
+      transform: translateZ(0);
     }
 
     .animated-bg {
@@ -92,6 +95,7 @@
       height: 100%;
       z-index: -1;
       overflow: hidden;
+      contain: strict;
     }
 
     .animated-bg span {
@@ -102,17 +106,56 @@
       background: rgba(255, 255, 255, 0.1);
       animation: animate 25s linear infinite;
       bottom: -150px;
+      will-change: transform, opacity;
     }
 
     @keyframes animate {
-      0% {
-        transform: translateY(0) rotate(0deg);
-        opacity: 1;
-      }
-      100% {
-        transform: translateY(-1000px) rotate(720deg);
-        opacity: 0;
-      }
+      0% { transform: translateY(0) rotate(0deg); opacity: 1; }
+      100% { transform: translateY(-1000px) rotate(720deg); opacity: 0; }
+    }
+
+    /* شاشة التحميل */
+    #loadingScreen {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 10000;
+      transition: opacity 0.5s ease, visibility 0.5s ease;
+      opacity: 1;
+      visibility: visible;
+    }
+    #loadingScreen.hidden {
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+    }
+    .loader-content {
+      text-align: center;
+      color: white;
+      transform: translateZ(0);
+      backface-visibility: hidden;
+    }
+    .loader-spinner {
+      width: 70px;
+      height: 70px;
+      border: 6px solid rgba(255,255,255,0.3);
+      border-top-color: white;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      margin: 0 auto 25px;
+      will-change: transform;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .loader-content p {
+      font-size: 1.3rem;
+      font-weight: 500;
+      text-shadow: 0 5px 15px rgba(0,0,0,0.2);
     }
 
     .container {
@@ -127,6 +170,7 @@
       border: 1px solid rgba(255, 255, 255, 0.2);
       overflow: hidden;
       position: relative;
+      contain: content;
     }
 
     /* Auth Styles */
@@ -147,6 +191,8 @@
       text-align: center;
       position: relative;
       overflow: hidden;
+      will-change: transform;
+      transform: translateZ(0);
     }
 
     .auth-side::before {
@@ -361,6 +407,8 @@
       display: flex;
       flex-direction: column;
       overflow: hidden;
+      will-change: transform;
+      transform: translateZ(0);
     }
 
     .sidebar-header {
@@ -387,6 +435,7 @@
       flex: 1;
       overflow-y: auto;
       padding: 15px;
+      contain: content;
     }
 
     .user-item {
@@ -400,6 +449,8 @@
       cursor: pointer;
       transition: all 0.3s ease;
       border: 2px solid transparent;
+      will-change: transform, border-color;
+      transform: translateZ(0);
     }
 
     .user-item:hover {
@@ -523,6 +574,8 @@
       cursor: pointer;
       transition: all 0.3s ease;
       font-size: 1.2rem;
+      will-change: transform, background;
+      transform: translateZ(0);
     }
 
     .btn-icon:hover {
@@ -629,6 +682,7 @@
       display: flex;
       flex-direction: column;
       gap: 15px;
+      contain: content;
     }
 
     .message-bubble {
@@ -637,6 +691,8 @@
       border-radius: 25px 25px 25px 5px;
       animation: slideIn 0.3s ease;
       position: relative;
+      will-change: transform;
+      transform: translateZ(0);
     }
 
     .message-bubble.own {
@@ -901,14 +957,8 @@
     }
 
     @keyframes slideIn {
-      from {
-        opacity: 0;
-        transform: translateY(20px);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
     }
 
     @keyframes typing {
@@ -965,6 +1015,14 @@
   </style>
 </head>
 <body>
+  <!-- شاشة التحميل -->
+  <div id="loadingScreen">
+    <div class="loader-content">
+      <div class="loader-spinner"></div>
+      <p>جاري تحميل التطبيق...</p>
+    </div>
+  </div>
+
   <div class="animated-bg" id="animatedBg"></div>
 
   <div class="container">
@@ -1142,7 +1200,7 @@
     </div>
   </div>
 
-  <!-- صفحة المحادثة الخاصة -->
+  <!-- صفحة المحادثة الخاصة (تم إزالة زر الحذف) -->
   <div class="private-page-new" id="privatePage">
     <div class="private-header-new">
       <button onclick="closePrivateChat()"><i class="fas fa-arrow-right"></i></button>
@@ -1152,7 +1210,7 @@
         <i class="fas fa-sun sun-icon"></i>
         <i class="fas fa-moon moon-icon"></i>
       </button>
-      <button onclick="clearPrivateChat()" id="clearPrivateBtn"><i class="fas fa-trash"></i></button>
+      <!-- تم إزالة زر حذف المحادثة -->
     </div>
     
     <div id="privateTypingIndicator" class="typing-indicator-new" style="display: none; margin: 10px 30px;">
@@ -1183,14 +1241,14 @@
       <i class="fas fa-times"></i>
     </button>
     <div class="preview-content-new">
-      <img id="fullImage" src="" alt="">
+      <img id="fullImage" src="" alt="" loading="lazy">
     </div>
   </div>
 
   <!-- معاينة الصورة قبل الرفع -->
   <div class="image-preview-modal" id="imagePreviewContainer" style="z-index: 3500;">
     <div style="background: var(--bg-white); border-radius: 30px; padding: 30px; max-width: 500px;">
-      <img id="imagePreview" class="preview-image" src="" alt="" style="max-width: 100%; max-height: 300px; border-radius: 15px;">
+      <img id="imagePreview" class="preview-image" src="" alt="" style="max-width: 100%; max-height: 300px; border-radius: 15px;" loading="lazy">
       <div style="display: flex; gap: 10px; margin-top: 20px; justify-content: center;">
         <button class="btn-modern" onclick="sendImageMessage()" style="width: auto; padding: 12px 30px;" id="sendImageBtn">
           <i class="fas fa-check"></i> إرسال
@@ -1253,6 +1311,7 @@
     const UPLOAD_PRESET = "chat-app";
 
     // ✅ تهيئة العناصر
+    const loadingScreen = document.getElementById('loadingScreen');
     const authDiv = document.getElementById('auth');
     const chatDiv = document.getElementById('chat');
     const messagesDiv = document.getElementById('messages');
@@ -1324,6 +1383,13 @@
     let loadingMore = false;
     const MESSAGES_LIMIT = 50;
 
+    // إظهار شاشة التحميل وإخفائها عند الانتهاء
+    function hideLoadingScreen() {
+      setTimeout(() => {
+        loadingScreen.classList.add('hidden');
+      }, 300);
+    }
+
     // ===== نظام الثيم =====
     function toggleTheme() {
       const html = document.documentElement;
@@ -1352,7 +1418,6 @@
       const userStatusRef = db.collection('status').doc(currentUser.uid);
       
       try {
-        // إعداد onDisconnect لتحديث الحالة عند قطع الاتصال فجأة
         await userRef.update({
           online: true,
           status: 'online',
@@ -1360,14 +1425,12 @@
           lastActive: firebase.firestore.FieldValue.serverTimestamp()
         });
 
-        // إعداد onDisconnect للمستخدم
         userRef.onDisconnect().update({
           online: false,
           status: 'offline',
           lastSeen: firebase.firestore.FieldValue.serverTimestamp()
         });
 
-        // إعداد onDisconnect لحالة المستخدم المفصلة
         userStatusRef.onDisconnect().set({
           uid: currentUser.uid,
           status: 'offline',
@@ -1389,106 +1452,91 @@
       let isAway = false;
       let lastActivity = Date.now();
 
-      // تحديث آخر نشاط
       function updateLastActivity() {
         lastActivity = Date.now();
         
         if (isAway) {
-          // إذا كان المستخدم عاد من حالة عدم النشاط
           isAway = false;
           userRef.update({
             status: 'online',
             online: true,
             lastActive: firebase.firestore.FieldValue.serverTimestamp()
-          }).catch(err => console.error('خطأ في تحديث الحالة:', err));
+          }).catch(() => {});
         }
 
-        // إعادة تعيين مؤقت عدم النشاط
         clearTimeout(inactivityTimeout);
         
-        // بعد 30 ثانية من عدم النشاط -> غير نشط (away)
         inactivityTimeout = setTimeout(() => {
           if (document.visibilityState === 'hidden') {
-            // إذا كان التبويب مخفياً، نعتبره غير نشط
             isAway = true;
             userRef.update({
               status: 'away',
               online: true,
               lastActive: firebase.firestore.FieldValue.serverTimestamp()
-            }).catch(err => console.error('خطأ في تحديث الحالة:', err));
+            }).catch(() => {});
           } else {
-            // تحقق إذا كان هناك نشاط حقيقي
             const timeSinceLastActivity = Date.now() - lastActivity;
-            if (timeSinceLastActivity > 30000) { // 30 ثانية
+            if (timeSinceLastActivity > 30000) {
               isAway = true;
               userRef.update({
                 status: 'away',
                 online: true,
                 lastActive: firebase.firestore.FieldValue.serverTimestamp()
-              }).catch(err => console.error('خطأ في تحديث الحالة:', err));
+              }).catch(() => {});
             }
           }
-        }, 30000); // 30 ثانية
+        }, 30000);
       }
 
-      // مراقبة حركات المستخدم
       const activityEvents = ['mousedown', 'keydown', 'touchstart', 'mousemove', 'scroll'];
       activityEvents.forEach(event => {
         document.addEventListener(event, updateLastActivity, { passive: true });
       });
 
-      // مراقبة تغيير حالة التبويب
       document.addEventListener('visibilitychange', () => {
         if (document.hidden) {
-          // المستخدم انتقل لتبويب آخر
           clearTimeout(inactivityTimeout);
           isAway = true;
           userRef.update({
             status: 'away',
             online: true,
             lastActive: firebase.firestore.FieldValue.serverTimestamp()
-          }).catch(err => console.error('خطأ في تحديث الحالة:', err));
+          }).catch(() => {});
         } else {
-          // المستخدم عاد للتبويب
           updateLastActivity();
         }
       });
 
-      // مراقبة حالة الإنترنت
       window.addEventListener('online', () => {
-        console.log('✅ عودة الاتصال بالإنترنت');
         userRef.update({
           online: true,
           status: 'online',
           lastSeen: firebase.firestore.FieldValue.serverTimestamp()
-        }).catch(err => console.error('خطأ في تحديث الحالة:', err));
+        }).catch(() => {});
         showToast('🟢 تم استعادة الاتصال بالإنترنت');
       });
 
       window.addEventListener('offline', () => {
-        console.log('❌ فقد الاتصال بالإنترنت');
         userRef.update({
           online: false,
           status: 'offline',
           lastSeen: firebase.firestore.FieldValue.serverTimestamp()
-        }).catch(err => console.error('خطأ في تحديث الحالة:', err));
+        }).catch(() => {});
         showToast('🔴 فقد الاتصال بالإنترنت', 'warning');
       });
 
-      // مراقبة قبل إغلاق المتصفح
       window.addEventListener('beforeunload', () => {
         userRef.update({
           online: false,
           status: 'offline',
           lastSeen: firebase.firestore.FieldValue.serverTimestamp()
-        }).catch(err => console.error('خطأ في تحديث الحالة عند الإغلاق:', err));
+        }).catch(() => {});
       });
 
-      // بدء المراقبة
       updateLastActivity();
     }
 
-    // ===== تحديث دالة تحميل المستخدمين =====
+    // ===== تحميل المستخدمين =====
     function loadOnlineUsers() {
       if (unsubscribeOnline) unsubscribeOnline();
       
@@ -1507,7 +1555,6 @@
               const unreadCount = unreadPrivateMessages[doc.id] || 0;
               const initial = data.username.charAt(0).toUpperCase();
               
-              // تحديد الحالة
               let statusText = '';
               let statusClass = '';
               let statusDot = '';
@@ -1528,7 +1575,6 @@
                 statusClass = 'offline';
                 statusDot = '<span class="status-dot offline"></span>';
                 
-                // حساب آخر ظهور
                 if (data.lastSeen?.toDate) {
                   const lastSeen = data.lastSeen.toDate();
                   const now = new Date();
@@ -1554,9 +1600,7 @@
                       ${statusDot}
                       ${statusText}
                     </div>
-                    ${lastSeenText ? `
-                      <div class="user-last-seen">آخر ظهور: ${lastSeenText}</div>
-                    ` : ''}
+                    ${lastSeenText ? `<div class="user-last-seen">آخر ظهور: ${lastSeenText}</div>` : ''}
                   </div>
                   ${unreadCount > 0 ? `<span class="notification-badge-new">${unreadCount}</span>` : ''}
                 </div>
@@ -1567,12 +1611,11 @@
           onlineList.innerHTML = html || '<div class="no-messages">لا يوجد مستخدمين آخرين</div>';
           document.getElementById('onlineCount').textContent = `${onlineCount} متصل، ${awayCount} غير نشط`;
         }, error => {
-          console.error('❌ خطأ في تحميل المستخدمين:', error);
           onlineList.innerHTML = '<div class="no-messages">خطأ في تحميل المستخدمين</div>';
         });
     }
 
-    // ===== الدوال المساعدة =====
+    // ===== دوال مساعدة =====
     function showToast(message, type = 'success') {
       const toast = document.createElement('div');
       toast.style.cssText = `
@@ -1619,7 +1662,7 @@
       });
     }
 
-    // ===== دوال المصادقة المحسنة =====
+    // ===== دوال المصادقة =====
     window.switchAuthTab = function(tab) {
       if (tab === 'login') {
         loginTab.classList.add('active');
@@ -1725,18 +1768,15 @@
             usernameCheck.style.color = '#f56565';
           }
         } catch (error) {
-          console.error(error);
           usernameCheck.innerHTML = '';
         }
       }, 500);
     };
 
-    // دالة تسجيل الدخول المحسنة
     window.login = async function() {
       const emailVal = loginEmail.value.trim();
       const passVal = loginPassword.value.trim();
       
-      // إخفاء رسائل الخطأ السابقة
       if (loginError) loginError.style.display = 'none';
       
       if (!emailVal || !passVal) {
@@ -1767,11 +1807,9 @@
           return;
         }
         
-        // تم تسجيل الدخول بنجاح
         console.log('✅ تم تسجيل الدخول بنجاح');
         
       } catch (error) {
-        console.error('❌ خطأ في تسجيل الدخول:', error);
         if (loginError) {
           loginError.style.display = 'block';
           
@@ -1795,7 +1833,6 @@
       }
     };
 
-    // دالة التسجيل المحسنة
     window.register = async function() {
       const emailVal = email.value.trim();
       const passVal = password.value.trim();
@@ -1838,10 +1875,8 @@
       try {
         const result = await auth.createUserWithEmailAndPassword(emailVal, passVal);
         
-        // إرسال بريد التحقق
         await result.user.sendEmailVerification();
         
-        // حفظ بيانات المستخدم
         await db.collection('users').doc(result.user.uid).set({
           username: userVal,
           email: emailVal,
@@ -1855,14 +1890,12 @@
         
         showToast('✅ تم إرسال رابط التحقق إلى بريدك الإلكتروني');
         
-        // التبديل إلى نموذج تسجيل الدخول
         switchAuthTab('login');
         loginEmail.value = emailVal;
         
         await auth.signOut();
         
       } catch (error) {
-        console.error('❌ خطأ في التسجيل:', error);
         if (registerError) {
           registerError.style.display = 'block';
           
@@ -1883,7 +1916,6 @@
       }
     };
 
-    // دالة تسجيل الدخول بحساب Google
     window.googleLogin = async function() {
       try {
         const result = await auth.signInWithPopup(googleProvider);
@@ -1903,41 +1935,34 @@
         console.log('✅ تم تسجيل الدخول بحساب Google بنجاح');
         
       } catch (error) {
-        console.error('❌ خطأ في تسجيل الدخول بحساب Google:', error);
         showToast('❌ خطأ في تسجيل الدخول بحساب Google', 'error');
       }
     };
 
-    // دالة تسجيل الخروج المحسنة
     window.logout = async function() {
       try {
         if (currentUser) {
-          // تحديث الحالة إلى غير متصل
           await db.collection('users').doc(currentUser.uid).update({
             online: false,
             status: 'offline',
             lastSeen: firebase.firestore.FieldValue.serverTimestamp()
           });
           
-          // إلغاء الاشتراكات
           if (unsubscribePublic) unsubscribePublic();
           if (unsubscribePrivate) unsubscribePrivate();
           if (unsubscribeOnline) unsubscribeOnline();
           if (unsubscribePartner) unsubscribePartner();
           if (unsubscribeTyping) unsubscribeTyping();
           
-          // حذف حالة الكتابة
           await db.collection('typing').doc(currentUser.uid).delete().catch(() => {});
         }
         
         await auth.signOut();
         
-        // إعادة تعيين المتغيرات
         currentUser = null;
         currentUsername = '';
         activePartner = null;
         
-        // إخفاء الدردشة
         chatDiv.style.display = 'none';
         authDiv.style.display = 'flex';
         privatePage.classList.remove('show');
@@ -1945,7 +1970,6 @@
         showToast('✅ تم تسجيل الخروج بنجاح');
         
       } catch (error) {
-        console.error('❌ خطأ في تسجيل الخروج:', error);
         showToast('❌ خطأ في تسجيل الخروج', 'error');
       }
     };
@@ -2004,7 +2028,7 @@
             }
             
             if (msg.imageUrl) {
-              content += `<img src="${escapeHtml(msg.imageUrl)}" class="message-image" onclick="showFullImage('${escapeHtml(msg.imageUrl)}')">`;
+              content += `<img src="${escapeHtml(msg.imageUrl)}" class="message-image" onclick="showFullImage('${escapeHtml(msg.imageUrl)}')" loading="lazy">`;
             }
             
             content += `<div class="reactions-wrapper" id="reactions-${doc.id}"></div>`;
@@ -2019,7 +2043,6 @@
           if (wasNearBottom) scrollToBottom(messagesDiv, true);
           isUpdatingMessages = false;
         }, error => {
-          console.error('❌ خطأ في تحميل الرسائل:', error);
           isUpdatingMessages = false;
         });
     }
@@ -2106,7 +2129,7 @@
             }
             
             if (msg.imageUrl) {
-              content += `<img src="${escapeHtml(msg.imageUrl)}" class="message-image" onclick="showFullImage('${escapeHtml(msg.imageUrl)}')">`;
+              content += `<img src="${escapeHtml(msg.imageUrl)}" class="message-image" onclick="showFullImage('${escapeHtml(msg.imageUrl)}')" loading="lazy">`;
             }
             
             content += `<div class="message-time">${time}</div>`;
@@ -2140,7 +2163,6 @@
         privateInput.value = '';
         scrollToBottom(privateMessages, true);
       }).catch(err => {
-        console.error('❌ خطأ في الإرسال:', err);
         showToast('❌ فشل الإرسال', 'error');
       });
     };
@@ -2169,7 +2191,6 @@
           scrollToBottom(messagesDiv, true);
         })
         .catch(err => {
-          console.error('❌ خطأ في الإرسال:', err);
           showToast('❌ فشل الإرسال', 'error');
         });
     }
@@ -2279,9 +2300,7 @@
             createdAt: firebase.firestore.FieldValue.serverTimestamp()
           });
         }
-      } catch (err) {
-        console.error(err);
-      }
+      } catch (err) {}
     };
 
     function setReply(messageId, messageText, username) {
@@ -2350,7 +2369,6 @@
       document.getElementById('fullImageModal').classList.add('show');
     };
 
-    // دالة معالجة اختيار الصورة
     window.handleAdvancedImageSelect = function(file) {
       if (!file) return;
       
@@ -2374,7 +2392,6 @@
       reader.readAsDataURL(file);
     };
 
-    // ربط دالة اختيار الصورة
     document.getElementById('imageFileInput').addEventListener('change', function(e) {
       window.handleAdvancedImageSelect(e.target.files[0]);
     });
@@ -2423,7 +2440,6 @@
         
         showToast('✅ تم إرسال الصورة');
       } catch (error) {
-        console.error('❌ خطأ في رفع الصورة:', error);
         showToast('❌ فشل إرسال الصورة', 'error');
       } finally {
         document.getElementById('uploadProgress').classList.remove('show');
@@ -2435,26 +2451,6 @@
       selectedImageFile = null;
       document.getElementById('imagePreviewContainer').classList.remove('show');
       document.getElementById('imageFileInput').value = '';
-    };
-
-    window.clearPrivateChat = async function() {
-      if (!activePartner || !currentUser) return;
-      if (!confirm('هل أنت متأكد من مسح جميع رسائل هذه المحادثة؟')) return;
-      
-      const roomId = currentUser.uid < activePartner.uid 
-        ? currentUser.uid + '_' + activePartner.uid 
-        : activePartner.uid + '_' + currentUser.uid;
-      
-      try {
-        const messages = await db.collection('private_messages').where('roomId', '==', roomId).get();
-        const batch = db.batch();
-        messages.forEach(doc => batch.delete(doc.ref));
-        await batch.commit();
-        showToast('✅ تم مسح المحادثة');
-      } catch (err) {
-        console.error('❌ خطأ في مسح المحادثة:', err);
-        showToast('❌ فشل المسح', 'error');
-      }
     };
 
     // ===== دوال استعادة كلمة المرور =====
@@ -2518,8 +2514,6 @@
         }, 3000);
         
       } catch (error) {
-        console.error('❌ خطأ في إرسال رابط إعادة التعيين:', error);
-        
         let errorMessage = '';
         switch (error.code) {
           case 'auth/user-not-found':
@@ -2551,19 +2545,35 @@
     }
 
     function createAnimatedBg() {
-      const bg = document.getElementById('animatedBg');
-      for (let i = 0; i < 50; i++) {
-        const span = document.createElement('span');
-        span.style.left = Math.random() * 100 + '%';
-        span.style.width = Math.random() * 30 + 10 + 'px';
-        span.style.height = span.style.width;
-        span.style.animationDuration = Math.random() * 20 + 10 + 's';
-        span.style.animationDelay = Math.random() * 5 + 's';
-        bg.appendChild(span);
+      if (window.requestIdleCallback) {
+        requestIdleCallback(() => {
+          const bg = document.getElementById('animatedBg');
+          for (let i = 0; i < 30; i++) {
+            const span = document.createElement('span');
+            span.style.left = Math.random() * 100 + '%';
+            span.style.width = Math.random() * 30 + 10 + 'px';
+            span.style.height = span.style.width;
+            span.style.animationDuration = Math.random() * 20 + 10 + 's';
+            span.style.animationDelay = Math.random() * 5 + 's';
+            bg.appendChild(span);
+          }
+        });
+      } else {
+        setTimeout(() => {
+          const bg = document.getElementById('animatedBg');
+          for (let i = 0; i < 30; i++) {
+            const span = document.createElement('span');
+            span.style.left = Math.random() * 100 + '%';
+            span.style.width = Math.random() * 30 + 10 + 'px';
+            span.style.height = span.style.width;
+            span.style.animationDuration = Math.random() * 20 + 10 + 's';
+            span.style.animationDelay = Math.random() * 5 + 's';
+            bg.appendChild(span);
+          }
+        }, 500);
       }
     }
 
-    // ===== دوال حذف الرسائل المحسنة مع التحقق من الصلاحيات =====
     window.copyMessage = function(text) {
       navigator.clipboard.writeText(text);
       showToast('✅ تم النسخ');
@@ -2596,39 +2606,6 @@
         }
         
       } catch (err) {
-        console.error('❌ خطأ في حذف الرسالة:', err);
-        showToast('❌ فشل الحذف', 'error');
-      }
-    };
-
-    window.deletePrivateMessage = async function(messageId) {
-      if (!currentUser || !activePartner) {
-        showToast('❌ لا يمكن تنفيذ العملية', 'error');
-        return;
-      }
-      
-      try {
-        const msgDoc = await db.collection('private_messages').doc(messageId).get();
-        
-        if (!msgDoc.exists) {
-          showToast('❌ الرسالة غير موجودة', 'error');
-          return;
-        }
-        
-        const msgData = msgDoc.data();
-        
-        if (msgData.uid !== currentUser.uid) {
-          showToast('❌ لا يمكنك حذف رسائل الآخرين', 'error');
-          return;
-        }
-        
-        if (confirm('هل أنت متأكد من حذف هذه الرسالة؟')) {
-          await db.collection('private_messages').doc(messageId).delete();
-          showToast('✅ تم حذف الرسالة');
-        }
-        
-      } catch (err) {
-        console.error('❌ خطأ في حذف الرسالة:', err);
         showToast('❌ فشل الحذف', 'error');
       }
     };
@@ -2710,8 +2687,6 @@
     // ===== تهيئة Firebase ومعالجة حالة المصادقة =====
     auth.onAuthStateChanged(async (user) => {
       if (user && user.emailVerified) {
-        console.log('✅ مستخدم مسجل الدخول:', user.email);
-        
         currentUser = user;
         
         try {
@@ -2744,7 +2719,7 @@
               db.collection('users').doc(currentUser.uid).update({
                 lastSeen: firebase.firestore.FieldValue.serverTimestamp(),
                 lastActive: firebase.firestore.FieldValue.serverTimestamp()
-              }).catch(err => console.error('خطأ في تحديث lastSeen:', err));
+              }).catch(() => {});
             }
           }, 60000);
           
@@ -2752,16 +2727,14 @@
           chatDiv.style.display = 'block';
           privatePage.classList.remove('show');
           
-          showToast('✅ تم تسجيل الدخول بنجاح');
+          hideLoadingScreen();
           
         } catch (error) {
-          console.error('❌ خطأ في تحميل بيانات المستخدم:', error);
-          showToast('❌ خطأ في تحميل البيانات', 'error');
+          hideLoadingScreen();
         }
         
       } else {
-        console.log('👤 لا يوجد مستخدم مسجل الدخول');
-        
+        hideLoadingScreen();
         authDiv.style.display = 'flex';
         chatDiv.style.display = 'none';
         privatePage.classList.remove('show');
@@ -2774,6 +2747,11 @@
 
     // تشغيل الخلفية المتحركة
     createAnimatedBg();
+
+    // إخفاء شاشة التحميل في حالة وجود خطأ أو انتهاء المهلة
+    setTimeout(() => {
+      hideLoadingScreen();
+    }, 5000);
   </script>
 </body>
-  </html>
+                                           </html>
