@@ -1056,11 +1056,11 @@
             </div>
           </div>
 
-          <!-- نموذج التسجيل -->
+          <!-- نموذج التسجيل مع تحديد 15 حرف لاسم المستخدم -->
           <div id="registerForm" style="display: none;">
             <div class="input-group-modern">
-              <label>👤 اسم المستخدم</label>
-              <input type="text" id="username" placeholder="اختر اسم مستخدم" class="input-modern" oninput="checkUsernameAvailability()">
+              <label>👤 اسم المستخدم (حد أقصى 15 حرف)</label>
+              <input type="text" id="username" placeholder="اختر اسم مستخدم" class="input-modern" maxlength="15" oninput="checkUsernameAvailability()">
               <div id="usernameCheck" class="username-check"></div>
             </div>
 
@@ -1735,6 +1735,14 @@
 
     window.checkUsernameAvailability = async function() {
       const usernameVal = username.value.trim();
+      
+      // التحقق من طول اسم المستخدم (حد أقصى 15 حرف)
+      if (usernameVal.length > 15) {
+        usernameCheck.innerHTML = '❌ اسم المستخدم طويل جداً (الحد الأقصى 15 حرف)';
+        usernameCheck.style.color = '#f56565';
+        return;
+      }
+      
       if (!usernameVal || usernameVal.length < 3) {
         usernameCheck.innerHTML = '';
         return;
@@ -1835,6 +1843,15 @@
         return;
       }
       
+      // التحقق من طول اسم المستخدم (حد أقصى 15 حرف)
+      if (userVal.length > 15) {
+        if (registerError) {
+          registerError.style.display = 'block';
+          registerError.textContent = '❌ اسم المستخدم يجب ألا يزيد عن 15 حرف';
+        }
+        return;
+      }
+      
       if (!validateEmail()) {
         if (registerError) {
           registerError.style.display = 'block';
@@ -1851,10 +1868,10 @@
         return;
       }
       
-      if (usernameCheck.innerHTML.includes('غير متاح')) {
+      if (usernameCheck.innerHTML.includes('غير متاح') || usernameCheck.innerHTML.includes('طويل جداً')) {
         if (registerError) {
           registerError.style.display = 'block';
-          registerError.textContent = '❌ اسم المستخدم غير متاح';
+          registerError.textContent = '❌ اسم المستخدم غير صالح';
         }
         return;
       }
@@ -1907,7 +1924,7 @@
       try {
         const result = await auth.signInWithPopup(googleProvider);
         const email = result.user.email;
-        const usernameFromEmail = email.split('@')[0];
+        const usernameFromEmail = email.split('@')[0].substring(0, 15); // تحديد 15 حرف كحد أقصى
         
         await db.collection('users').doc(result.user.uid).set({
           username: usernameFromEmail,
@@ -2664,7 +2681,7 @@
           if (userDoc.exists) {
             currentUsername = userDoc.data().username;
           } else {
-            currentUsername = user.email.split('@')[0];
+            currentUsername = user.email.split('@')[0].substring(0, 15);
             await db.collection('users').doc(user.uid).set({
               username: currentUsername,
               email: user.email,
@@ -2727,4 +2744,4 @@
     }, 5000);
   </script>
 </body>
-        </html>
+                                    </html>
