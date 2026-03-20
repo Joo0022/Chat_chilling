@@ -103,13 +103,14 @@
     }
 
     body {
-      background: linear-gradient(135deg, var(--bg-gradient-start), var(--bg-gradient-end));
-      min-height: 100vh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 0;
-      transition: background 0.3s ease;
+  background: linear-gradient(135deg, var(--bg-gradient-start), var(--bg-gradient-end));
+  min-height: 100vh;
+  display: flex;
+  align-items: flex-start;  /* غيرها من center إلى flex-start */
+  justify-content: center;
+  padding: 0;  /* إزالة padding */
+  margin: 0;
+  transition: background 0.3s ease;
     }
 
     /* شاشة التحميل */
@@ -184,16 +185,17 @@
 
     /* الحاوية الرئيسية */
     .container {
-      width: 99.9%;
-      height: calc(90vh + 10px);
-      background: var(--container-bg);
-      backdrop-filter: blur(20px);
-      -webkit-backdrop-filter: blur(20px);
-      border-radius: 0;
-      box-shadow: none;
-      border: none;
-      overflow: hidden;
-      position: relative;
+  width: 100%;  /* غيرها من 99.9% إلى 100% */
+  height: calc(90vh + 10px);
+  background: var(--container-bg);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-radius: 0;
+  box-shadow: none;
+  border: none;
+  overflow: hidden;
+  position: relative;
+  margin-top: 0;  /* تأكد من عدم وجود مسافة من الأعلى */
     }
 
     /* Auth Styles */
