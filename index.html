@@ -1064,6 +1064,21 @@
       margin-top: 5px;
       text-align: center;
     }
+    /* وضع الدردشة - يضاف تلقائياً عند فتح الدردشة */
+body.chat-mode {
+  align-items: flex-start !important;
+  padding: 0 !important;
+}
+
+body.chat-mode .container {
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  border: none !important;
+  height: 100vh !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  margin: 0 !important;
+}
   </style>
 </head>
 <body>
@@ -2821,6 +2836,26 @@
     setTimeout(() => {
       hideLoadingScreen();
     }, 5000);
+    // إضافة/إزالة كلاس chat-mode عند تبديل الشاشات
+function updateChatMode() {
+  const chatDisplay = document.getElementById('chat').style.display;
+  const isChatVisible = chatDisplay === 'block' || 
+                        (window.getComputedStyle(document.getElementById('chat')).display === 'block');
+  
+  if (isChatVisible) {
+    document.body.classList.add('chat-mode');
+  } else {
+    document.body.classList.remove('chat-mode');
+  }
+}
+
+// مراقبة تغيير حالة الدردشة
+const chatElement = document.getElementById('chat');
+const observer = new MutationObserver(updateChatMode);
+observer.observe(chatElement, { attributes: true, attributeFilter: ['style'] });
+
+// استدعاء أولي
+updateChatMode();
   </script>
 </body>
           </html>
