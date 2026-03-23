@@ -841,10 +841,25 @@
       return;
     }
     try {
-      await auth.signInWithEmailAndPassword(email, pass);
+      const result = await auth.signInWithEmailAndPassword(email, pass);
+      // بعد تسجيل الدخول، نتحقق من التفعيل
+      if (!result.user.emailVerified) {
+        await auth.signOut();
+        errorDiv.style.display = 'block';
+        errorDiv.textContent = '⚠️ لم يتم تفعيل بريدك الإلكتروني بعد. الرجاء التحقق من بريدك الإلكتروني';
+        return;
+      }
     } catch (err) {
       errorDiv.style.display = 'block';
-      errorDiv.textContent = err.message;
+      let msg = '';
+      switch (err.code) {
+        case 'auth/user-not-found': msg = '❌ لا يوجد حساب بهذا البريد'; break;
+        case 'auth/wrong-password': msg = '❌ كلمة المرور غير صحيحة'; break;
+        case 'auth/invalid-email': msg = '❌ البريد الإلكتروني غير صالح'; break;
+        case 'auth/too-many-requests': msg = '❌ تم تعطيل الحساب مؤقتاً بسبب محاولات كثيرة'; break;
+        default: msg = '❌ خطأ: ' + err.message;
+      }
+      errorDiv.textContent = msg;
     }
   };
 
@@ -903,9 +918,25 @@
 
   window.googleLogin = async function() {
     try {
-      await auth.signInWithPopup(googleProvider);
+      const result = await auth.signInWithPopup(googleProvider);
+      const email = result.user.email;
+      const usernameFromEmail = email.split('@')[0].substring(0, 15);
+      await db.collection('users').doc(result.user.uid).set({
+        username: usernameFromEmail,
+        email: email,
+        online: true,
+        status: 'online',
+        emailVerified: true,
+        lastSeen: firebase.firestore.FieldValue.serverTimestamp(),
+        lastActive: firebase.firestore.FieldValue.serverTimestamp()
+      }, { merge: true });
+      // Google accounts are automatically verified, so no extra check needed
     } catch (err) {
-      showToast('❌ فشل تسجيل الدخول بحساب Google');
+      if (err.code === 'auth/popup-blocked') {
+        showToast('❌ تم حظر النافذة المنبثقة. يرجى السماح بالنوافذ المنبثقة لهذا الموقع');
+      } else {
+        showToast('❌ فشل تسجيل الدخول بحساب Google: ' + err.message);
+      }
     }
   };
 
@@ -916,7 +947,7 @@
     await auth.signOut();
   };
 
-  // Chat functions
+  // Chat functions (abbreviated but fully functional)
   function loadPublicMessages() {
     if (unsubscribePublic) unsubscribePublic();
     unsubscribePublic = db.collection('messages').orderBy('createdAt', 'asc').limit(50).onSnapshot(snap => {
@@ -933,12 +964,8 @@
           time = `${d.getHours()}:${d.getMinutes().toString().padStart(2,'0')}`;
         }
         let content = '';
-        if (msg.uid !== currentUser?.uid) {
-          content += `<div class="message-sender">${escapeHtml(msg.username)}</div>`;
-        }
-        if (msg.replyTo) {
-          content += `<div style="font-size:0.7rem; opacity:0.7;">↩ ${escapeHtml(msg.replyTo.username)}: ${escapeHtml(msg.replyTo.text.substring(0,30))}</div>`;
-        }
+        if (msg.uid !== currentUser?.uid) content += `<div class="message-sender">${escapeHtml(msg.username)}</div>`;
+        if (msg.replyTo) content += `<div style="font-size:0.7rem; opacity:0.7;">↩ ${escapeHtml(msg.replyTo.username)}: ${escapeHtml(msg.replyTo.text.substring(0,30))}</div>`;
         if (msg.text) content += `<div class="message-text">${escapeHtml(msg.text)}</div>`;
         if (msg.imageUrl) content += `<img src="${escapeHtml(msg.imageUrl)}" class="message-image" onclick="showFullImage('${escapeHtml(msg.imageUrl)}')">`;
         content += `<div class="message-time">${time}</div>`;
@@ -1299,4 +1326,4 @@
   setTimeout(hideLoadingScreen, 2000);
 </script>
 </body>
-            </html>
+</html>
