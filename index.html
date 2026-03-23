@@ -726,6 +726,11 @@
       gap: 5px;
       cursor: pointer;
     }
+    .user-last-seen {
+  color: var(--text-light);    /* أو أي لون تفضله */
+  font-size: 0.7rem;
+  margin-top: 4px;
+    }
   </style>
 </head>
 <body>
@@ -958,29 +963,33 @@
 
     function loadOnlineUsers() {
       if (unsubscribeOnline) unsubscribeOnline();
-      unsubscribeOnline = db.collection('users').orderBy('lastActive', 'desc').onSnapshot(snapshot => {
-        let html = '', onlineCount = 0, awayCount = 0;
-        snapshot.forEach(doc => {
-          if (doc.id !== currentUser?.uid) {
-            const data = doc.data();
-            if (!data.username) return;
-            const unreadCount = unreadPrivateMessages[doc.id] || 0;
-            const initial = data.username.charAt(0).toUpperCase();
-            let statusText = '', statusClass = '', statusDot = '', lastSeenText = '';
-            if (data.online === true) {
-              if (data.status === 'online') { onlineCount++; statusText = '🟢 متصل'; statusClass = 'online'; statusDot = '<span class="status-dot"></span>'; }
-              else if (data.status === 'away') { awayCount++; statusText = '🟡 غير نشط'; statusClass = 'away'; statusDot = '<span class="status-dot away"></span>'; }
-              else { onlineCount++; statusText = '🟢 متصل'; statusClass = 'online'; statusDot = '<span class="status-dot"></span>'; }
-            } else {
-              statusText = '🔴 غير متصل'; statusClass = 'offline'; statusDot = '<span class="status-dot offline"></span>';
-              if (data.lastSeen?.toDate) { const lastSeen = data.lastSeen.toDate(), now = new Date(), diffMinutes = Math.floor((now - lastSeen) / 60000); if (diffMinutes < 1) lastSeenText = 'منذ لحظات'; else if (diffMinutes < 60) lastSeenText = `منذ ${diffMinutes} دقيقة`; else lastSeenText = `منذ ${Math.floor(diffMinutes/60)} ساعة`; }
+      // Only show users who have verified their email
+      unsubscribeOnline = db.collection('users')
+        .where('emailVerified', '==', true)
+        .orderBy('lastActive', 'desc')
+        .onSnapshot(snapshot => {
+          let html = '', onlineCount = 0, awayCount = 0;
+          snapshot.forEach(doc => {
+            if (doc.id !== currentUser?.uid) {
+              const data = doc.data();
+              if (!data.username) return;
+              const unreadCount = unreadPrivateMessages[doc.id] || 0;
+              const initial = data.username.charAt(0).toUpperCase();
+              let statusText = '', statusClass = '', statusDot = '', lastSeenText = '';
+              if (data.online === true) {
+                if (data.status === 'online') { onlineCount++; statusText = '🟢 متصل'; statusClass = 'online'; statusDot = '<span class="status-dot"></span>'; }
+                else if (data.status === 'away') { awayCount++; statusText = '🟡 غير نشط'; statusClass = 'away'; statusDot = '<span class="status-dot away"></span>'; }
+                else { onlineCount++; statusText = '🟢 متصل'; statusClass = 'online'; statusDot = '<span class="status-dot"></span>'; }
+              } else {
+                statusText = '🔴 غير متصل'; statusClass = 'offline'; statusDot = '<span class="status-dot offline"></span>';
+                if (data.lastSeen?.toDate) { const lastSeen = data.lastSeen.toDate(), now = new Date(), diffMinutes = Math.floor((now - lastSeen) / 60000); if (diffMinutes < 1) lastSeenText = 'منذ لحظات'; else if (diffMinutes < 60) lastSeenText = `منذ ${diffMinutes} دقيقة`; else lastSeenText = `منذ ${Math.floor(diffMinutes/60)} ساعة`; }
+              }
+              html += `<div class="user-item" onclick="openPrivateChat('${doc.id}', '${escapeHtml(data.username)}')"><div class="user-avatar">${initial}</div><div class="user-info"><div class="user-name">${escapeHtml(data.username)}</div><div class="user-status ${statusClass}">${statusDot} ${statusText}</div>${lastSeenText ? `<div class="user-last-seen">آخر ظهور: ${lastSeenText}</div>` : ''}</div>${unreadCount > 0 ? `<span class="notification-badge-new">${unreadCount}</span>` : ''}</div>`;
             }
-            html += `<div class="user-item" onclick="openPrivateChat('${doc.id}', '${escapeHtml(data.username)}')"><div class="user-avatar">${initial}</div><div class="user-info"><div class="user-name">${escapeHtml(data.username)}</div><div class="user-status ${statusClass}">${statusDot} ${statusText}</div>${lastSeenText ? `<div class="user-last-seen">آخر ظهور: ${lastSeenText}</div>` : ''}</div>${unreadCount > 0 ? `<span class="notification-badge-new">${unreadCount}</span>` : ''}</div>`;
-          }
-        });
-        onlineList.innerHTML = html || '<div class="no-messages">لا يوجد مستخدمين آخرين</div>';
-        document.getElementById('onlineCount').textContent = `${onlineCount} متصل، ${awayCount} غير نشط`;
-      }, error => { onlineList.innerHTML = '<div class="no-messages">خطأ في تحميل المستخدمين</div>'; });
+          });
+          onlineList.innerHTML = html || '<div class="no-messages">لا يوجد مستخدمين آخرين</div>';
+          document.getElementById('onlineCount').textContent = `${onlineCount} متصل، ${awayCount} غير نشط`;
+        }, error => { onlineList.innerHTML = '<div class="no-messages">خطأ في تحميل المستخدمين</div>'; });
     }
 
     function showToast(message, type = 'success') {
@@ -1207,8 +1216,26 @@
         currentUser = user;
         try {
           const userDoc = await db.collection('users').doc(user.uid).get();
-          if (userDoc.exists) currentUsername = userDoc.data().username;
-          else { currentUsername = user.email.split('@')[0].substring(0,15); await db.collection('users').doc(user.uid).set({ username: currentUsername, email: user.email, online: true, status: 'online', emailVerified: true, createdAt: firebase.firestore.FieldValue.serverTimestamp(), lastSeen: firebase.firestore.FieldValue.serverTimestamp(), lastActive: firebase.firestore.FieldValue.serverTimestamp() }); }
+          if (userDoc.exists) {
+            const data = userDoc.data();
+            currentUsername = data.username;
+            // إذا كان الحقل emailVerified غير صحيح في Firestore، قم بتحديثه
+            if (data.emailVerified !== true) {
+              await db.collection('users').doc(user.uid).update({ emailVerified: true });
+            }
+          } else {
+            currentUsername = user.email.split('@')[0].substring(0,15);
+            await db.collection('users').doc(user.uid).set({
+              username: currentUsername,
+              email: user.email,
+              online: true,
+              status: 'online',
+              emailVerified: true,
+              createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+              lastSeen: firebase.firestore.FieldValue.serverTimestamp(),
+              lastActive: firebase.firestore.FieldValue.serverTimestamp()
+            });
+          }
           await setupUserPresence();
           setupActivityMonitor();
           loadPublicMessages();
@@ -1220,7 +1247,15 @@
           privatePage.classList.remove('show');
           hideLoadingScreen();
         } catch (error) { console.error(error); hideLoadingScreen(); }
-      } else { hideLoadingScreen(); authDiv.style.display = 'flex'; chatDiv.style.display = 'none'; privatePage.classList.remove('show'); currentUser = null; currentUsername = ''; activePartner = null; }
+      } else {
+        hideLoadingScreen();
+        authDiv.style.display = 'flex';
+        chatDiv.style.display = 'none';
+        privatePage.classList.remove('show');
+        currentUser = null;
+        currentUsername = '';
+        activePartner = null;
+      }
     });
     createAnimatedBg();
     setTimeout(() => hideLoadingScreen(), 5000);
