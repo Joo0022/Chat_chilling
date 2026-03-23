@@ -23,7 +23,6 @@
       --bg-gradient-start: #eef2f3;
       --bg-gradient-end: #eef2f3;
       --container-bg: #ffffff;
-      --auth-side-bg: linear-gradient(135deg, #f0f2f5, #ffffff);
       --auth-main-bg: #ffffff;
       --text-primary: #1f2a3e;
       --text-secondary: #4a5568;
@@ -44,25 +43,12 @@
       --danger-color: #e53e3e;
       --success-color: #31a24c;
       --warning-color: #ecc94b;
-      --user-color-1: #FF6B6B;
-      --user-color-2: #4ECDC4;
-      --user-color-3: #45B7D1;
-      --user-color-4: #96CEB4;
-      --user-color-5: #FFEAA7;
-      --user-color-6: #DDA0DD;
-      --user-color-7: #98D8C8;
-      --user-color-8: #F7DC6F;
-      --user-color-9: #BB8FCE;
-      --user-color-10: #82E0AA;
-      --user-color-11: #F1948A;
-      --user-color-12: #85C1E9;
     }
 
     :root[data-theme="dark"] {
       --bg-gradient-start: #0f1117;
       --bg-gradient-end: #0f1117;
       --container-bg: #1e1f2c;
-      --auth-side-bg: linear-gradient(135deg, #1e1f2c, #2a2b38);
       --auth-main-bg: #1e1f2c;
       --text-primary: #e9eef3;
       --text-secondary: #cbd5e0;
@@ -83,18 +69,6 @@
       --danger-color: #e74c3c;
       --success-color: #2ecc71;
       --warning-color: #f1c40f;
-      --user-color-1: #FF8A8A;
-      --user-color-2: #6ED4CB;
-      --user-color-3: #5FC3E0;
-      --user-color-4: #A8D5BA;
-      --user-color-5: #FFF2B5;
-      --user-color-6: #E6B8E6;
-      --user-color-7: #B0E0D6;
-      --user-color-8: #FCE96A;
-      --user-color-9: #D2B4DE;
-      --user-color-10: #A3E4C0;
-      --user-color-11: #F5B7B1;
-      --user-color-12: #A9D6F0;
     }
 
     body {
@@ -105,7 +79,6 @@
       padding: 0;
     }
 
-    /* Loading screen */
     #loadingScreen {
       position: fixed;
       top: 0;
@@ -139,16 +112,14 @@
     }
     @keyframes spin { to { transform: rotate(360deg); } }
 
-    /* Full-screen container */
     .container {
       width: 100%;
       height: 100vh;
       background: var(--container-bg);
       overflow: hidden;
-      position: relative;
     }
 
-    /* ===== AUTH SIMPLIFIED ===== */
+    /* Auth */
     #auth {
       height: 100%;
       display: flex;
@@ -164,9 +135,6 @@
       border-radius: 32px;
       box-shadow: 0 12px 40px rgba(0,0,0,0.08);
       margin: 20px;
-    }
-    .auth-form-container {
-      width: 100%;
     }
     .auth-tabs {
       display: flex;
@@ -284,7 +252,7 @@
       border-radius: 20px;
     }
 
-    /* ===== TELEGRAM-LIKE CHAT ===== */
+    /* Chat layout */
     #chat {
       height: 100%;
       display: none;
@@ -294,7 +262,6 @@
       height: 100%;
       width: 100%;
     }
-    /* Users sidebar */
     .users-sidebar {
       width: 320px;
       background: var(--sidebar-bg);
@@ -374,14 +341,6 @@
       border-radius: 50%;
       background: var(--online-status);
     }
-    .notification-badge-new {
-      background: var(--danger-color);
-      color: white;
-      border-radius: 30px;
-      padding: 2px 8px;
-      font-size: 0.7rem;
-    }
-    /* Main chat area */
     .chat-main {
       flex: 1;
       display: flex;
@@ -421,7 +380,6 @@
       background: var(--hover-bg);
       color: #667eea;
     }
-    /* Search bar toggle */
     .search-area {
       display: none;
       padding: 12px 20px;
@@ -453,7 +411,6 @@
       cursor: pointer;
       font-size: 0.9rem;
     }
-    /* Messages area */
     .messages-area {
       flex: 1;
       overflow-y: auto;
@@ -467,7 +424,6 @@
       padding: 10px 14px;
       border-radius: 20px;
       animation: fadeSlide 0.2s ease;
-      position: relative;
     }
     .message-bubble.own {
       align-self: flex-end;
@@ -507,19 +463,6 @@
       border-radius: 14px;
       cursor: pointer;
       margin-top: 6px;
-    }
-    .reactions-wrapper {
-      display: flex;
-      gap: 6px;
-      margin-top: 6px;
-      flex-wrap: wrap;
-    }
-    .reaction-badge-new {
-      background: rgba(0,0,0,0.05);
-      border-radius: 30px;
-      padding: 2px 10px;
-      font-size: 0.7rem;
-      cursor: pointer;
     }
     .typing-indicator-new {
       padding: 8px 20px;
@@ -566,7 +509,6 @@
       background: #667eea;
       color: white;
     }
-    /* Private chat overlay */
     .private-page-new {
       position: fixed;
       top: 0;
@@ -595,7 +537,6 @@
       overflow-y: auto;
       padding: 20px;
     }
-    /* Modals */
     .image-preview-modal {
       position: fixed;
       top: 0;
@@ -638,7 +579,6 @@
   <div class="loader-content"><div class="loader-spinner"></div><p>جاري التحميل...</p></div>
 </div>
 <div class="container">
-  <!-- Auth simplified -->
   <div id="auth">
     <div class="auth-main">
       <div class="auth-form-container">
@@ -647,7 +587,7 @@
           <button class="auth-tab" id="registerTab" onclick="switchAuthTab('register')">حساب جديد</button>
         </div>
         <div id="loginForm">
-          <div class="input-group-modern"><label>📧 البريد الإلكتروني</label><input type="email" id="loginEmail" class="input-modern" placeholder="example@domain.com"><div id="loginEmailValidation" class="validation-message"></div></div>
+          <div class="input-group-modern"><label>📧 البريد الإلكتروني</label><input type="email" id="loginEmail" class="input-modern" placeholder="example@domain.com" oninput="validateLoginEmail()"><div id="loginEmailValidation" class="validation-message"></div></div>
           <div class="input-group-modern"><label>🔒 كلمة المرور</label><div class="password-wrapper-modern"><input type="password" id="loginPassword" class="input-modern"><button class="password-toggle-modern" onclick="togglePasswordVisibility('loginPassword', this)" type="button"><i class="far fa-eye"></i></button></div></div>
           <div id="loginError" class="error-message" style="display:none;"></div>
           <button class="btn-modern" onclick="login()">تسجيل الدخول</button>
@@ -666,7 +606,6 @@
       </div>
     </div>
   </div>
-  <!-- Chat area -->
   <div id="chat">
     <div class="chat-container">
       <div class="users-sidebar">
@@ -683,14 +622,13 @@
             <button class="btn-icon" onclick="logout()"><i class="fas fa-sign-out-alt"></i></button>
           </div>
         </div>
-        <!-- Search bar (hidden by default) -->
         <div class="search-area" id="searchBar">
           <div class="search-input-group">
             <input type="text" id="searchInput" placeholder="ابحث في الرسائل..." class="search-input" oninput="searchMessages(this.value)">
             <button class="btn-close" onclick="closeSearchBar()">إلغاء</button>
           </div>
         </div>
-        <div id="typingIndicator" class="typing-indicator-new" style="display:none;"><div class="typing-dots"><span></span><span></span><span></span></div><span id="typingText"></span></div>
+        <div id="typingIndicator" class="typing-indicator-new" style="display:none;"><span id="typingText"></span> يكتب...</div>
         <div id="replyIndicator" class="typing-indicator-new" style="display:none;"><i class="fas fa-reply"></i><span>الرد على <span id="replyToName"></span> : "<span id="replyText"></span>"</span><button onclick="cancelReply()" style="background:none; border:none; color:var(--danger-color);"><i class="fas fa-times"></i></button></div>
         <div class="messages-area" id="messages"></div>
         <div class="input-area-new">
@@ -702,18 +640,16 @@
     </div>
   </div>
 </div>
-<!-- Private Chat Modal -->
 <div class="private-page-new" id="privatePage">
   <div class="private-header-new"><button onclick="closePrivateChat()"><i class="fas fa-arrow-right"></i></button><h3>محادثة مع: <span id="privatePartnerName"></span></h3><span id="privateStatus"></span><button class="theme-toggle" style="margin-right: auto;" onclick="toggleTheme()"><i class="fas fa-sun sun-icon"></i><i class="fas fa-moon moon-icon"></i></button></div>
-  <div id="privateTypingIndicator" class="typing-indicator-new" style="display:none;"><span id="privateTypingText"></span></div>
+  <div id="privateTypingIndicator" class="typing-indicator-new" style="display:none;"><span id="privateTypingText"></span> يكتب...</div>
   <div class="private-messages-new" id="privateMessages"></div>
   <div class="input-area-new"><button class="btn-upload" onclick="document.getElementById('imageFileInput').click()"><i class="fas fa-image"></i></button><input type="text" id="privateInput" placeholder="رسالة خاصة..." class="message-input" oninput="handlePrivateTyping()"><button class="btn-send" onclick="sendPrivateMessage()"><i class="fas fa-paper-plane"></i></button></div>
 </div>
-<!-- Image modals -->
 <div class="image-preview-modal" id="fullImageModal"><button class="close-preview" onclick="document.getElementById('fullImageModal').classList.remove('show')" style="position:absolute; top:20px; right:20px; background:#fff; border:none; width:40px; height:40px; border-radius:50%;"><i class="fas fa-times"></i></button><div class="preview-content-new"><img id="fullImage" src=""></div></div>
 <div class="image-preview-modal" id="imagePreviewContainer"><div style="background:var(--bg-white); border-radius:28px; padding:24px;"><img id="imagePreview" style="max-width:280px; max-height:280px; border-radius:16px;"><div style="display:flex; gap:12px; margin-top:20px;"><button class="btn-modern" onclick="sendImageMessage()" style="padding:8px 24px;">إرسال</button><button class="btn-modern google" onclick="cancelImageUpload()">إلغاء</button></div></div></div>
 <div class="image-preview-modal" id="uploadProgress"><div style="background:var(--bg-white); padding:30px; border-radius:28px; text-align:center;"><div style="width:40px; height:40px; border:3px solid #ccc; border-top-color:#667eea; border-radius:50%; animation:spin 1s linear infinite; margin:0 auto;"></div><p>جاري الرفع...</p></div></div>
-<div class="image-preview-modal" id="forgotPasswordModal"><div style="background:var(--bg-white); border-radius:28px; padding:28px; max-width:360px;"><h3>استعادة كلمة المرور</h3><input type="email" id="resetEmail" class="input-modern" placeholder="البريد الإلكتروني"><div id="resetEmailValidation"></div><div id="forgotPasswordMessage"></div><div style="display:flex; gap:12px; margin-top:20px;"><button class="btn-modern" onclick="sendPasswordReset()">إرسال</button><button class="btn-modern google" onclick="hideForgotPasswordModal()">إلغاء</button></div></div></div>
+<div class="image-preview-modal" id="forgotPasswordModal"><div style="background:var(--bg-white); border-radius:28px; padding:28px; max-width:360px;"><h3>استعادة كلمة المرور</h3><input type="email" id="resetEmail" class="input-modern" placeholder="البريد الإلكتروني" oninput="validateResetEmail()"><div id="resetEmailValidation" class="validation-message"></div><div id="forgotPasswordMessage"></div><div style="display:flex; gap:12px; margin-top:20px;"><button class="btn-modern" onclick="sendPasswordReset()">إرسال</button><button class="btn-modern google" onclick="hideForgotPasswordModal()">إلغاء</button></div></div></div>
 <input type="file" id="imageFileInput" accept="image/*" style="display:none;">
 
 <script>
@@ -749,27 +685,32 @@
   let activityTimeout = null;
   let isAway = false;
 
-  // DOM elements
-  const loadingScreen = document.getElementById('loadingScreen');
-  const messagesDiv = document.getElementById('messages');
-  const messageInput = document.getElementById('messageInput');
-  const privateMessages = document.getElementById('privateMessages');
-  const privateInput = document.getElementById('privateInput');
-
   // Helper functions
-  function hideLoadingScreen() { loadingScreen.classList.add('hidden'); }
-  function showToast(msg) { let t = document.createElement('div'); t.textContent = msg; t.style.cssText = "position:fixed; bottom:20px; left:50%; transform:translateX(-50%); background:#2c3e50; color:white; padding:10px 24px; border-radius:40px; z-index:10000; font-size:0.85rem;"; document.body.appendChild(t); setTimeout(()=>t.remove(),2000); }
-  function escapeHtml(s) { return String(s).replace(/[&<>]/g, function(m){if(m==='&') return '&amp;'; if(m==='<') return '&lt;'; if(m==='>') return '&gt;'; return m;}); }
-  function scrollToBottom(el) { if(el) el.scrollTop = el.scrollHeight; }
+  function hideLoadingScreen() { document.getElementById('loadingScreen').classList.add('hidden'); }
+  function showToast(msg) {
+    let t = document.createElement('div');
+    t.textContent = msg;
+    t.style.cssText = "position:fixed; bottom:20px; left:50%; transform:translateX(-50%); background:#2c3e50; color:white; padding:10px 24px; border-radius:40px; z-index:10000; font-size:0.85rem;";
+    document.body.appendChild(t);
+    setTimeout(() => t.remove(), 2000);
+  }
+  function escapeHtml(unsafe) {
+    if (!unsafe) return '';
+    return String(unsafe).replace(/[&<>]/g, function(m) {
+      if (m === '&') return '&amp;';
+      if (m === '<') return '&lt;';
+      if (m === '>') return '&gt;';
+      return m;
+    });
+  }
+  function scrollToBottom(element) { if (element) element.scrollTop = element.scrollHeight; }
 
-  // ========== ADVANCED PRESENCE SYSTEM ==========
+  // Advanced presence
   async function setupUserPresence() {
     if (!currentUser) return;
     const userRef = db.collection('users').doc(currentUser.uid);
-    const userStatusRef = db.collection('status').doc(currentUser.uid);
     await userRef.update({ online: true, status: 'online', lastSeen: firebase.firestore.FieldValue.serverTimestamp(), lastActive: firebase.firestore.FieldValue.serverTimestamp() });
     userRef.onDisconnect().update({ online: false, status: 'offline', lastSeen: firebase.firestore.FieldValue.serverTimestamp() });
-    userStatusRef.onDisconnect().set({ uid: currentUser.uid, status: 'offline', lastSeen: firebase.firestore.FieldValue.serverTimestamp() });
     window.addEventListener('online', () => userRef.update({ online: true, status: 'online', lastSeen: firebase.firestore.FieldValue.serverTimestamp() }).catch(()=>{}));
     window.addEventListener('offline', () => userRef.update({ online: false, status: 'offline' }).catch(()=>{}));
     window.addEventListener('beforeunload', () => userRef.update({ online: false, status: 'offline' }).catch(()=>{}));
@@ -798,40 +739,206 @@
     updateLastActivity();
   }
 
-  // ========== AUTH FUNCTIONS ==========
-  window.switchAuthTab = (tab) => {
-    document.getElementById('loginTab').classList.toggle('active', tab === 'login');
-    document.getElementById('registerTab').classList.toggle('active', tab === 'register');
-    document.getElementById('loginForm').style.display = tab === 'login' ? 'block' : 'none';
-    document.getElementById('registerForm').style.display = tab === 'register' ? 'block' : 'none';
+  // Auth functions
+  window.switchAuthTab = function(tab) {
+    const loginTab = document.getElementById('loginTab');
+    const registerTab = document.getElementById('registerTab');
+    const loginForm = document.getElementById('loginForm');
+    const registerForm = document.getElementById('registerForm');
+    if (tab === 'login') {
+      loginTab.classList.add('active');
+      registerTab.classList.remove('active');
+      loginForm.style.display = 'block';
+      registerForm.style.display = 'none';
+    } else {
+      registerTab.classList.add('active');
+      loginTab.classList.remove('active');
+      registerForm.style.display = 'block';
+      loginForm.style.display = 'none';
+    }
+    document.getElementById('loginError').style.display = 'none';
+    document.getElementById('registerError').style.display = 'none';
   };
-  window.togglePasswordVisibility = (id, btn) => {
-    let inp = document.getElementById(id);
-    if (inp.type === 'password') { inp.type = 'text'; btn.querySelector('i').className = 'far fa-eye-slash'; }
-    else { inp.type = 'password'; btn.querySelector('i').className = 'far fa-eye'; }
-  };
-  window.validateEmail = () => { /* keep same */ };
-  window.validatePassword = () => { /* keep same */ };
-  window.checkUsernameAvailability = async () => { /* keep same */ };
-  window.login = async () => { /* keep same */ };
-  window.register = async () => { /* keep same */ };
-  window.googleLogin = async () => { try { await auth.signInWithPopup(googleProvider); } catch(e){ showToast('فشل تسجيل Google'); } };
-  window.logout = async () => { if(currentUser) await db.collection('users').doc(currentUser.uid).update({ online: false, status: 'offline' }); await auth.signOut(); };
 
-  // ========== CHAT CORE ==========
+  window.togglePasswordVisibility = function(inputId, button) {
+    const input = document.getElementById(inputId);
+    const icon = button.querySelector('i');
+    if (input.type === 'password') {
+      input.type = 'text';
+      icon.className = 'far fa-eye-slash';
+    } else {
+      input.type = 'password';
+      icon.className = 'far fa-eye';
+    }
+  };
+
+  window.validateEmail = function() {
+    const email = document.getElementById('email').value.trim();
+    const isValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+    const div = document.getElementById('emailValidation');
+    if (!email) { div.style.display = 'none'; return false; }
+    div.style.display = 'block';
+    div.className = isValid ? 'validation-message success' : 'validation-message error';
+    div.innerHTML = isValid ? '✅ البريد الإلكتروني صالح' : '❌ البريد الإلكتروني غير صالح';
+    return isValid;
+  };
+
+  window.validateLoginEmail = function() {
+    const email = document.getElementById('loginEmail').value.trim();
+    const isValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+    const div = document.getElementById('loginEmailValidation');
+    if (!email) { div.style.display = 'none'; return false; }
+    div.style.display = 'block';
+    div.className = isValid ? 'validation-message success' : 'validation-message error';
+    div.innerHTML = isValid ? '✅ البريد الإلكتروني صالح' : '❌ البريد الإلكتروني غير صالح';
+    return isValid;
+  };
+
+  window.validatePassword = function() {
+    const pass = document.getElementById('password').value;
+    const reqs = document.getElementById('passwordReqs');
+    const lengthOk = pass.length >= 8;
+    const capitalOk = /[A-Z]/.test(pass);
+    const numberOk = /\d/.test(pass);
+    reqs.innerHTML = `
+      <div style="color:${lengthOk ? '#2ecc71' : '#aaa'}">${lengthOk ? '✅' : '❌'} 8 أحرف على الأقل</div>
+      <div style="color:${capitalOk ? '#2ecc71' : '#aaa'}">${capitalOk ? '✅' : '❌'} حرف كبير (A-Z)</div>
+      <div style="color:${numberOk ? '#2ecc71' : '#aaa'}">${numberOk ? '✅' : '❌'} رقم (0-9)</div>
+    `;
+    return lengthOk && capitalOk && numberOk;
+  };
+
+  window.checkUsernameAvailability = async function() {
+    const username = document.getElementById('username').value.trim();
+    const checkDiv = document.getElementById('usernameCheck');
+    if (username.length < 3) { checkDiv.innerHTML = ''; return; }
+    checkDiv.innerHTML = '⏳ جاري التحقق...';
+    clearTimeout(window.usernameTimeout);
+    window.usernameTimeout = setTimeout(async () => {
+      const snap = await db.collection('users').where('username', '==', username).get();
+      if (snap.empty) {
+        checkDiv.innerHTML = '✅ اسم المستخدم متاح';
+        checkDiv.style.color = '#2ecc71';
+      } else {
+        checkDiv.innerHTML = '❌ اسم المستخدم غير متاح';
+        checkDiv.style.color = '#e74c3c';
+      }
+    }, 500);
+  };
+
+  window.login = async function() {
+    const email = document.getElementById('loginEmail').value.trim();
+    const pass = document.getElementById('loginPassword').value.trim();
+    const errorDiv = document.getElementById('loginError');
+    if (!email || !pass) {
+      errorDiv.style.display = 'block';
+      errorDiv.textContent = '❌ الرجاء إدخال البريد وكلمة المرور';
+      return;
+    }
+    if (!validateLoginEmail()) {
+      errorDiv.style.display = 'block';
+      errorDiv.textContent = '❌ البريد الإلكتروني غير صالح';
+      return;
+    }
+    try {
+      await auth.signInWithEmailAndPassword(email, pass);
+    } catch (err) {
+      errorDiv.style.display = 'block';
+      errorDiv.textContent = err.message;
+    }
+  };
+
+  window.register = async function() {
+    const email = document.getElementById('email').value.trim();
+    const pass = document.getElementById('password').value.trim();
+    const username = document.getElementById('username').value.trim();
+    const errorDiv = document.getElementById('registerError');
+    if (!email || !pass || !username) {
+      errorDiv.style.display = 'block';
+      errorDiv.textContent = '❌ الرجاء ملء جميع الحقول';
+      return;
+    }
+    if (username.length > 15) {
+      errorDiv.style.display = 'block';
+      errorDiv.textContent = '❌ اسم المستخدم طويل جداً (الحد الأقصى 15)';
+      return;
+    }
+    if (!validateEmail()) {
+      errorDiv.style.display = 'block';
+      errorDiv.textContent = '❌ البريد الإلكتروني غير صالح';
+      return;
+    }
+    if (!validatePassword()) {
+      errorDiv.style.display = 'block';
+      errorDiv.textContent = '❌ كلمة المرور يجب أن تحتوي على 8 أحرف، حرف كبير ورقم';
+      return;
+    }
+    const usernameSnap = await db.collection('users').where('username', '==', username).get();
+    if (!usernameSnap.empty) {
+      errorDiv.style.display = 'block';
+      errorDiv.textContent = '❌ اسم المستخدم مستخدم بالفعل';
+      return;
+    }
+    try {
+      const cred = await auth.createUserWithEmailAndPassword(email, pass);
+      await cred.user.sendEmailVerification();
+      await db.collection('users').doc(cred.user.uid).set({
+        username: username,
+        email: email,
+        online: false,
+        status: 'offline',
+        emailVerified: false,
+        createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+        lastSeen: firebase.firestore.FieldValue.serverTimestamp()
+      });
+      showToast('✅ تم إرسال رابط التحقق إلى بريدك الإلكتروني');
+      switchAuthTab('login');
+      document.getElementById('loginEmail').value = email;
+      await auth.signOut();
+    } catch (err) {
+      errorDiv.style.display = 'block';
+      errorDiv.textContent = err.message;
+    }
+  };
+
+  window.googleLogin = async function() {
+    try {
+      await auth.signInWithPopup(googleProvider);
+    } catch (err) {
+      showToast('❌ فشل تسجيل الدخول بحساب Google');
+    }
+  };
+
+  window.logout = async function() {
+    if (currentUser) {
+      await db.collection('users').doc(currentUser.uid).update({ online: false, status: 'offline' });
+    }
+    await auth.signOut();
+  };
+
+  // Chat functions
   function loadPublicMessages() {
     if (unsubscribePublic) unsubscribePublic();
     unsubscribePublic = db.collection('messages').orderBy('createdAt', 'asc').limit(50).onSnapshot(snap => {
+      const messagesDiv = document.getElementById('messages');
       messagesDiv.innerHTML = '';
       snap.forEach(doc => {
-        let msg = doc.data();
+        const msg = doc.data();
         if (!msg.text && !msg.imageUrl) return;
-        let div = document.createElement('div');
+        const div = document.createElement('div');
         div.className = `message-bubble ${msg.uid === currentUser?.uid ? 'own' : 'other'}`;
-        let time = msg.createdAt?.toDate ? `${msg.createdAt.toDate().getHours()}:${msg.createdAt.toDate().getMinutes().toString().padStart(2,'0')}` : '';
+        let time = '';
+        if (msg.createdAt?.toDate) {
+          const d = msg.createdAt.toDate();
+          time = `${d.getHours()}:${d.getMinutes().toString().padStart(2,'0')}`;
+        }
         let content = '';
-        if (msg.uid !== currentUser?.uid) content += `<div class="message-sender">${escapeHtml(msg.username)}</div>`;
-        if (msg.replyTo) content += `<div style="font-size:0.7rem; opacity:0.7;">↩ ${escapeHtml(msg.replyTo.username)}: ${escapeHtml(msg.replyTo.text.substring(0,30))}</div>`;
+        if (msg.uid !== currentUser?.uid) {
+          content += `<div class="message-sender">${escapeHtml(msg.username)}</div>`;
+        }
+        if (msg.replyTo) {
+          content += `<div style="font-size:0.7rem; opacity:0.7;">↩ ${escapeHtml(msg.replyTo.username)}: ${escapeHtml(msg.replyTo.text.substring(0,30))}</div>`;
+        }
         if (msg.text) content += `<div class="message-text">${escapeHtml(msg.text)}</div>`;
         if (msg.imageUrl) content += `<img src="${escapeHtml(msg.imageUrl)}" class="message-image" onclick="showFullImage('${escapeHtml(msg.imageUrl)}')">`;
         content += `<div class="message-time">${time}</div>`;
@@ -848,88 +955,320 @@
       let html = '', onlineCount = 0, awayCount = 0;
       snap.forEach(doc => {
         if (doc.id === currentUser?.uid) return;
-        let data = doc.data();
+        const data = doc.data();
         if (!data.username) return;
-        let initial = data.username.charAt(0).toUpperCase();
-        let statusText = '', statusClass = '', dot = '';
+        const initial = data.username.charAt(0).toUpperCase();
+        let statusText = '', dot = '';
         if (data.online === true) {
-          if (data.status === 'online') { onlineCount++; statusText = '🟢 متصل'; statusClass = 'online'; dot = '<span class="status-dot"></span>'; }
-          else if (data.status === 'away') { awayCount++; statusText = '🟡 غير نشط'; statusClass = 'away'; dot = '<span class="status-dot away"></span>'; }
-          else { onlineCount++; statusText = '🟢 متصل'; statusClass = 'online'; dot = '<span class="status-dot"></span>'; }
-        } else { statusText = '🔴 غير متصل'; statusClass = 'offline'; dot = '<span class="status-dot offline"></span>'; }
-        html += `<div class="user-item" onclick="openPrivateChat('${doc.id}','${escapeHtml(data.username)}')"><div class="user-avatar">${initial}</div><div class="user-info"><div class="user-name">${escapeHtml(data.username)}</div><div class="user-status ${statusClass}">${dot} ${statusText}</div></div></div>`;
+          if (data.status === 'online') { onlineCount++; statusText = '🟢 متصل'; dot = '<span class="status-dot"></span>'; }
+          else if (data.status === 'away') { awayCount++; statusText = '🟡 غير نشط'; dot = '<span class="status-dot away" style="background:var(--away-status);"></span>'; }
+          else { onlineCount++; statusText = '🟢 متصل'; dot = '<span class="status-dot"></span>'; }
+        } else {
+          statusText = '🔴 غير متصل';
+          dot = '<span class="status-dot offline" style="background:var(--offline-status);"></span>';
+        }
+        html += `<div class="user-item" onclick="openPrivateChat('${doc.id}','${escapeHtml(data.username)}')">
+          <div class="user-avatar">${initial}</div>
+          <div class="user-info">
+            <div class="user-name">${escapeHtml(data.username)}</div>
+            <div class="user-status">${dot} ${statusText}</div>
+          </div>
+        </div>`;
       });
-      document.getElementById('onlineList').innerHTML = html || '<div class="no-messages">لا يوجد مستخدمين</div>';
+      document.getElementById('onlineList').innerHTML = html || '<div class="no-messages">لا يوجد مستخدمين آخرين</div>';
       document.getElementById('onlineCount').innerHTML = `${onlineCount} متصل، ${awayCount} غير نشط`;
     });
   }
 
   function loadTypingIndicators() {
     db.collection('typing').onSnapshot(snap => {
-      let typingUsers = [];
-      snap.forEach(doc => { if (doc.id !== currentUser?.uid && doc.data().isTyping) typingUsers.push(doc.data().username); });
-      if (typingUsers.length) { document.getElementById('typingText').innerText = typingUsers.join('، ') + ' يكتب...'; document.getElementById('typingIndicator').style.display = 'flex'; }
-      else document.getElementById('typingIndicator').style.display = 'none';
+      const typingUsers = [];
+      snap.forEach(doc => {
+        if (doc.id !== currentUser?.uid && doc.data().isTyping) {
+          typingUsers.push(doc.data().username);
+        }
+      });
+      const indicator = document.getElementById('typingIndicator');
+      const textSpan = document.getElementById('typingText');
+      if (typingUsers.length) {
+        textSpan.innerText = typingUsers.join('، ');
+        indicator.style.display = 'flex';
+      } else {
+        indicator.style.display = 'none';
+      }
     });
   }
 
-  window.openPrivateChat = (uid, username) => {
+  window.openPrivateChat = function(uid, username) {
+    if (!currentUser) return;
     activePartner = { uid, username };
     document.getElementById('privatePartnerName').innerText = username;
     document.getElementById('privatePage').classList.add('show');
-    let roomId = [currentUser.uid, uid].sort().join('_');
+    const roomId = [currentUser.uid, uid].sort().join('_');
     if (unsubscribePrivate) unsubscribePrivate();
     unsubscribePrivate = db.collection('private_messages').where('roomId', '==', roomId).orderBy('createdAt').onSnapshot(snap => {
-      privateMessages.innerHTML = '';
+      const container = document.getElementById('privateMessages');
+      container.innerHTML = '';
       snap.forEach(d => {
-        let m = d.data();
-        let t = m.createdAt?.toDate ? `${m.createdAt.toDate().getHours()}:${m.createdAt.toDate().getMinutes().toString().padStart(2,'0')}` : '';
-        let div = document.createElement('div');
+        const m = d.data();
+        const time = m.createdAt?.toDate ? `${m.createdAt.toDate().getHours()}:${m.createdAt.toDate().getMinutes().toString().padStart(2,'0')}` : '';
+        const div = document.createElement('div');
         div.className = `message-bubble ${m.uid === currentUser.uid ? 'own' : 'other'}`;
-        div.innerHTML = (m.uid !== currentUser.uid ? `<div class="message-sender">${escapeHtml(m.username)}</div>` : '') + (m.text ? `<div class="message-text">${escapeHtml(m.text)}</div>` : '') + (m.imageUrl ? `<img src="${escapeHtml(m.imageUrl)}" class="message-image" onclick="showFullImage('${escapeHtml(m.imageUrl)}')">` : '') + `<div class="message-time">${t}</div>`;
-        privateMessages.appendChild(div);
+        div.innerHTML = (m.uid !== currentUser.uid ? `<div class="message-sender">${escapeHtml(m.username)}</div>` : '') +
+          (m.text ? `<div class="message-text">${escapeHtml(m.text)}</div>` : '') +
+          (m.imageUrl ? `<img src="${escapeHtml(m.imageUrl)}" class="message-image" onclick="showFullImage('${escapeHtml(m.imageUrl)}')">` : '') +
+          `<div class="message-time">${time}</div>`;
+        container.appendChild(div);
       });
-      scrollToBottom(privateMessages);
+      scrollToBottom(container);
     });
     if (unsubscribePartner) unsubscribePartner();
     unsubscribePartner = db.collection('users').doc(uid).onSnapshot(doc => {
       if (doc.exists) {
-        let d = doc.data();
+        const d = doc.data();
         if (d.online && d.status === 'online') document.getElementById('privateStatus').innerHTML = '🟢 متصل';
         else if (d.online && d.status === 'away') document.getElementById('privateStatus').innerHTML = '🟡 غير نشط';
         else document.getElementById('privateStatus').innerHTML = '🔴 غير متصل';
       }
     });
   };
-  window.closePrivateChat = () => { if (unsubscribePrivate) unsubscribePrivate(); if (unsubscribePartner) unsubscribePartner(); activePartner = null; document.getElementById('privatePage').classList.remove('show'); };
-  window.sendPrivateMessage = () => { let txt = privateInput.value.trim(); if (!txt || !activePartner) return; let roomId = [currentUser.uid, activePartner.uid].sort().join('_'); db.collection('private_messages').add({ text: txt, username: currentUsername, uid: currentUser.uid, toUid: activePartner.uid, roomId, createdAt: new Date() }); privateInput.value = ''; scrollToBottom(privateMessages); };
-  function sendWithReply() { let txt = messageInput.value.trim(); if (!txt) return; let data = { text: txt, username: currentUsername, uid: currentUser.uid, createdAt: new Date() }; if (replyingTo) data.replyTo = replyingTo; db.collection('messages').add(data); messageInput.value = ''; cancelReply(); scrollToBottom(messagesDiv); }
-  function handleTyping() { if (!currentUser) return; if (!isTyping) { isTyping = true; db.collection('typing').doc(currentUser.uid).set({ username: currentUsername, isTyping: true, timestamp: new Date() }); } clearTimeout(typingTimeout); typingTimeout = setTimeout(() => { isTyping = false; db.collection('typing').doc(currentUser.uid).delete(); }, 2000); }
-  function handlePrivateTyping() { if (!currentUser || !activePartner) return; let roomId = [currentUser.uid, activePartner.uid].sort().join('_'); if (!isTyping) { isTyping = true; db.collection('private_typing').doc(roomId).set({ username: currentUsername, isTyping: true }); } clearTimeout(typingTimeout); typingTimeout = setTimeout(() => { isTyping = false; db.collection('private_typing').doc(roomId).delete(); }, 2000); }
-  window.toggleSearchBar = () => { document.getElementById('searchBar').classList.toggle('show'); if (document.getElementById('searchBar').classList.contains('show')) document.getElementById('searchInput').focus(); };
-  window.closeSearchBar = () => { document.getElementById('searchBar').classList.remove('show'); clearSearch(); };
-  window.searchMessages = (term) => { if (!term.trim()) return; document.querySelectorAll('.message-bubble').forEach(el => { if (el.innerText.toLowerCase().includes(term.toLowerCase())) { el.style.backgroundColor = '#fffaec'; el.scrollIntoView({ behavior: 'smooth', block: 'center' }); } else el.style.backgroundColor = ''; }); };
-  window.clearSearch = () => { document.getElementById('searchInput').value = ''; document.querySelectorAll('.message-bubble').forEach(el => el.style.backgroundColor = ''); };
-  window.showFullImage = (url) => { document.getElementById('fullImage').src = url; document.getElementById('fullImageModal').classList.add('show'); };
-  window.toggleSidebar = () => document.querySelector('.users-sidebar').classList.toggle('show');
-  window.toggleTheme = () => { let html = document.documentElement; let cur = html.getAttribute('data-theme') || 'light'; html.setAttribute('data-theme', cur === 'light' ? 'dark' : 'light'); localStorage.setItem('chat-theme', cur === 'light' ? 'dark' : 'light'); };
-  window.setReply = (id, text, username) => { replyingTo = { id, text, username }; document.getElementById('replyToName').innerText = username; document.getElementById('replyText').innerText = text.substring(0, 40); document.getElementById('replyIndicator').style.display = 'flex'; };
-  window.cancelReply = () => { replyingTo = null; document.getElementById('replyIndicator').style.display = 'none'; };
-  document.getElementById('imageFileInput').addEventListener('change', (e) => { let f = e.target.files[0]; if (!f) return; if (f.size > 5 * 1024 * 1024) { showToast('الصورة كبيرة'); return; } selectedImageFile = f; let reader = new FileReader(); reader.onload = ev => { document.getElementById('imagePreview').src = ev.target.result; document.getElementById('imagePreviewContainer').classList.add('show'); currentImageMessageContext = document.getElementById('privatePage').classList.contains('show') ? 'private' : 'public'; }; reader.readAsDataURL(f); });
-  window.sendImageMessage = async () => { if (!selectedImageFile) return; document.getElementById('uploadProgress').classList.add('show'); let fd = new FormData(); fd.append('file', selectedImageFile); fd.append('upload_preset', UPLOAD_PRESET); let res = await fetch(`https://api.cloudinary.com/v1_1/${CLOUD_NAME}/image/upload`, { method: 'POST', body: fd }); let data = await res.json(); if (currentImageMessageContext === 'private' && activePartner) { let roomId = [currentUser.uid, activePartner.uid].sort().join('_'); await db.collection('private_messages').add({ imageUrl: data.secure_url, username: currentUsername, uid: currentUser.uid, toUid: activePartner.uid, roomId, createdAt: new Date() }); } else { await db.collection('messages').add({ imageUrl: data.secure_url, username: currentUsername, uid: currentUser.uid, createdAt: new Date() }); } showToast('✅ تم إرسال الصورة'); document.getElementById('uploadProgress').classList.remove('show'); cancelImageUpload(); };
-  window.cancelImageUpload = () => { selectedImageFile = null; document.getElementById('imagePreviewContainer').classList.remove('show'); document.getElementById('imageFileInput').value = ''; };
-  window.showForgotPasswordModal = () => document.getElementById('forgotPasswordModal').classList.add('show');
-  window.hideForgotPasswordModal = () => document.getElementById('forgotPasswordModal').classList.remove('show');
-  window.sendPasswordReset = async () => { let email = document.getElementById('resetEmail').value.trim(); if (!email) return; try { await auth.sendPasswordResetEmail(email); showToast('رابط إعادة التعيين أرسل'); hideForgotPasswordModal(); } catch(e){ showToast('خطأ: '+e.message); } };
 
-  // Auth state
+  window.closePrivateChat = function() {
+    if (unsubscribePrivate) unsubscribePrivate();
+    if (unsubscribePartner) unsubscribePartner();
+    activePartner = null;
+    document.getElementById('privatePage').classList.remove('show');
+  };
+
+  window.sendPrivateMessage = function() {
+    const txt = document.getElementById('privateInput').value.trim();
+    if (!txt || !activePartner) return;
+    const roomId = [currentUser.uid, activePartner.uid].sort().join('_');
+    db.collection('private_messages').add({
+      text: txt,
+      username: currentUsername,
+      uid: currentUser.uid,
+      toUid: activePartner.uid,
+      roomId: roomId,
+      createdAt: firebase.firestore.FieldValue.serverTimestamp()
+    });
+    document.getElementById('privateInput').value = '';
+    scrollToBottom(document.getElementById('privateMessages'));
+  };
+
+  function sendWithReply() {
+    const txt = document.getElementById('messageInput').value.trim();
+    if (!txt) return;
+    const data = {
+      text: txt,
+      username: currentUsername,
+      uid: currentUser.uid,
+      createdAt: firebase.firestore.FieldValue.serverTimestamp()
+    };
+    if (replyingTo) data.replyTo = replyingTo;
+    db.collection('messages').add(data);
+    document.getElementById('messageInput').value = '';
+    cancelReply();
+    scrollToBottom(document.getElementById('messages'));
+  }
+
+  function handleTyping() {
+    if (!currentUser) return;
+    if (!isTyping) {
+      isTyping = true;
+      db.collection('typing').doc(currentUser.uid).set({
+        username: currentUsername,
+        isTyping: true,
+        timestamp: firebase.firestore.FieldValue.serverTimestamp()
+      }).catch(()=>{});
+    }
+    clearTimeout(typingTimeout);
+    typingTimeout = setTimeout(() => {
+      isTyping = false;
+      db.collection('typing').doc(currentUser.uid).delete().catch(()=>{});
+    }, 2000);
+  }
+
+  function handlePrivateTyping() {
+    if (!currentUser || !activePartner) return;
+    const roomId = [currentUser.uid, activePartner.uid].sort().join('_');
+    if (!isTyping) {
+      isTyping = true;
+      db.collection('private_typing').doc(roomId).set({
+        username: currentUsername,
+        isTyping: true,
+        timestamp: firebase.firestore.FieldValue.serverTimestamp()
+      }).catch(()=>{});
+    }
+    clearTimeout(typingTimeout);
+    typingTimeout = setTimeout(() => {
+      isTyping = false;
+      db.collection('private_typing').doc(roomId).delete().catch(()=>{});
+    }, 2000);
+  }
+
+  window.toggleSearchBar = function() {
+    const bar = document.getElementById('searchBar');
+    bar.classList.toggle('show');
+    if (bar.classList.contains('show')) document.getElementById('searchInput').focus();
+  };
+  window.closeSearchBar = function() {
+    document.getElementById('searchBar').classList.remove('show');
+    clearSearch();
+  };
+  window.searchMessages = function(term) {
+    if (!term.trim()) return;
+    const messages = document.querySelectorAll('.message-bubble');
+    let found = false;
+    messages.forEach(msg => {
+      const text = msg.innerText;
+      if (text.toLowerCase().includes(term.toLowerCase())) {
+        msg.style.backgroundColor = '#fffaec';
+        if (!found) { msg.scrollIntoView({ behavior: 'smooth', block: 'center' }); found = true; }
+      } else {
+        msg.style.backgroundColor = '';
+      }
+    });
+    if (!found) showToast('❌ لا توجد رسائل مطابقة');
+  };
+  window.clearSearch = function() {
+    document.getElementById('searchInput').value = '';
+    document.querySelectorAll('.message-bubble').forEach(el => el.style.backgroundColor = '');
+  };
+
+  window.showFullImage = function(url) {
+    document.getElementById('fullImage').src = url;
+    document.getElementById('fullImageModal').classList.add('show');
+  };
+  window.toggleSidebar = function() {
+    document.querySelector('.users-sidebar').classList.toggle('show');
+  };
+  window.toggleTheme = function() {
+    const html = document.documentElement;
+    const cur = html.getAttribute('data-theme') || 'light';
+    const next = cur === 'light' ? 'dark' : 'light';
+    html.setAttribute('data-theme', next);
+    localStorage.setItem('chat-theme', next);
+  };
+  window.setReply = function(id, text, username) {
+    replyingTo = { id, text, username };
+    document.getElementById('replyToName').innerText = username;
+    document.getElementById('replyText').innerText = text.substring(0, 40) + (text.length > 40 ? '...' : '');
+    document.getElementById('replyIndicator').style.display = 'flex';
+  };
+  window.cancelReply = function() {
+    replyingTo = null;
+    document.getElementById('replyIndicator').style.display = 'none';
+  };
+
+  // Image upload
+  document.getElementById('imageFileInput').addEventListener('change', (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    if (file.size > 5 * 1024 * 1024) { showToast('❌ حجم الصورة كبير جداً (الحد الأقصى 5 ميجابايت)'); return; }
+    if (!file.type.startsWith('image/')) { showToast('❌ الملف ليس صورة'); return; }
+    selectedImageFile = file;
+    const reader = new FileReader();
+    reader.onload = (ev) => {
+      document.getElementById('imagePreview').src = ev.target.result;
+      document.getElementById('imagePreviewContainer').classList.add('show');
+      currentImageMessageContext = document.getElementById('privatePage').classList.contains('show') ? 'private' : 'public';
+    };
+    reader.readAsDataURL(file);
+  });
+
+  window.sendImageMessage = async function() {
+    if (!selectedImageFile) return;
+    document.getElementById('uploadProgress').classList.add('show');
+    const fd = new FormData();
+    fd.append('file', selectedImageFile);
+    fd.append('upload_preset', UPLOAD_PRESET);
+    try {
+      const res = await fetch(`https://api.cloudinary.com/v1_1/${CLOUD_NAME}/image/upload`, { method: 'POST', body: fd });
+      const data = await res.json();
+      if (currentImageMessageContext === 'private' && activePartner) {
+        const roomId = [currentUser.uid, activePartner.uid].sort().join('_');
+        await db.collection('private_messages').add({
+          imageUrl: data.secure_url,
+          username: currentUsername,
+          uid: currentUser.uid,
+          toUid: activePartner.uid,
+          roomId,
+          createdAt: firebase.firestore.FieldValue.serverTimestamp()
+        });
+      } else {
+        await db.collection('messages').add({
+          imageUrl: data.secure_url,
+          username: currentUsername,
+          uid: currentUser.uid,
+          createdAt: firebase.firestore.FieldValue.serverTimestamp()
+        });
+      }
+      showToast('✅ تم إرسال الصورة');
+    } catch (err) {
+      showToast('❌ فشل إرسال الصورة');
+    } finally {
+      document.getElementById('uploadProgress').classList.remove('show');
+      cancelImageUpload();
+    }
+  };
+
+  window.cancelImageUpload = function() {
+    selectedImageFile = null;
+    document.getElementById('imagePreviewContainer').classList.remove('show');
+    document.getElementById('imageFileInput').value = '';
+  };
+
+  // Forgot password
+  window.validateResetEmail = function() {
+    const email = document.getElementById('resetEmail').value.trim();
+    const isValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+    const div = document.getElementById('resetEmailValidation');
+    if (!email) { div.style.display = 'none'; return false; }
+    div.style.display = 'block';
+    div.className = isValid ? 'validation-message success' : 'validation-message error';
+    div.innerHTML = isValid ? '✅ البريد الإلكتروني صالح' : '❌ البريد الإلكتروني غير صالح';
+    return isValid;
+  };
+  window.showForgotPasswordModal = function() {
+    document.getElementById('forgotPasswordModal').classList.add('show');
+  };
+  window.hideForgotPasswordModal = function() {
+    document.getElementById('forgotPasswordModal').classList.remove('show');
+  };
+  window.sendPasswordReset = async function() {
+    const email = document.getElementById('resetEmail').value.trim();
+    if (!email) { showToast('❌ أدخل البريد الإلكتروني'); return; }
+    if (!validateResetEmail()) return;
+    try {
+      await auth.sendPasswordResetEmail(email);
+      showToast('✅ تم إرسال رابط إعادة التعيين');
+      hideForgotPasswordModal();
+    } catch (err) {
+      showToast('❌ خطأ: ' + err.message);
+    }
+  };
+
+  // Auth state listener
   auth.onAuthStateChanged(async (user) => {
     if (user && user.emailVerified) {
       currentUser = user;
-      let doc = await db.collection('users').doc(user.uid).get();
-      if (doc.exists) currentUsername = doc.data().username;
-      else currentUsername = user.email.split('@')[0];
-      await db.collection('users').doc(user.uid).set({ username: currentUsername, email: user.email, online: true, status: 'online', lastActive: new Date() }, { merge: true });
+      const doc = await db.collection('users').doc(user.uid).get();
+      if (doc.exists) {
+        currentUsername = doc.data().username;
+      } else {
+        currentUsername = user.email.split('@')[0].substring(0, 15);
+        await db.collection('users').doc(user.uid).set({
+          username: currentUsername,
+          email: user.email,
+          online: true,
+          status: 'online',
+          emailVerified: true,
+          createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+          lastSeen: firebase.firestore.FieldValue.serverTimestamp(),
+          lastActive: firebase.firestore.FieldValue.serverTimestamp()
+        });
+      }
       await setupUserPresence();
       setupActivityMonitor();
       loadPublicMessages();
@@ -945,10 +1284,19 @@
       hideLoadingScreen();
     }
   });
-  messageInput.addEventListener('keypress', e => { if (e.key === 'Enter') sendWithReply(); });
-  privateInput.addEventListener('keypress', e => { if (e.key === 'Enter') sendPrivateMessage(); });
-  (function loadTheme() { let saved = localStorage.getItem('chat-theme'); if (saved) document.documentElement.setAttribute('data-theme', saved); })();
-  setTimeout(() => hideLoadingScreen(), 2000);
+
+  // Event listeners
+  document.getElementById('messageInput').addEventListener('keypress', (e) => { if (e.key === 'Enter') sendWithReply(); });
+  document.getElementById('privateInput').addEventListener('keypress', (e) => { if (e.key === 'Enter') sendPrivateMessage(); });
+
+  // Load saved theme
+  (function() {
+    const saved = localStorage.getItem('chat-theme');
+    if (saved) document.documentElement.setAttribute('data-theme', saved);
+  })();
+
+  // Hide loading after timeout
+  setTimeout(hideLoadingScreen, 2000);
 </script>
 </body>
-</html>
+            </html>
