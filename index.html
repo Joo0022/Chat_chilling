@@ -98,16 +98,29 @@
     }
 
     body {
-      background: linear-gradient(135deg, var(--bg-gradient-start), var(--bg-gradient-end));
-      min-height: 100vh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 20px;
-      margin: 0;
-      transition: background 0.3s ease;
-      overflow: hidden;
-    }
+  background: linear-gradient(135deg, var(--bg-gradient-start), var(--bg-gradient-end));
+  min-height: 100dvh;               /* استخدام dvh لتجنب تأثير الأشرطة */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  margin: 0;
+  transition: background 0.3s ease;
+  overflow: hidden;                 /* منع التمرير العام للصفحة */
+}
+
+.container {
+  width: 100%;
+  max-width: 1400px;
+  height: 85dvh;                    /* ارتفاع ديناميكي يتكيف مع الشاشة */
+  background: var(--container-bg);
+  backdrop-filter: blur(20px);
+  border-radius: 32px;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  overflow: hidden;
+  position: relative;
+  }
 
     #loadingScreen {
       position: fixed;
@@ -171,7 +184,7 @@
     }
 
     /* الحاوية الرئيسية - مركزية وليست ملء الشاشة */
-    .container {
+   /* .container {
       width: 100%;
       max-width: 1400px;
       height: 85vh;
@@ -185,7 +198,7 @@
       position: relative;
       transition: all 0.3s ease;
     }
-
+*/
     #auth {
       height: 100%;
       display: flex;
