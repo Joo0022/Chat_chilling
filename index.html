@@ -16,35 +16,35 @@
       margin: 0;
       padding: 0;
       box-sizing: border-box;
-      font-family: 'Inter', 'Cairo', 'Segoe UI', system-ui, -apple-system, sans-serif;
+      font-family: 'Cairo', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     }
 
-    /* --- متغيرات التصميم الجديدة (عصرية - زجاجية) --- */
+    /* --- المتغيرات اللونية (ثيم فاتح/داكن) --- */
     :root[data-theme="light"] {
-      --bg-primary: #f5f7ff;
-      --bg-secondary: #ffffff;
-      --bg-glass: rgba(255, 255, 255, 0.75);
-      --bg-glass-solid: rgba(255, 255, 255, 0.96);
-      --text-primary: #0a0f2c;
-      --text-secondary: #2d3a6f;
-      --text-muted: #6c7aa0;
-      --accent-primary: #5b5ce0;
-      --accent-gradient: linear-gradient(135deg, #5b5ce0, #8b5cf6);
-      --accent-secondary: #f97316;
-      --border-light: rgba(0, 0, 0, 0.08);
-      --shadow-sm: 0 8px 20px rgba(0, 0, 0, 0.03), 0 2px 6px rgba(0, 0, 0, 0.05);
-      --shadow-md: 0 12px 28px rgba(0, 0, 0, 0.08);
-      --shadow-lg: 0 20px 35px -8px rgba(0, 0, 0, 0.12);
-      --message-own: linear-gradient(115deg, #5b5ce0, #8b5cf6);
+      --bg-gradient-start: #667eea;
+      --bg-gradient-end: #764ba2;
+      --container-bg: rgba(255, 255, 255, 0.12);
+      --auth-side-bg: linear-gradient(135deg, rgba(102, 126, 234, 0.88), rgba(118, 75, 162, 0.88));
+      --auth-main-bg: rgba(255, 255, 255, 0.96);
+      --text-primary: #1e293b;
+      --text-secondary: #334155;
+      --text-light: #64748b;
+      --bg-white: #ffffff;
+      --bg-light: #f8fafc;
+      --border-color: #e2e8f0;
+      --shadow-color: rgba(0, 0, 0, 0.1);
+      --message-own: linear-gradient(135deg, #667eea, #764ba2);
       --message-other: #ffffff;
-      --sidebar-bg: rgba(255, 255, 255, 0.85);
+      --sidebar-bg: #ffffff;
       --input-bg: #ffffff;
-      --hover-bg: rgba(91, 92, 224, 0.08);
-      --online-status: #22c55e;
-      --away-status: #f97316;
+      --icon-color: #475569;
+      --hover-bg: #f1f5f9;
+      --online-status: #10b981;
+      --away-status: #f59e0b;
       --offline-status: #94a3b8;
-      --danger: #ef4444;
-      --success: #22c55e;
+      --danger-color: #ef4444;
+      --success-color: #22c55e;
+      --warning-color: #facc15;
       --user-color-1: #FF6B6B;
       --user-color-2: #4ECDC4;
       --user-color-3: #45B7D1;
@@ -57,34 +57,33 @@
       --user-color-10: #82E0AA;
       --user-color-11: #F1948A;
       --user-color-12: #85C1E9;
-      --blur-bg: blur(12px);
     }
 
     :root[data-theme="dark"] {
-      --bg-primary: #0c0f1c;
-      --bg-secondary: #13172b;
-      --bg-glass: rgba(19, 23, 43, 0.8);
-      --bg-glass-solid: rgba(19, 23, 43, 0.96);
-      --text-primary: #f0f2ff;
-      --text-secondary: #cbd5ff;
-      --text-muted: #8f9bb3;
-      --accent-primary: #7c6ef0;
-      --accent-gradient: linear-gradient(135deg, #7c6ef0, #a78bfa);
-      --accent-secondary: #fb923c;
-      --border-light: rgba(255, 255, 255, 0.08);
-      --shadow-sm: 0 8px 20px rgba(0, 0, 0, 0.3);
-      --shadow-md: 0 12px 28px rgba(0, 0, 0, 0.4);
-      --shadow-lg: 0 20px 35px -8px rgba(0, 0, 0, 0.5);
-      --message-own: linear-gradient(115deg, #7c6ef0, #a78bfa);
-      --message-other: #1e243f;
-      --sidebar-bg: rgba(15, 19, 35, 0.85);
-      --input-bg: #1e243f;
-      --hover-bg: rgba(124, 110, 240, 0.15);
-      --online-status: #4ade80;
-      --away-status: #fb923c;
-      --offline-status: #6b7280;
-      --danger: #f87171;
-      --success: #4ade80;
+      --bg-gradient-start: #0f172a;
+      --bg-gradient-end: #1e293b;
+      --container-bg: rgba(0, 0, 0, 0.35);
+      --auth-side-bg: linear-gradient(135deg, rgba(30, 41, 59, 0.9), rgba(15, 23, 42, 0.9));
+      --auth-main-bg: rgba(30, 41, 59, 0.96);
+      --text-primary: #f1f5f9;
+      --text-secondary: #cbd5e1;
+      --text-light: #94a3b8;
+      --bg-white: #1e293b;
+      --bg-light: #0f172a;
+      --border-color: #334155;
+      --shadow-color: rgba(0, 0, 0, 0.4);
+      --message-own: linear-gradient(135deg, #4f46e5, #7c3aed);
+      --message-other: #1e293b;
+      --sidebar-bg: #0f172a;
+      --input-bg: #1e293b;
+      --icon-color: #cbd5e1;
+      --hover-bg: #334155;
+      --online-status: #10b981;
+      --away-status: #f59e0b;
+      --offline-status: #64748b;
+      --danger-color: #f87171;
+      --success-color: #4ade80;
+      --warning-color: #facc15;
       --user-color-1: #FF8A8A;
       --user-color-2: #6ED4CB;
       --user-color-3: #5FC3E0;
@@ -97,47 +96,48 @@
       --user-color-10: #A3E4C0;
       --user-color-11: #F5B7B1;
       --user-color-12: #A9D6F0;
-      --blur-bg: blur(16px);
     }
 
-    /* --- الهيكل الأساسي --- */
+    /* --- هيكل الصفحة الرئيسي: ملء الشاشة بالكامل بدون هوامش خارجية --- */
     html, body {
       height: 100%;
       width: 100%;
       margin: 0;
       padding: 0;
-      overflow: hidden;
+      overflow: hidden;          /* منع التمرير العام، التمرير داخل الحاويات فقط */
     }
 
     body {
-      background: var(--bg-primary);
+      background: linear-gradient(135deg, var(--bg-gradient-start), var(--bg-gradient-end));
       display: flex;
       align-items: center;
       justify-content: center;
       transition: background 0.3s ease;
     }
 
+    /* الحاوية الرئيسية: تأخذ المساحة الكاملة للعنصر الأب (body) بدون قيود عرض/ارتفاع خارجية */
     .container {
       width: 100%;
       height: 100%;
-      max-width: none;
-      background: transparent;
-      backdrop-filter: none;
-      border-radius: 0;
+      max-width: none;           /* إلغاء الحد الأقصى للعرض ليملأ الشاشة بالكامل */
+      background: var(--container-bg);
+      backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px);
+      border-radius: 0;          /* تناسب الحاوية الجديدة بدون تدوير للزوايا */
+      box-shadow: none;          /* الظل غير ضروري في الوضع الملء */
       overflow: hidden;
       display: flex;
       flex-direction: column;
     }
 
-    /* شاشة تحميل جديدة */
+    /* --- شاشة التحميل --- */
     #loadingScreen {
       position: fixed;
       top: 0;
       left: 0;
       width: 100%;
       height: 100%;
-      background: var(--bg-primary);
-      backdrop-filter: blur(20px);
+      background: linear-gradient(135deg, #667eea, #764ba2);
       display: flex;
       align-items: center;
       justify-content: center;
@@ -151,19 +151,20 @@
     }
     .loader-content {
       text-align: center;
+      color: white;
     }
     .loader-spinner {
-      width: 60px;
-      height: 60px;
-      border: 3px solid rgba(91, 92, 224, 0.2);
-      border-top-color: var(--accent-primary);
+      width: 70px;
+      height: 70px;
+      border: 6px solid rgba(255,255,255,0.3);
+      border-top-color: white;
       border-radius: 50%;
-      animation: spin 1s cubic-bezier(0.4, 0, 0.2, 1) infinite;
-      margin: 0 auto 20px;
+      animation: spin 1s linear infinite;
+      margin: 0 auto 25px;
     }
     @keyframes spin { to { transform: rotate(360deg); } }
 
-    /* خلفية متحركة أنيقة */
+    /* خلفية متحركة */
     .animated-bg {
       position: fixed;
       top: 0;
@@ -172,24 +173,22 @@
       height: 100%;
       z-index: -1;
       overflow: hidden;
-      opacity: 0.4;
     }
     .animated-bg span {
       position: absolute;
       display: block;
-      width: 80px;
-      height: 80px;
-      background: radial-gradient(circle, rgba(91,92,224,0.2) 0%, rgba(139,92,246,0) 70%);
-      border-radius: 50%;
-      animation: float 20s infinite linear;
+      width: 20px;
+      height: 20px;
+      background: rgba(255, 255, 255, 0.1);
+      animation: animate 25s linear infinite;
       bottom: -150px;
     }
-    @keyframes float {
-      0% { transform: translateY(0) rotate(0deg); opacity: 0.5; }
+    @keyframes animate {
+      0% { transform: translateY(0) rotate(0deg); opacity: 1; }
       100% { transform: translateY(-1000px) rotate(720deg); opacity: 0; }
     }
 
-    /* ========== شاشة المصادقة بتصميم عصري ========== */
+    /* ========== شاشة المصادقة ========== */
     #auth {
       height: 100%;
       display: flex;
@@ -198,7 +197,7 @@
 
     .auth-side {
       flex: 1;
-      background: var(--accent-gradient);
+      background: var(--auth-side-bg);
       backdrop-filter: blur(8px);
       display: flex;
       flex-direction: column;
@@ -209,31 +208,33 @@
       text-align: center;
       position: relative;
       overflow: hidden;
-      border-radius: 0;
+      border-radius: 0;          /* تناسق مع الحاوية الجديدة */
     }
     .auth-side::before {
       content: '';
       position: absolute;
-      width: 150%;
-      height: 150%;
-      background: radial-gradient(circle at 30% 40%, rgba(255,255,255,0.2) 0%, transparent 70%);
-      animation: slowDrift 12s infinite alternate;
+      width: 200%;
+      height: 200%;
+      background: rgba(255, 255, 255, 0.1);
+      transform: rotate(45deg);
+      top: -50%;
+      left: -50%;
+      animation: shine 6s infinite;
     }
-    @keyframes slowDrift {
-      0% { transform: translate(-5%, -5%); }
-      100% { transform: translate(5%, 5%); }
+    @keyframes shine {
+      0% { transform: rotate(45deg) translateY(-100%); }
+      100% { transform: rotate(45deg) translateY(100%); }
     }
     .auth-side h1 {
-      font-size: 2.6rem;
-      font-weight: 700;
+      font-size: 2.5rem;
       margin-bottom: 20px;
-      letter-spacing: -0.5px;
+      text-shadow: 0 10px 20px rgba(0,0,0,0.3);
       position: relative;
     }
     .auth-side p {
       font-size: 1rem;
       max-width: 350px;
-      line-height: 1.7;
+      line-height: 1.6;
       opacity: 0.9;
       position: relative;
     }
@@ -243,8 +244,8 @@
       align-items: center;
       justify-content: center;
       padding: 40px;
-      background: var(--bg-glass-solid);
-      backdrop-filter: var(--blur-bg);
+      background: var(--auth-main-bg);
+      backdrop-filter: blur(10px);
       border-radius: 0;
     }
     .auth-form-container {
@@ -254,11 +255,10 @@
     .auth-tabs {
       display: flex;
       gap: 12px;
-      margin-bottom: 32px;
-      background: var(--bg-secondary);
+      margin-bottom: 30px;
+      background: rgba(102, 126, 234, 0.1);
       padding: 6px;
       border-radius: 60px;
-      box-shadow: var(--shadow-sm);
     }
     .auth-tab {
       flex: 1;
@@ -266,41 +266,41 @@
       border: none;
       border-radius: 50px;
       background: transparent;
-      color: var(--text-secondary);
+      color: var(--text-primary);
       font-weight: 600;
       font-size: 0.95rem;
       cursor: pointer;
-      transition: all 0.2s ease;
+      transition: all 0.3s ease;
     }
     .auth-tab.active {
-      background: var(--accent-gradient);
+      background: linear-gradient(135deg, #667eea, #764ba2);
       color: white;
-      box-shadow: var(--shadow-sm);
+      box-shadow: 0 8px 20px -5px rgba(102, 126, 234, 0.5);
     }
     .input-group-modern {
-      margin-bottom: 24px;
+      margin-bottom: 20px;
     }
     .input-group-modern label {
       display: block;
-      color: var(--text-secondary);
+      color: var(--text-primary);
       margin-bottom: 8px;
       font-weight: 500;
-      font-size: 0.85rem;
+      font-size: 0.9rem;
     }
     .input-modern {
       width: 100%;
-      padding: 14px 18px;
-      border: 1.5px solid var(--border-light);
-      border-radius: 28px;
+      padding: 12px 18px;
+      border: 2px solid var(--border-color);
+      border-radius: 30px;
       background: var(--input-bg);
       color: var(--text-primary);
       font-size: 0.95rem;
-      transition: all 0.2s;
+      transition: all 0.3s ease;
     }
     .input-modern:focus {
       outline: none;
-      border-color: var(--accent-primary);
-      box-shadow: 0 0 0 3px rgba(91, 92, 224, 0.2);
+      border-color: #667eea;
+      box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.15);
     }
     .password-wrapper-modern {
       position: relative;
@@ -312,30 +312,31 @@
       transform: translateY(-50%);
       background: none;
       border: none;
-      color: var(--text-muted);
+      color: var(--text-light);
       cursor: pointer;
+      font-size: 1.1rem;
     }
     .btn-modern {
       width: 100%;
-      padding: 14px;
+      padding: 12px;
       border: none;
-      border-radius: 40px;
+      border-radius: 50px;
       font-weight: 600;
       font-size: 0.95rem;
       cursor: pointer;
-      transition: all 0.2s ease;
-      background: var(--accent-gradient);
+      transition: all 0.3s ease;
+      background: linear-gradient(135deg, #667eea, #764ba2);
       color: white;
-      box-shadow: var(--shadow-sm);
+      box-shadow: 0 8px 20px -5px rgba(102, 126, 234, 0.5);
     }
     .btn-modern:hover {
       transform: translateY(-2px);
-      box-shadow: var(--shadow-md);
+      box-shadow: 0 12px 25px -5px rgba(102, 126, 234, 0.7);
     }
     .btn-modern.google {
-      background: var(--bg-secondary);
+      background: var(--bg-white);
       color: var(--text-primary);
-      border: 1.5px solid var(--border-light);
+      border: 2px solid var(--border-color);
       display: flex;
       align-items: center;
       justify-content: center;
@@ -344,9 +345,9 @@
     .separator-modern {
       text-align: center;
       margin: 24px 0;
-      color: var(--text-muted);
-      font-size: 0.8rem;
+      color: var(--text-light);
       position: relative;
+      font-size: 0.85rem;
     }
     .separator-modern::before,
     .separator-modern::after {
@@ -355,16 +356,16 @@
       top: 50%;
       width: 40%;
       height: 1px;
-      background: var(--border-light);
+      background: var(--border-color);
     }
     .separator-modern::before { right: 0; }
     .separator-modern::after { left: 0; }
-    .validation-message { font-size: 0.75rem; margin-top: 6px; display: none; }
-    .validation-message.success { color: var(--success); display: block; }
-    .validation-message.error { color: var(--danger); display: block; }
-    .error-message { color: var(--danger); font-size: 0.8rem; margin-top: 5px; text-align: center; }
+    .validation-message { font-size: 0.75rem; margin-top: 5px; display: none; }
+    .validation-message.success { color: var(--success-color); display: block; }
+    .validation-message.error { color: var(--danger-color); display: block; }
+    .error-message { color: var(--danger-color); font-size: 0.8rem; margin-top: 5px; text-align: center; }
 
-    /* ========== واجهة الدردشة الحديثة ========== */
+    /* ========== واجهة الدردشة ========== */
     #chat {
       height: 100%;
       display: none;
@@ -378,16 +379,15 @@
     .users-sidebar {
       width: 290px;
       background: var(--sidebar-bg);
-      backdrop-filter: var(--blur-bg);
-      border-left: 1px solid var(--border-light);
+      border-left: 1px solid var(--border-color);
       display: flex;
       flex-direction: column;
       overflow: hidden;
-      transition: right 0.3s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+      transition: right 0.3s ease;
     }
     .sidebar-header {
       padding: 20px;
-      background: var(--accent-gradient);
+      background: var(--auth-side-bg);
       color: white;
     }
     .sidebar-header h3 {
@@ -397,60 +397,59 @@
       gap: 10px;
     }
     .online-count {
-      background: rgba(255, 255, 255, 0.25);
-      padding: 4px 12px;
-      border-radius: 40px;
-      font-size: 0.75rem;
-      font-weight: 500;
+      background: rgba(255, 255, 255, 0.2);
+      padding: 4px 10px;
+      border-radius: 20px;
+      font-size: 0.8rem;
     }
     .users-list {
       flex: 1;
       overflow-y: auto;
-      padding: 16px;
+      padding: 15px;
     }
     .user-item {
       display: flex;
       align-items: center;
       gap: 12px;
       padding: 12px;
-      background: var(--bg-glass);
-      backdrop-filter: blur(4px);
-      border-radius: 24px;
-      margin-bottom: 10px;
+      background: var(--bg-light);
+      border-radius: 16px;
+      margin-bottom: 8px;
       cursor: pointer;
-      transition: all 0.2s;
-      border: 1px solid transparent;
+      transition: all 0.3s ease;
+      border: 2px solid transparent;
     }
     .user-item:hover {
       transform: translateX(-4px);
-      border-color: var(--accent-primary);
+      border-color: #667eea;
       background: var(--hover-bg);
-      box-shadow: var(--shadow-sm);
+      box-shadow: 0 8px 20px -8px var(--shadow-color);
     }
     .user-avatar {
-      width: 44px;
-      height: 44px;
-      background: var(--accent-gradient);
-      border-radius: 20px;
+      width: 42px;
+      height: 42px;
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      border-radius: 14px;
       display: flex;
       align-items: center;
       justify-content: center;
       color: white;
-      font-weight: 700;
+      font-weight: 600;
       font-size: 1rem;
-      box-shadow: var(--shadow-sm);
     }
     .user-info {
       flex: 1;
     }
-    .user-name { font-weight: 700; color: var(--text-primary); font-size: 0.9rem; }
-    .user-status { font-size: 0.7rem; display: flex; align-items: center; gap: 5px; margin-top: 2px; }
-    .status-dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; }
-    .user-status.online .status-dot { background: var(--online-status); }
-    .user-status.away .status-dot { background: var(--away-status); }
-    .user-status.offline .status-dot { background: var(--offline-status); }
+    .user-name { font-weight: 600; color: var(--text-primary); font-size: 0.9rem; }
+    .user-status { font-size: 0.7rem; display: flex; align-items: center; gap: 4px; }
+    .user-status.online { color: var(--online-status); }
+    .user-status.away { color: var(--away-status); }
+    .user-status.offline { color: var(--offline-status); }
+    .status-dot { width: 8px; height: 8px; background: var(--online-status); border-radius: 50%; display: inline-block; }
+    .status-dot.away { background: var(--away-status); }
+    .status-dot.offline { background: var(--offline-status); }
     .notification-badge-new {
-      background: var(--danger);
+      background: var(--danger-color);
       color: white;
       border-radius: 30px;
       padding: 2px 8px;
@@ -463,14 +462,13 @@
       flex: 1;
       display: flex;
       flex-direction: column;
-      background: var(--bg-glass);
-      backdrop-filter: var(--blur-bg);
+      background: var(--bg-light);
       overflow: hidden;
     }
     .chat-header {
-      padding: 16px 24px;
-      background: var(--bg-secondary);
-      border-bottom: 1px solid var(--border-light);
+      padding: 15px 24px;
+      background: var(--bg-white);
+      border-bottom: 1px solid var(--border-color);
       display: flex;
       align-items: center;
       justify-content: space-between;
@@ -478,31 +476,56 @@
     .chat-header h2 {
       color: var(--text-primary);
       font-size: 1.2rem;
-      font-weight: 600;
       display: flex;
       align-items: center;
       gap: 8px;
     }
     .header-actions-new {
       display: flex;
-      gap: 10px;
+      gap: 8px;
     }
     .btn-icon, .theme-toggle {
       width: 40px;
       height: 40px;
       border: none;
-      border-radius: 18px;
-      background: var(--bg-glass);
-      color: var(--text-secondary);
+      border-radius: 14px;
+      background: var(--bg-light);
+      color: var(--icon-color);
       cursor: pointer;
-      transition: all 0.2s;
+      transition: all 0.2s ease;
       font-size: 1rem;
-      backdrop-filter: blur(4px);
     }
     .btn-icon:hover, .theme-toggle:hover {
-      background: var(--accent-gradient);
+      background: linear-gradient(135deg, #667eea, #764ba2);
       color: white;
-      transform: scale(1.03);
+      transform: scale(1.02);
+    }
+    .search-area {
+      padding: 12px 24px;
+      background: var(--bg-white);
+      border-bottom: 1px solid var(--border-color);
+      display: none;
+    }
+    .search-area.show { display: block; }
+    .search-input-group {
+      display: flex;
+      gap: 10px;
+    }
+    .search-input {
+      flex: 1;
+      padding: 10px 18px;
+      border: 2px solid var(--border-color);
+      border-radius: 40px;
+      background: var(--input-bg);
+      color: var(--text-primary);
+    }
+    .btn-close {
+      background: var(--danger-color);
+      color: white;
+      border: none;
+      border-radius: 40px;
+      padding: 0 18px;
+      cursor: pointer;
     }
     .messages-area {
       flex: 1;
@@ -515,45 +538,40 @@
     .message-bubble {
       max-width: 70%;
       padding: 12px 18px;
-      border-radius: 26px;
-      animation: fadeSlide 0.2s ease;
+      border-radius: 22px 22px 22px 5px;
+      animation: slideIn 0.2s ease;
       position: relative;
-      transition: all 0.1s;
     }
     .message-bubble.own {
       align-self: flex-end;
       background: var(--message-own);
       color: white;
-      border-bottom-right-radius: 8px;
-      box-shadow: var(--shadow-sm);
+      border-radius: 22px 22px 5px 22px;
     }
     .message-bubble.other {
       align-self: flex-start;
       background: var(--message-other);
       color: var(--text-primary);
-      border-bottom-left-radius: 8px;
-      box-shadow: var(--shadow-sm);
-      border: 1px solid var(--border-light);
+      box-shadow: 0 3px 12px var(--shadow-color);
     }
     .message-sender {
       font-size: 0.7rem;
-      margin-bottom: 5px;
-      opacity: 0.85;
+      margin-bottom: 4px;
+      opacity: 0.9;
       font-weight: 600;
       display: inline-block;
-      background: rgba(0,0,0,0.1);
-      padding: 2px 10px;
-      border-radius: 30px;
+      padding: 2px 8px;
+      border-radius: 20px;
+      background: rgba(0, 0, 0, 0.1);
     }
-    .message-text { word-break: break-word; line-height: 1.45; font-size: 0.9rem; }
-    .message-time { font-size: 0.65rem; opacity: 0.6; margin-top: 6px; text-align: left; }
+    .message-text { word-break: break-word; line-height: 1.4; font-size: 0.9rem; }
+    .message-time { font-size: 0.65rem; opacity: 0.6; margin-top: 5px; }
     .message-image {
       max-width: 220px;
       max-height: 160px;
-      border-radius: 20px;
+      border-radius: 16px;
       cursor: pointer;
-      margin-top: 8px;
-      transition: transform 0.1s;
+      margin-top: 6px;
       border: 1px solid rgba(255,255,255,0.2);
     }
     .typing-indicator-new {
@@ -561,26 +579,24 @@
       align-items: center;
       gap: 8px;
       padding: 8px 18px;
-      background: var(--bg-glass);
-      border-radius: 50px;
+      background: var(--bg-white);
+      border-radius: 40px;
       width: fit-content;
       margin: 8px 24px;
-      box-shadow: var(--shadow-sm);
-      backdrop-filter: blur(8px);
+      box-shadow: 0 3px 12px var(--shadow-color);
     }
+    .typing-dots { display: flex; gap: 4px; }
     .typing-dots span {
       width: 6px;
       height: 6px;
-      background: var(--accent-primary);
+      background: #667eea;
       border-radius: 50%;
-      display: inline-block;
-      animation: bounce 1.2s infinite;
+      animation: typing 1.4s infinite;
     }
-    @keyframes bounce { 0%,60%,100% { transform: translateY(0); } 30% { transform: translateY(-5px); } }
     .input-area-new {
-      padding: 16px 24px;
-      background: var(--bg-secondary);
-      border-top: 1px solid var(--border-light);
+      padding: 15px 24px;
+      background: var(--bg-white);
+      border-top: 1px solid var(--border-color);
       display: flex;
       gap: 12px;
       align-items: center;
@@ -588,29 +604,28 @@
     .message-input {
       flex: 1;
       padding: 12px 20px;
-      border: 1.5px solid var(--border-light);
-      border-radius: 50px;
+      border: 2px solid var(--border-color);
+      border-radius: 40px;
       background: var(--input-bg);
       color: var(--text-primary);
       font-size: 0.9rem;
     }
     .btn-send, .btn-upload {
-      width: 48px;
-      height: 48px;
+      width: 44px;
+      height: 44px;
       border: none;
-      border-radius: 28px;
+      border-radius: 50%;
       cursor: pointer;
       transition: all 0.2s;
-      font-size: 1.2rem;
+      font-size: 1rem;
     }
     .btn-send {
-      background: var(--accent-gradient);
+      background: linear-gradient(135deg, #667eea, #764ba2);
       color: white;
-      box-shadow: var(--shadow-sm);
     }
     .btn-upload {
-      background: var(--bg-glass);
-      color: var(--text-secondary);
+      background: var(--bg-light);
+      color: var(--icon-color);
     }
 
     /* المحادثة الخاصة */
@@ -620,8 +635,7 @@
       left: 0;
       width: 100%;
       height: 100%;
-      background: var(--bg-glass-solid);
-      backdrop-filter: var(--blur-bg);
+      background: var(--bg-light);
       z-index: 2000;
       display: none;
       flex-direction: column;
@@ -629,8 +643,8 @@
     }
     .private-page-new.show { display: flex; }
     .private-header-new {
-      padding: 16px 24px;
-      background: var(--accent-gradient);
+      padding: 15px 24px;
+      background: var(--auth-side-bg);
       color: white;
       display: flex;
       align-items: center;
@@ -641,17 +655,16 @@
       background: rgba(255,255,255,0.2);
       border: none;
       color: white;
-      width: 44px;
-      height: 44px;
-      border-radius: 24px;
+      width: 40px;
+      height: 40px;
+      border-radius: 14px;
       cursor: pointer;
-      transition: 0.2s;
     }
     .private-messages-new {
       flex: 1;
       overflow-y: auto;
       padding: 20px;
-      background: var(--bg-glass);
+      background: var(--bg-light);
       display: flex;
       flex-direction: column;
       gap: 12px;
@@ -662,8 +675,7 @@
       left: 0;
       width: 100%;
       height: 100%;
-      background: rgba(0,0,0,0.75);
-      backdrop-filter: blur(12px);
+      background: rgba(0,0,0,0.85);
       display: none;
       justify-content: center;
       align-items: center;
@@ -673,13 +685,17 @@
     .preview-content-new img {
       max-width: 90vw;
       max-height: 85vh;
-      border-radius: 32px;
-      box-shadow: var(--shadow-lg);
+      border-radius: 24px;
     }
-    @keyframes fadeSlide {
-      from { opacity: 0; transform: translateY(8px); }
+    @keyframes slideIn {
+      from { opacity: 0; transform: translateY(15px); }
       to { opacity: 1; transform: translateY(0); }
     }
+    @keyframes typing {
+      0%,60%,100% { transform: translateY(0); }
+      30% { transform: translateY(-6px); }
+    }
+    /* استجابة للأجهزة اللوحية والجوال */
     @media (max-width: 768px) {
       .auth-side { display: none; }
       .users-sidebar {
@@ -693,42 +709,27 @@
       }
       .users-sidebar.show { right: 0; }
       .message-bubble { max-width: 85%; }
+      .chat-header h2 { font-size: 1rem; }
     }
     .no-messages {
       text-align: center;
       padding: 40px;
-      color: var(--text-muted);
+      color: var(--text-light);
     }
     .reaction-badge-new {
-      background: rgba(128,128,128,0.15);
-      border-radius: 40px;
-      padding: 4px 10px;
+      background: rgba(128,128,128,0.2);
+      border-radius: 30px;
+      padding: 2px 8px;
       font-size: 0.7rem;
       display: inline-flex;
       align-items: center;
-      gap: 6px;
-      cursor: pointer;
-      margin-top: 6px;
-      transition: 0.1s;
-    }
-    .reaction-badge-new:hover { background: var(--accent-primary); color: white; }
-    .user-last-seen { font-size: 0.65rem; color: var(--text-muted); margin-top: 2px; }
-    .close-preview {
-      position: absolute;
-      top: 20px;
-      right: 30px;
-      background: rgba(0,0,0,0.5);
-      border: none;
-      color: white;
-      font-size: 1.5rem;
-      border-radius: 50px;
-      padding: 10px 16px;
+      gap: 5px;
       cursor: pointer;
     }
   </style>
 </head>
 <body>
-  <div id="loadingScreen"><div class="loader-content"><div class="loader-spinner"></div><p style="color: var(--text-primary);">جاري تحميل التطبيق...</p></div></div>
+  <div id="loadingScreen"><div class="loader-content"><div class="loader-spinner"></div><p>جاري تحميل التطبيق...</p></div></div>
   <div class="animated-bg" id="animatedBg"></div>
   <div class="container">
     <div id="auth">
@@ -741,7 +742,7 @@
             <div class="input-group-modern"><label>🔒 كلمة المرور</label><div class="password-wrapper-modern"><input type="password" id="loginPassword" placeholder="أدخل كلمة المرور" class="input-modern"><button class="password-toggle-modern" onclick="togglePasswordVisibility('loginPassword', this)" type="button"><i class="far fa-eye"></i></button></div></div>
             <div id="loginError" class="error-message" style="display: none;"></div>
             <button class="btn-modern" onclick="login()" id="loginBtn">تسجيل الدخول</button>
-            <div style="text-align: center; margin-top: 15px;"><button onclick="showForgotPasswordModal()" style="background: none; border: none; color: var(--accent-primary); cursor: pointer;">نسيت كلمة المرور؟</button></div>
+            <div style="text-align: center; margin-top: 15px;"><button onclick="showForgotPasswordModal()" style="background: none; border: none; color: #667eea; cursor: pointer;">نسيت كلمة المرور؟</button></div>
           </div>
           <div id="registerForm" style="display: none;">
             <div class="input-group-modern"><label>👤 اسم المستخدم (حد أقصى 15 حرف)</label><input type="text" id="username" placeholder="اختر اسم مستخدم" class="input-modern" maxlength="15" oninput="checkUsernameAvailability()"><div id="usernameCheck" class="username-check"></div></div>
@@ -760,21 +761,55 @@
         <div class="users-sidebar"><div class="sidebar-header"><h3><i class="fas fa-users"></i> المستخدمون <span class="online-count" id="onlineCount">0</span></h3></div><div class="users-list" id="onlineList"></div></div>
         <div class="chat-main">
           <div class="chat-header"><h2><i class="fas fa-comments"></i> المحادثة العامة</h2><div class="header-actions-new"><button class="theme-toggle" onclick="toggleTheme()"><i class="fas fa-sun sun-icon"></i><i class="fas fa-moon moon-icon"></i></button><button class="btn-icon" onclick="toggleSearch()"><i class="fas fa-search"></i></button><button class="btn-icon" onclick="toggleSidebar()"><i class="fas fa-users"></i></button><button class="btn-icon" onclick="logout()"><i class="fas fa-sign-out-alt"></i></button></div></div>
-          <div class="search-area" id="searchBar" style="display: none;"><div class="search-input-group"><input type="text" id="searchInput" placeholder="ابحث في الرسائل..." class="search-input" oninput="searchMessages(this.value)"><button class="btn-close" onclick="closeSearch()">إلغاء</button></div></div>
+          <div class="search-area" id="searchBar"><div class="search-input-group"><input type="text" id="searchInput" placeholder="ابحث في الرسائل..." class="search-input" oninput="searchMessages(this.value)"><button class="btn-close" onclick="closeSearch()">إلغاء</button></div></div>
           <div id="typingIndicator" class="typing-indicator-new" style="display: none;"><div class="typing-dots"><span></span><span></span><span></span></div><span id="typingText"></span></div>
-          <div id="replyIndicator" class="typing-indicator-new" style="display: none;"><i class="fas fa-reply" style="color: var(--accent-primary);"></i><span>الرد على <span id="replyToName"></span></span><span style="opacity: 0.7;">"<span id="replyText"></span>"</span><button onclick="cancelReply()" style="background: none; border: none; color: var(--danger); cursor: pointer; margin-right: auto;"><i class="fas fa-times"></i></button></div>
+          <div id="replyIndicator" class="typing-indicator-new" style="display: none;"><i class="fas fa-reply" style="color: #667eea;"></i><span>الرد على <span id="replyToName"></span></span><span style="opacity: 0.7;">"<span id="replyText"></span>"</span><button onclick="cancelReply()" style="background: none; border: none; color: var(--danger-color); cursor: pointer; margin-right: auto;"><i class="fas fa-times"></i></button></div>
           <div class="messages-area" id="messages"></div>
           <div class="input-area-new"><button class="btn-upload" onclick="document.getElementById('imageFileInput').click()"><i class="fas fa-image"></i></button><input type="text" id="messageInput" placeholder="اكتب رسالة..." class="message-input" oninput="handleTyping()"><button class="btn-send" onclick="sendWithReply()"><i class="fas fa-paper-plane"></i></button></div>
         </div>
       </div>
     </div>
   </div>
-  <!-- باقي العناصر -->
+  <!-- باقي العناصر (خاص, معاينة) -->
   <div class="private-page-new" id="privatePage"><div class="private-header-new"><button onclick="closePrivateChat()"><i class="fas fa-arrow-right"></i></button><h3>محادثة مع: <span id="privatePartnerName"></span></h3><span class="private-status-new" id="privateStatus">🟢 متصل</span><button class="theme-toggle" onclick="toggleTheme()" style="margin-right: auto;"><i class="fas fa-sun sun-icon"></i><i class="fas fa-moon moon-icon"></i></button></div><div id="privateTypingIndicator" class="typing-indicator-new" style="display: none;"><div class="typing-dots"><span></span><span></span><span></span></div><span id="privateTypingText"></span></div><div class="private-messages-new" id="privateMessages"></div><div class="input-area-new"><button class="btn-upload" onclick="document.getElementById('imageFileInput').click()"><i class="fas fa-image"></i></button><input type="text" id="privateInput" placeholder="اكتب رسالة خاصة..." class="message-input" oninput="handlePrivateTyping()"><button class="btn-send" onclick="sendPrivateMessage()"><i class="fas fa-paper-plane"></i></button></div></div>
   <div class="image-preview-modal" id="fullImageModal"><button class="close-preview" onclick="document.getElementById('fullImageModal').classList.remove('show')"><i class="fas fa-times"></i></button><div class="preview-content-new"><img id="fullImage" src="" alt=""></div></div>
-  <div class="image-preview-modal" id="imagePreviewContainer" style="z-index: 3500;"><div style="background: var(--bg-glass-solid); border-radius: 40px; padding: 30px; max-width: 500px; backdrop-filter: blur(12px);"><img id="imagePreview" style="max-width: 100%; max-height: 250px; border-radius: 24px;"><div style="display: flex; gap: 12px; margin-top: 20px; justify-content: center;"><button class="btn-modern" onclick="sendImageMessage()" style="width: auto; padding: 8px 25px;">إرسال</button><button class="btn-modern google" onclick="cancelImageUpload()" style="width: auto; padding: 8px 25px;">إلغاء</button></div></div></div>
-  <div class="image-preview-modal" id="uploadProgress"><div style="background: var(--bg-glass-solid); border-radius: 40px; padding: 30px; text-align: center;"><div style="width: 40px; height: 40px; border: 3px solid var(--border-light); border-top-color: var(--accent-primary); border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto 15px;"></div><p style="color: var(--text-primary);">جاري رفع الصورة...</p></div></div>
-  <div class="image-preview-modal" id="forgotPasswordModal"><div style="background: var(--bg-glass-solid); border-radius: 40px; padding: 30px; max-width: 380px; backdrop-filter: blur(12px);"><h3 style="color: var(--text-primary);">استعادة كلمة المرور</h3><p style="color: var(--text-secondary); margin-bottom: 15px;">أدخل بريدك الإلكتروني وسنرسل رابط إعادة التعيين</p><input type="email" id="resetEmail" placeholder="البريد الإلكتروني" class="input-modern"><div id="resetEmailValidation" class="validation-message"></div><div id="forgotPasswordMessage" style="margin: 15px 0;"></div><div style="display: flex; gap: 10px;"><button class="btn-modern" onclick="sendPasswordReset()">إرسال</button><button class="btn-modern google" onclick="hideForgotPasswordModal()">إلغاء</button></div></div></div>
+  <div class="image-preview-modal" id="imagePreviewContainer" style="z-index: 3500;"><div style="background: var(--bg-white); border-radius: 30px; padding: 30px; max-width: 500px;"><img id="imagePreview" style="max-width: 100%; max-height: 250px; border-radius: 15px;"><div style="display: flex; gap: 10px; margin-top: 20px; justify-content: center;"><button class="btn-modern" onclick="sendImageMessage()" style="width: auto; padding: 8px 25px;">إرسال</button><button class="btn-modern google" onclick="cancelImageUpload()" style="width: auto; padding: 8px 25px;">إلغاء</button></div></div></div>
+  <div class="image-preview-modal" id="uploadProgress"><div style="background: var(--bg-white); border-radius: 30px; padding: 30px; text-align: center;"><div style="width: 40px; height: 40px; border: 3px solid var(--border-color); border-top-color: #667eea; border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto 15px;"></div><p style="color: var(--text-primary);">جاري رفع الصورة...</p></div></div>
+  
+  <!-- نافذة استعادة كلمة المرور المعدلة -->
+  <div class="image-preview-modal" id="forgotPasswordModal">
+    <div style="background: var(--bg-white); border-radius: 30px; padding: 30px; max-width: 380px;">
+      <h3 style="color: var(--text-primary);">استعادة كلمة المرور</h3>
+      <p style="color: var(--text-secondary); margin-bottom: 15px;">أدخل بريدك الإلكتروني وسنرسل رابط إعادة التعيين</p>
+      <input type="email" id="resetEmail" placeholder="البريد الإلكتروني" class="input-modern">
+      <div id="resetEmailValidation" class="validation-message"></div>
+      <div id="forgotPasswordMessage" style="margin: 15px 0;"></div>
+      <div id="resetLoading" style="display: none; text-align: center; margin: 10px 0;">
+        <i class="fas fa-spinner fa-pulse"></i> جاري الإرسال...
+      </div>
+      <div style="display: flex; gap: 10px;">
+        <button class="btn-modern" id="sendResetBtn" onclick="sendPasswordReset()">إرسال</button>
+        <button class="btn-modern google" id="cancelResetBtn" onclick="hideForgotPasswordModal()">إلغاء</button>
+      </div>
+    </div>
+  </div>
+  
+  <!-- نافذة تأكيد التحقق من البريد الإلكتروني (جديدة) -->
+  <div class="image-preview-modal" id="verificationModal">
+    <div style="background: var(--bg-white); border-radius: 30px; padding: 30px; max-width: 500px; text-align: center;">
+      <i class="fas fa-envelope" style="font-size: 4rem; color: #667eea; margin-bottom: 20px;"></i>
+      <h3 style="color: var(--text-primary);">تحقق من بريدك الإلكتروني</h3>
+      <p style="color: var(--text-secondary); margin: 15px 0;">تم إرسال رابط التفعيل إلى <strong id="verificationEmail"></strong></p>
+      <p style="background: #fef9c3; padding: 10px; border-radius: 12px; color: #854d0e;">
+        ⚠️ تأكد من التحقق من مجلد <strong>البريد العشوائي (Spam)</strong> إذا لم تجد الرسالة في صندوق الوارد.
+      </p>
+      <div style="display: flex; gap: 10px; justify-content: center; margin-top: 20px;">
+        <button class="btn-modern" onclick="window.open('https://mail.google.com', '_blank')">فتح Gmail</button>
+        <button class="btn-modern google" onclick="hideVerificationModal()">أغلق</button>
+      </div>
+    </div>
+  </div>
+  
   <input type="file" id="imageFileInput" accept="image/*" style="display: none;">
   <script>
     // Firebase Configuration
@@ -832,9 +867,12 @@
     const resetEmail = document.getElementById('resetEmail');
     const resetEmailValidation = document.getElementById('resetEmailValidation');
     const forgotPasswordMessage = document.getElementById('forgotPasswordMessage');
+    // تعريف العناصر الجديدة المضافة
     const resetLoading = document.getElementById('resetLoading');
     const sendResetBtn = document.getElementById('sendResetBtn');
     const cancelResetBtn = document.getElementById('cancelResetBtn');
+    const verificationModal = document.getElementById('verificationModal');
+    const verificationEmailSpan = document.getElementById('verificationEmail');
 
     let currentUser = null;
     let currentUsername = '';
@@ -976,7 +1014,60 @@
     window.validatePassword = function() { const passVal = password.value; document.getElementById('req-length').style.color = passVal.length >= 8 ? '#48bb78' : 'var(--text-light)'; document.getElementById('req-capital').style.color = /[A-Z]/.test(passVal) ? '#48bb78' : 'var(--text-light)'; document.getElementById('req-number').style.color = /\d/.test(passVal) ? '#48bb78' : 'var(--text-light)'; document.getElementById('req-length').innerHTML = (passVal.length >= 8 ? '✅' : '❌') + ' 8 أحرف على الأقل'; document.getElementById('req-capital').innerHTML = (/[A-Z]/.test(passVal) ? '✅' : '❌') + ' حرف كبير (A-Z)'; document.getElementById('req-number').innerHTML = (/\d/.test(passVal) ? '✅' : '❌') + ' رقم (0-9)'; };
     window.checkUsernameAvailability = async function() { const usernameVal = username.value.trim(); if (usernameVal.length > 15) { usernameCheck.innerHTML = '❌ اسم المستخدم طويل جداً (الحد الأقصى 15 حرف)'; usernameCheck.style.color = '#f56565'; return; } if (!usernameVal || usernameVal.length < 3) { usernameCheck.innerHTML = ''; return; } usernameCheck.innerHTML = '⏳ جاري التحقق...'; usernameCheck.style.color = 'var(--text-light)'; clearTimeout(window.usernameCheckTimeout); window.usernameCheckTimeout = setTimeout(async () => { try { const snapshot = await db.collection('users').where('username', '==', usernameVal).get(); if (snapshot.empty) { usernameCheck.innerHTML = '✅ اسم المستخدم متاح'; usernameCheck.style.color = '#48bb78'; } else { usernameCheck.innerHTML = '❌ اسم المستخدم غير متاح'; usernameCheck.style.color = '#f56565'; } } catch (error) { usernameCheck.innerHTML = ''; } }, 500); };
     window.login = async function() { const emailVal = loginEmail.value.trim(), passVal = loginPassword.value.trim(); if (loginError) loginError.style.display = 'none'; if (!emailVal || !passVal) { if (loginError) { loginError.style.display = 'block'; loginError.textContent = '❌ الرجاء إدخال البريد وكلمة المرور'; } return; } if (!validateLoginEmail()) { if (loginError) { loginError.style.display = 'block'; loginError.textContent = '❌ البريد الإلكتروني غير صالح'; } return; } try { const result = await auth.signInWithEmailAndPassword(emailVal, passVal); if (!result.user.emailVerified) { if (loginError) { loginError.style.display = 'block'; loginError.textContent = '⚠️ لم يتم تفعيل بريدك الإلكتروني بعد. الرجاء التحقق من بريدك الإلكتروني'; } await auth.signOut(); return; } } catch (error) { if (loginError) { loginError.style.display = 'block'; switch (error.code) { case 'auth/user-not-found': loginError.textContent = '❌ لا يوجد حساب بهذا البريد الإلكتروني'; break; case 'auth/wrong-password': loginError.textContent = '❌ كلمة المرور غير صحيحة'; break; case 'auth/invalid-email': loginError.textContent = '❌ البريد الإلكتروني غير صالح'; break; case 'auth/too-many-requests': loginError.textContent = '❌ تم تعطيل الحساب مؤقتاً بسبب محاولات كثيرة'; break; default: loginError.textContent = '❌ خطأ في تسجيل الدخول: ' + error.message; } } } };
-    window.register = async function() { const emailVal = email.value.trim(), passVal = password.value.trim(), userVal = username.value.trim(); if (registerError) registerError.style.display = 'none'; if (!emailVal || !passVal || !userVal) { if (registerError) { registerError.style.display = 'block'; registerError.textContent = '❌ الرجاء ملء جميع الحقول'; } return; } if (userVal.length > 15) { if (registerError) { registerError.style.display = 'block'; registerError.textContent = '❌ اسم المستخدم يجب ألا يزيد عن 15 حرف'; } return; } if (!validateEmail()) { if (registerError) { registerError.style.display = 'block'; registerError.textContent = '❌ البريد الإلكتروني غير صالح'; } return; } if (passVal.length < 8 || !/[A-Z]/.test(passVal) || !/\d/.test(passVal)) { if (registerError) { registerError.style.display = 'block'; registerError.textContent = '❌ كلمة المرور يجب أن تحتوي على 8 أحرف على الأقل، حرف كبير ورقم'; } return; } if (usernameCheck.innerHTML.includes('غير متاح') || usernameCheck.innerHTML.includes('طويل جداً')) { if (registerError) { registerError.style.display = 'block'; registerError.textContent = '❌ اسم المستخدم غير صالح'; } return; } try { const result = await auth.createUserWithEmailAndPassword(emailVal, passVal); await result.user.sendEmailVerification(); await db.collection('users').doc(result.user.uid).set({ username: userVal, email: emailVal, online: false, status: 'offline', emailVerified: false, createdAt: firebase.firestore.FieldValue.serverTimestamp(), lastSeen: firebase.firestore.FieldValue.serverTimestamp(), lastActive: firebase.firestore.FieldValue.serverTimestamp() }); showToast('✅ تم إرسال رابط التحقق إلى بريدك الإلكتروني'); switchAuthTab('login'); loginEmail.value = emailVal; await auth.signOut(); } catch (error) { if (registerError) { registerError.style.display = 'block'; switch (error.code) { case 'auth/email-already-in-use': registerError.textContent = '❌ هذا البريد الإلكتروني مستخدم بالفعل'; break; case 'auth/invalid-email': registerError.textContent = '❌ البريد الإلكتروني غير صالح'; break; case 'auth/weak-password': registerError.textContent = '❌ كلمة المرور ضعيفة جداً'; break; default: registerError.textContent = '❌ خطأ: ' + error.message; } } } };
+    window.register = async function() { 
+      const emailVal = email.value.trim(), passVal = password.value.trim(), userVal = username.value.trim(); 
+      if (registerError) registerError.style.display = 'none'; 
+      if (!emailVal || !passVal || !userVal) { 
+        if (registerError) { registerError.style.display = 'block'; registerError.textContent = '❌ الرجاء ملء جميع الحقول'; } 
+        return; 
+      } 
+      if (userVal.length > 15) { 
+        if (registerError) { registerError.style.display = 'block'; registerError.textContent = '❌ اسم المستخدم يجب ألا يزيد عن 15 حرف'; } 
+        return; 
+      } 
+      if (!validateEmail()) { 
+        if (registerError) { registerError.style.display = 'block'; registerError.textContent = '❌ البريد الإلكتروني غير صالح'; } 
+        return; 
+      } 
+      if (passVal.length < 8 || !/[A-Z]/.test(passVal) || !/\d/.test(passVal)) { 
+        if (registerError) { registerError.style.display = 'block'; registerError.textContent = '❌ كلمة المرور يجب أن تحتوي على 8 أحرف على الأقل، حرف كبير ورقم'; } 
+        return; 
+      } 
+      if (usernameCheck.innerHTML.includes('غير متاح') || usernameCheck.innerHTML.includes('طويل جداً')) { 
+        if (registerError) { registerError.style.display = 'block'; registerError.textContent = '❌ اسم المستخدم غير صالح'; } 
+        return; 
+      } 
+      try { 
+        const result = await auth.createUserWithEmailAndPassword(emailVal, passVal); 
+        await result.user.sendEmailVerification(); 
+        await db.collection('users').doc(result.user.uid).set({ 
+          username: userVal, email: emailVal, online: false, status: 'offline', 
+          emailVerified: false, createdAt: firebase.firestore.FieldValue.serverTimestamp(), 
+          lastSeen: firebase.firestore.FieldValue.serverTimestamp(), 
+          lastActive: firebase.firestore.FieldValue.serverTimestamp() 
+        }); 
+        // عرض نافذة التحقق من البريد الإلكتروني
+        verificationEmailSpan.textContent = emailVal;
+        verificationModal.classList.add('show');
+        // تسجيل الخروج فوراً لمنع الدخول قبل التحقق
+        await auth.signOut();
+        switchAuthTab('login'); 
+        loginEmail.value = emailVal; // تعبئة البريد في حقل تسجيل الدخول
+      } catch (error) { 
+        if (registerError) { 
+          registerError.style.display = 'block'; 
+          switch (error.code) { 
+            case 'auth/email-already-in-use': registerError.textContent = '❌ هذا البريد الإلكتروني مستخدم بالفعل'; break; 
+            case 'auth/invalid-email': registerError.textContent = '❌ البريد الإلكتروني غير صالح'; break; 
+            case 'auth/weak-password': registerError.textContent = '❌ كلمة المرور ضعيفة جداً'; break; 
+            default: registerError.textContent = '❌ خطأ: ' + error.message; 
+          } 
+        } 
+      } 
+    };
+    window.hideVerificationModal = function() {
+      verificationModal.classList.remove('show');
+    };
     window.googleLogin = async function() { try { const result = await auth.signInWithPopup(googleProvider); const email = result.user.email; const usernameFromEmail = email.split('@')[0].substring(0, 15); await db.collection('users').doc(result.user.uid).set({ username: usernameFromEmail, email: email, online: true, status: 'online', emailVerified: true, lastSeen: firebase.firestore.FieldValue.serverTimestamp(), lastActive: firebase.firestore.FieldValue.serverTimestamp() }, { merge: true }); } catch (error) { showToast('❌ خطأ في تسجيل الدخول بحساب Google', 'error'); } };
     window.logout = async function() { try { if (currentUser) { await db.collection('users').doc(currentUser.uid).update({ online: false, status: 'offline', lastSeen: firebase.firestore.FieldValue.serverTimestamp() }); if (unsubscribePublic) unsubscribePublic(); if (unsubscribePrivate) unsubscribePrivate(); if (unsubscribeOnline) unsubscribeOnline(); if (unsubscribePartner) unsubscribePartner(); if (unsubscribeTyping) unsubscribeTyping(); await db.collection('typing').doc(currentUser.uid).delete().catch(() => {}); } await auth.signOut(); currentUser = null; currentUsername = ''; activePartner = null; chatDiv.style.display = 'none'; authDiv.style.display = 'flex'; privatePage.classList.remove('show'); showToast('✅ تم تسجيل الخروج بنجاح'); } catch (error) { showToast('❌ خطأ في تسجيل الخروج', 'error'); } };
 
@@ -1070,7 +1161,38 @@
     window.hideForgotPasswordModal = function() { forgotPasswordModal.classList.remove('show'); };
     window.validateResetEmail = function() { const emailVal = resetEmail.value.trim(), emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/; const isValid = emailRegex.test(emailVal); if (!emailVal) { resetEmailValidation.style.display = 'none'; return false; } resetEmailValidation.style.display = 'block'; if (isValid) { resetEmailValidation.className = 'validation-message success'; resetEmailValidation.innerHTML = '✅ البريد الإلكتروني صالح'; } else { resetEmailValidation.className = 'validation-message error'; resetEmailValidation.innerHTML = '❌ البريد الإلكتروني غير صالح'; } return isValid; };
     resetEmail.addEventListener('input', validateResetEmail);
-    window.sendPasswordReset = async function() { const emailVal = resetEmail.value.trim(); if (!emailVal) { forgotPasswordMessage.innerHTML = '❌ الرجاء إدخال البريد الإلكتروني'; forgotPasswordMessage.style.color = '#f56565'; return; } if (!validateResetEmail()) return; resetLoading.style.display = 'block'; sendResetBtn.disabled = true; cancelResetBtn.disabled = true; try { await auth.sendPasswordResetEmail(emailVal); forgotPasswordMessage.innerHTML = '✅ تم إرسال رابط إعادة التعيين إلى بريدك الإلكتروني'; forgotPasswordMessage.style.color = '#48bb78'; setTimeout(() => hideForgotPasswordModal(), 3000); } catch (error) { let errorMessage = ''; switch (error.code) { case 'auth/user-not-found': errorMessage = '❌ لا يوجد حساب بهذا البريد الإلكتروني'; break; case 'auth/invalid-email': errorMessage = '❌ البريد الإلكتروني غير صالح'; break; case 'auth/too-many-requests': errorMessage = '❌ تم إرسال العديد من الطلبات. الرجاء المحاولة لاحقاً'; break; default: errorMessage = '❌ حدث خطأ: ' + error.message; } forgotPasswordMessage.innerHTML = errorMessage; forgotPasswordMessage.style.color = '#f56565'; } finally { resetLoading.style.display = 'none'; sendResetBtn.disabled = false; cancelResetBtn.disabled = false; } };
+    window.sendPasswordReset = async function() { 
+      const emailVal = resetEmail.value.trim(); 
+      if (!emailVal) { 
+        forgotPasswordMessage.innerHTML = '❌ الرجاء إدخال البريد الإلكتروني'; 
+        forgotPasswordMessage.style.color = '#f56565'; 
+        return; 
+      } 
+      if (!validateResetEmail()) return; 
+      resetLoading.style.display = 'block'; 
+      sendResetBtn.disabled = true; 
+      cancelResetBtn.disabled = true; 
+      try { 
+        await auth.sendPasswordResetEmail(emailVal); 
+        forgotPasswordMessage.innerHTML = '✅ تم إرسال رابط إعادة التعيين إلى بريدك الإلكتروني'; 
+        forgotPasswordMessage.style.color = '#48bb78'; 
+        setTimeout(() => hideForgotPasswordModal(), 3000); 
+      } catch (error) { 
+        let errorMessage = ''; 
+        switch (error.code) { 
+          case 'auth/user-not-found': errorMessage = '❌ لا يوجد حساب بهذا البريد الإلكتروني'; break; 
+          case 'auth/invalid-email': errorMessage = '❌ البريد الإلكتروني غير صالح'; break; 
+          case 'auth/too-many-requests': errorMessage = '❌ تم إرسال العديد من الطلبات. الرجاء المحاولة لاحقاً'; break; 
+          default: errorMessage = '❌ حدث خطأ: ' + error.message; 
+        } 
+        forgotPasswordMessage.innerHTML = errorMessage; 
+        forgotPasswordMessage.style.color = '#f56565'; 
+      } finally { 
+        resetLoading.style.display = 'none'; 
+        sendResetBtn.disabled = false; 
+        cancelResetBtn.disabled = false; 
+      } 
+    };
     function toggleSidebar() { document.querySelector('.users-sidebar').classList.toggle('show'); }
     function createAnimatedBg() { const bg = document.getElementById('animatedBg'); for (let i = 0; i < 30; i++) { const span = document.createElement('span'); span.style.left = Math.random() * 100 + '%'; span.style.width = Math.random() * 30 + 10 + 'px'; span.style.height = span.style.width; span.style.animationDuration = Math.random() * 20 + 10 + 's'; span.style.animationDelay = Math.random() * 5 + 's'; bg.appendChild(span); } }
     window.copyMessage = function(text) { navigator.clipboard.writeText(text); showToast('✅ تم النسخ'); };
