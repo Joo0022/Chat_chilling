@@ -1174,7 +1174,27 @@
     window.hideVerificationModal = function() {
       verificationModal.classList.remove('show');
     };
-    window.googleLogin = async function() { try { const result = await auth.signInWithPopup(googleProvider); const email = result.user.email; const usernameFromEmail = email.split('@')[0].substring(0, 15); await db.collection('users').doc(result.user.uid).set({ username: usernameFromEmail, email: email, online: true, status: 'online', emailVerified: true, lastSeen: firebase.firestore.FieldValue.serverTimestamp(), lastActive: firebase.firestore.FieldValue.serverTimestamp() }, { merge: true }); } catch (error) { showToast('❌ خطأ في تسجيل الدخول بحساب Google', 'error'); } };
+    window.googleLogin = async function() { 
+      try { 
+        const result = await auth.signInWithPopup(googleProvider); 
+        const email = result.user.email; 
+        // استخدام البريد الإلكتروني فقط لإنشاء اسم المستخدم بشكل مؤقت
+        // سيتم التحقق من وجود اسم مستخدم مخصص عند تسجيل الدخول
+        const usernameFromEmail = email.split('@')[0].substring(0, 15); 
+        // استخدام set مع merge لتجنب الكتابة فوق البيانات الموجودة
+        await db.collection('users').doc(result.user.uid).set({ 
+          username: usernameFromEmail, 
+          email: email, 
+          online: true, 
+          status: 'online', 
+          emailVerified: true, 
+          lastSeen: firebase.firestore.FieldValue.serverTimestamp(), 
+          lastActive: firebase.firestore.FieldValue.serverTimestamp() 
+        }, { merge: true }); 
+      } catch (error) { 
+        showToast('❌ خطأ في تسجيل الدخول بحساب Google', 'error'); 
+      } 
+    };
     window.logout = async function() { try { if (currentUser) { await db.collection('users').doc(currentUser.uid).update({ online: false, status: 'offline', lastSeen: firebase.firestore.FieldValue.serverTimestamp() }); if (unsubscribePublic) unsubscribePublic(); if (unsubscribePrivate) unsubscribePrivate(); if (unsubscribeOnline) unsubscribeOnline(); if (unsubscribePartner) unsubscribePartner(); if (unsubscribeTyping) unsubscribeTyping(); await db.collection('typing').doc(currentUser.uid).delete().catch(() => {}); } await auth.signOut(); currentUser = null; currentUsername = ''; activePartner = null; chatDiv.style.display = 'none'; authDiv.style.display = 'flex'; privatePage.classList.remove('show'); showToast('✅ تم تسجيل الخروج بنجاح'); } catch (error) { showToast('❌ خطأ في تسجيل الخروج', 'error'); } };
 
     // Chat functions
@@ -1340,11 +1360,21 @@
           const userDoc = await db.collection('users').doc(user.uid).get();
           if (userDoc.exists) {
             const data = userDoc.data();
-            currentUsername = data.username;
+            // التحقق مما إذا كان المستخدم لديه اسم مستخدم مخصص أم لا
+            // إذا كان اسم المستخدم مطابقاً للاسم المستخرج من البريد، فهذا يعني أنه لم يتم تعيين اسم مخصص
+            const emailUsername = user.email.split('@')[0].substring(0, 15);
+            if (data.username && data.username !== emailUsername) {
+              // المستخدم لديه اسم مخصص
+              currentUsername = data.username;
+            } else {
+              // المستخدم ليس لديه اسم مخصص، نستخدم الاسم من قاعدة البيانات أو ننشئ واحداً
+              currentUsername = data.username || emailUsername;
+            }
             if (data.emailVerified !== true) {
               await db.collection('users').doc(user.uid).update({ emailVerified: true });
             }
           } else {
+            // مستخدم جديد عبر جوجل أو بريد إلكتروني ولكن لم يتم إنشاء وثيقة بعد
             currentUsername = user.email.split('@')[0].substring(0,15);
             await db.collection('users').doc(user.uid).set({
               username: currentUsername,
@@ -1367,7 +1397,10 @@
           chatDiv.style.display = 'block';
           privatePage.classList.remove('show');
           hideLoadingScreen();
-        } catch (error) { console.error(error); hideLoadingScreen(); }
+        } catch (error) { 
+          console.error(error); 
+          hideLoadingScreen(); 
+        }
       } else {
         hideLoadingScreen();
         authDiv.style.display = 'flex';
@@ -1382,4 +1415,4 @@
     setTimeout(() => hideLoadingScreen(), 5000);
   </script>
 </body>
-          </html>
+</html>
