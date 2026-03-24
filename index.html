@@ -57,9 +57,6 @@
       --user-color-10: #82E0AA;
       --user-color-11: #F1948A;
       --user-color-12: #85C1E9;
-      --connection-status-online: #10b981;
-      --connection-status-offline: #94a3b8;
-      --connection-status-connecting: #f59e0b;
     }
 
     :root[data-theme="dark"] {
@@ -99,9 +96,6 @@
       --user-color-10: #A3E4C0;
       --user-color-11: #F5B7B1;
       --user-color-12: #A9D6F0;
-      --connection-status-online: #10b981;
-      --connection-status-offline: #64748b;
-      --connection-status-connecting: #f59e0b;
     }
 
     /* --- هيكل الصفحة الرئيسي --- */
@@ -520,23 +514,34 @@
       align-items: center;
       gap: 8px;
     }
+    /* حالة الاتصال - علامة WiFi */
     .connection-status {
       display: flex;
       align-items: center;
       gap: 8px;
-      font-size: 0.75rem;
+      font-size: 0.9rem;
       padding: 4px 12px;
       border-radius: 20px;
       background: var(--bg-light);
     }
-    .connection-status.online { color: var(--connection-status-online); }
-    .connection-status.offline { color: var(--connection-status-offline); }
-    .connection-status.connecting { color: var(--connection-status-connecting); animation: pulse 1.5s infinite; }
+    .connection-status.online i { 
+      color: #10b981; 
+    }
+    .connection-status.offline i { 
+      color: #ef4444; 
+    }
+    .connection-status.connecting i { 
+      color: #f59e0b; 
+      animation: pulse 1.5s infinite;
+    }
+    .connection-status span {
+      font-size: 0.75rem;
+      color: var(--text-secondary);
+    }
     @keyframes pulse {
       0%, 100% { opacity: 1; }
       50% { opacity: 0.5; }
     }
-    .connection-status i { font-size: 0.8rem; }
     .header-actions-new {
       display: flex;
       gap: 8px;
@@ -871,7 +876,10 @@
           <div class="chat-header">
             <h2><i class="fas fa-comments"></i> المحادثة العامة</h2>
             <div style="display: flex; align-items: center; gap: 12px;">
-              <div class="connection-status" id="connectionStatus"><i class="fas fa-circle"></i> <span id="connectionStatusText">متصل</span></div>
+              <div class="connection-status" id="connectionStatus">
+                <i class="fas fa-wifi"></i> 
+                <span id="connectionStatusText">متصل</span>
+              </div>
               <div class="header-actions-new">
                 <button class="theme-toggle" onclick="toggleTheme()"><i class="fas fa-sun sun-icon"></i><i class="fas fa-moon moon-icon"></i></button>
                 <button class="btn-icon" onclick="toggleSearch()"><i class="fas fa-search"></i></button>
@@ -967,7 +975,7 @@
     const CLOUD_NAME = "dn0knjzpi";
     const UPLOAD_PRESET = "chat-app";
 
-    // Admin emails (يمكنك تعديلها حسب رغبتك)
+    // Admin emails
     const ADMIN_EMAILS = ["y83298252@gmail.com", "y83298252@proton.me"];
 
     // DOM Elements
@@ -1103,7 +1111,7 @@
       }
     }
 
-    // ========== حالة الاتصال ==========
+    // ========== حالة الاتصال (علامة WiFi) ==========
     function updateConnectionStatus(online) {
       isOnline = online;
       if (online) {
@@ -1455,7 +1463,6 @@
           messagesDiv.appendChild(messageDiv);
           loadReactions(doc.id);
           
-          // إشعار للرسائل العامة إذا كانت الشاشة غير مرئية
           if (!isOwn && document.visibilityState !== 'visible') {
             sendNotification(`رسالة جديدة من ${msg.username}`, msg.text?.substring(0, 50) || '📷 صورة');
           }
@@ -1531,7 +1538,6 @@
           privateMessages.appendChild(messageDiv);
         });
         
-        // إشعار للرسائل الخاصة
         if (activePartner && document.visibilityState !== 'visible') {
           const lastMsg = snapshot.docs[snapshot.docs.length - 1]?.data();
           if (lastMsg && lastMsg.uid !== currentUser?.uid) {
@@ -1665,4 +1671,4 @@
     setTimeout(() => hideLoadingScreen(), 5000);
   </script>
 </body>
-  </html>
+        </html>
