@@ -57,6 +57,9 @@
       --user-color-10: #82E0AA;
       --user-color-11: #F1948A;
       --user-color-12: #85C1E9;
+      --connection-status-online: #10b981;
+      --connection-status-offline: #94a3b8;
+      --connection-status-connecting: #f59e0b;
     }
 
     :root[data-theme="dark"] {
@@ -96,6 +99,9 @@
       --user-color-10: #A3E4C0;
       --user-color-11: #F5B7B1;
       --user-color-12: #A9D6F0;
+      --connection-status-online: #10b981;
+      --connection-status-offline: #64748b;
+      --connection-status-connecting: #f59e0b;
     }
 
     /* --- هيكل الصفحة الرئيسي --- */
@@ -514,6 +520,23 @@
       align-items: center;
       gap: 8px;
     }
+    .connection-status {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.75rem;
+      padding: 4px 12px;
+      border-radius: 20px;
+      background: var(--bg-light);
+    }
+    .connection-status.online { color: var(--connection-status-online); }
+    .connection-status.offline { color: var(--connection-status-offline); }
+    .connection-status.connecting { color: var(--connection-status-connecting); animation: pulse 1.5s infinite; }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.5; }
+    }
+    .connection-status i { font-size: 0.8rem; }
     .header-actions-new {
       display: flex;
       gap: 8px;
@@ -712,6 +735,17 @@
       border-radius: 14px;
       cursor: pointer;
     }
+    .private-header-info {
+      flex: 1;
+    }
+    .private-header-info h3 {
+      font-size: 1rem;
+      margin-bottom: 2px;
+    }
+    .private-last-seen {
+      font-size: 0.7rem;
+      opacity: 0.8;
+    }
     .private-messages-new {
       flex: 1;
       overflow-y: auto;
@@ -777,6 +811,29 @@
       gap: 5px;
       cursor: pointer;
     }
+    .notification-permission-banner {
+      position: fixed;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: var(--bg-white);
+      border-radius: 50px;
+      padding: 10px 20px;
+      box-shadow: 0 5px 20px var(--shadow-color);
+      display: flex;
+      gap: 15px;
+      align-items: center;
+      z-index: 1000;
+      border: 1px solid var(--border-color);
+    }
+    .notification-permission-banner button {
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      border: none;
+      color: white;
+      padding: 6px 16px;
+      border-radius: 30px;
+      cursor: pointer;
+    }
   </style>
 </head>
 <body>
@@ -811,7 +868,18 @@
       <div class="chat-container">
         <div class="users-sidebar"><div class="sidebar-header"><h3><i class="fas fa-users"></i> المستخدمون <span class="online-count" id="onlineCount">0</span></h3></div><div class="users-list" id="onlineList"></div></div>
         <div class="chat-main">
-          <div class="chat-header"><h2><i class="fas fa-comments"></i> المحادثة العامة</h2><div class="header-actions-new"><button class="theme-toggle" onclick="toggleTheme()"><i class="fas fa-sun sun-icon"></i><i class="fas fa-moon moon-icon"></i></button><button class="btn-icon" onclick="toggleSearch()"><i class="fas fa-search"></i></button><button class="btn-icon" onclick="toggleSidebar()"><i class="fas fa-users"></i></button><button class="btn-icon" onclick="logout()"><i class="fas fa-sign-out-alt"></i></button></div></div>
+          <div class="chat-header">
+            <h2><i class="fas fa-comments"></i> المحادثة العامة</h2>
+            <div style="display: flex; align-items: center; gap: 12px;">
+              <div class="connection-status" id="connectionStatus"><i class="fas fa-circle"></i> <span id="connectionStatusText">متصل</span></div>
+              <div class="header-actions-new">
+                <button class="theme-toggle" onclick="toggleTheme()"><i class="fas fa-sun sun-icon"></i><i class="fas fa-moon moon-icon"></i></button>
+                <button class="btn-icon" onclick="toggleSearch()"><i class="fas fa-search"></i></button>
+                <button class="btn-icon" onclick="toggleSidebar()"><i class="fas fa-users"></i></button>
+                <button class="btn-icon" onclick="logout()"><i class="fas fa-sign-out-alt"></i></button>
+              </div>
+            </div>
+          </div>
           <div class="search-area" id="searchBar"><div class="search-input-group"><input type="text" id="searchInput" placeholder="ابحث في الرسائل..." class="search-input" oninput="searchMessages(this.value)"><button class="btn-close" onclick="closeSearch()">إلغاء</button></div></div>
           <div id="typingIndicator" class="typing-indicator-new" style="display: none;"><div class="typing-dots"><span></span><span></span><span></span></div><span id="typingText"></span></div>
           <div id="replyIndicator" class="typing-indicator-new" style="display: none;"><i class="fas fa-reply" style="color: #667eea;"></i><span>الرد على <span id="replyToName"></span></span><span style="opacity: 0.7;">"<span id="replyText"></span>"</span><button onclick="cancelReply()" style="background: none; border: none; color: var(--danger-color); cursor: pointer; margin-right: auto;"><i class="fas fa-times"></i></button></div>
@@ -822,7 +890,20 @@
     </div>
   </div>
   <!-- باقي العناصر (خاص, معاينة) -->
-  <div class="private-page-new" id="privatePage"><div class="private-header-new"><button onclick="closePrivateChat()"><i class="fas fa-arrow-right"></i></button><h3>محادثة مع: <span id="privatePartnerName"></span></h3><span class="private-status-new" id="privateStatus">🟢 متصل</span><button class="theme-toggle" onclick="toggleTheme()" style="margin-right: auto;"><i class="fas fa-sun sun-icon"></i><i class="fas fa-moon moon-icon"></i></button></div><div id="privateTypingIndicator" class="typing-indicator-new" style="display: none;"><div class="typing-dots"><span></span><span></span><span></span></div><span id="privateTypingText"></span></div><div class="private-messages-new" id="privateMessages"></div><div class="input-area-new"><button class="btn-upload" onclick="document.getElementById('imageFileInput').click()"><i class="fas fa-image"></i></button><input type="text" id="privateInput" placeholder="اكتب رسالة خاصة..." class="message-input" oninput="handlePrivateTyping()"><button class="btn-send" onclick="sendPrivateMessage()"><i class="fas fa-paper-plane"></i></button></div></div>
+  <div class="private-page-new" id="privatePage">
+    <div class="private-header-new">
+      <button onclick="closePrivateChat()"><i class="fas fa-arrow-right"></i></button>
+      <div class="private-header-info">
+        <h3>محادثة مع: <span id="privatePartnerName"></span></h3>
+        <div class="private-last-seen" id="privateLastSeen"></div>
+      </div>
+      <span class="private-status-new" id="privateStatus">🟢 متصل</span>
+      <button class="theme-toggle" onclick="toggleTheme()" style="margin-right: auto;"><i class="fas fa-sun sun-icon"></i><i class="fas fa-moon moon-icon"></i></button>
+    </div>
+    <div id="privateTypingIndicator" class="typing-indicator-new" style="display: none;"><div class="typing-dots"><span></span><span></span><span></span></div><span id="privateTypingText"></span></div>
+    <div class="private-messages-new" id="privateMessages"></div>
+    <div class="input-area-new"><button class="btn-upload" onclick="document.getElementById('imageFileInput').click()"><i class="fas fa-image"></i></button><input type="text" id="privateInput" placeholder="اكتب رسالة خاصة..." class="message-input" oninput="handlePrivateTyping()"><button class="btn-send" onclick="sendPrivateMessage()"><i class="fas fa-paper-plane"></i></button></div>
+  </div>
   <div class="image-preview-modal" id="fullImageModal"><button class="close-preview" onclick="document.getElementById('fullImageModal').classList.remove('show')"><i class="fas fa-times"></i></button><div class="preview-content-new"><img id="fullImage" src="" alt=""></div></div>
   <div class="image-preview-modal" id="imagePreviewContainer" style="z-index: 3500;"><div style="background: var(--bg-white); border-radius: 30px; padding: 30px; max-width: 500px;"><img id="imagePreview" style="max-width: 100%; max-height: 250px; border-radius: 15px;"><div style="display: flex; gap: 10px; margin-top: 20px; justify-content: center;"><button class="btn-modern" onclick="sendImageMessage()" style="width: auto; padding: 8px 25px;">إرسال</button><button class="btn-modern google" onclick="cancelImageUpload()" style="width: auto; padding: 8px 25px;">إلغاء</button></div></div></div>
   <div class="image-preview-modal" id="uploadProgress"><div style="background: var(--bg-white); border-radius: 30px; padding: 30px; text-align: center;"><div style="width: 40px; height: 40px; border: 3px solid var(--border-color); border-top-color: #667eea; border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto 15px;"></div><p style="color: var(--text-primary);">جاري رفع الصورة...</p></div></div>
@@ -861,6 +942,13 @@
     </div>
   </div>
   
+  <!-- نافذة طلب إذن الإشعارات -->
+  <div class="notification-permission-banner" id="notificationBanner" style="display: none;">
+    <span>🔔 تفعيل الإشعارات لتصلك رسائل جديدة</span>
+    <button onclick="requestNotificationPermission()">تفعيل</button>
+    <button onclick="closeNotificationBanner()" style="background: transparent; color: var(--danger-color);">تجاهل</button>
+  </div>
+  
   <input type="file" id="imageFileInput" accept="image/*" style="display: none;">
   <script>
     // Firebase Configuration
@@ -880,7 +968,7 @@
     const UPLOAD_PRESET = "chat-app";
 
     // Admin emails (يمكنك تعديلها حسب رغبتك)
-    const ADMIN_EMAILS = ["y83298252@gmail.com", "y83298252@proton.me"]; // ضع بريد الأدمن هنا
+    const ADMIN_EMAILS = ["y83298252@gmail.com", "y83298252@proton.me"];
 
     // DOM Elements
     const loadingScreen = document.getElementById('loadingScreen');
@@ -915,6 +1003,7 @@
     const privateInput = document.getElementById('privateInput');
     const privatePartnerName = document.getElementById('privatePartnerName');
     const privateStatus = document.getElementById('privateStatus');
+    const privateLastSeen = document.getElementById('privateLastSeen');
     const privateTypingIndicator = document.getElementById('privateTypingIndicator');
     const privateTypingText = document.getElementById('privateTypingText');
     const forgotPasswordModal = document.getElementById('forgotPasswordModal');
@@ -926,6 +1015,9 @@
     const cancelResetBtn = document.getElementById('cancelResetBtn');
     const verificationModal = document.getElementById('verificationModal');
     const verificationEmailSpan = document.getElementById('verificationEmail');
+    const connectionStatus = document.getElementById('connectionStatus');
+    const connectionStatusText = document.getElementById('connectionStatusText');
+    const notificationBanner = document.getElementById('notificationBanner');
 
     let currentUser = null;
     let currentUsername = '';
@@ -944,12 +1036,148 @@
     let currentPrivateRoomId = null;
     let scrollAnimationFrame = null;
     let isUpdatingMessages = false;
+    let notificationsEnabled = false;
+    let isOnline = true;
+    let reconnectAttempts = 0;
     const MESSAGES_LIMIT = 50;
 
     const userColors = new Map();
     const availableColors = Array.from({ length: 12 }, (_, i) => `user-color-${i + 1}`);
     let colorIndex = 0;
 
+    // ========== إشعارات سطح المكتب ==========
+    function checkNotificationPermission() {
+      if (!('Notification' in window)) {
+        console.log('المتصفح لا يدعم الإشعارات');
+        return false;
+      }
+      if (Notification.permission === 'granted') {
+        notificationsEnabled = true;
+        notificationBanner.style.display = 'none';
+        return true;
+      } else if (Notification.permission === 'denied') {
+        notificationBanner.style.display = 'none';
+        return false;
+      } else {
+        notificationBanner.style.display = 'flex';
+        return false;
+      }
+    }
+
+    window.requestNotificationPermission = function() {
+      if (!('Notification' in window)) {
+        showToast('المتصفح لا يدعم الإشعارات', 'error');
+        return;
+      }
+      Notification.requestPermission().then(permission => {
+        if (permission === 'granted') {
+          notificationsEnabled = true;
+          notificationBanner.style.display = 'none';
+          showToast('✅ تم تفعيل الإشعارات');
+        } else {
+          showToast('❌ لم يتم تفعيل الإشعارات', 'error');
+        }
+      });
+    };
+
+    function closeNotificationBanner() {
+      notificationBanner.style.display = 'none';
+    }
+
+    function sendNotification(title, body, icon = null) {
+      if (!notificationsEnabled) return;
+      if (document.visibilityState === 'visible') return;
+      try {
+        const notification = new Notification(title, {
+          body: body,
+          icon: icon || 'https://i.postimg.cc/rsbg47X7/8f55b377-3e6f-4bc9-bbc5-9b1ed3057599.png',
+          silent: false
+        });
+        notification.onclick = () => {
+          window.focus();
+          notification.close();
+        };
+        setTimeout(() => notification.close(), 5000);
+      } catch (e) {
+        console.error('خطأ في الإشعار:', e);
+      }
+    }
+
+    // ========== حالة الاتصال ==========
+    function updateConnectionStatus(online) {
+      isOnline = online;
+      if (online) {
+        connectionStatus.classList.remove('offline', 'connecting');
+        connectionStatus.classList.add('online');
+        connectionStatusText.textContent = 'متصل';
+        if (reconnectAttempts > 0) {
+          showToast('🔄 تم إعادة الاتصال');
+          reconnectAttempts = 0;
+        }
+      } else {
+        connectionStatus.classList.remove('online', 'connecting');
+        connectionStatus.classList.add('offline');
+        connectionStatusText.textContent = 'غير متصل';
+      }
+    }
+
+    function setConnectingStatus() {
+      connectionStatus.classList.remove('online', 'offline');
+      connectionStatus.classList.add('connecting');
+      connectionStatusText.textContent = 'جاري الاتصال...';
+    }
+
+    function setupConnectionMonitoring() {
+      window.addEventListener('online', () => {
+        updateConnectionStatus(true);
+        if (currentUser) {
+          db.collection('users').doc(currentUser.uid).update({
+            online: true,
+            status: 'online',
+            lastSeen: firebase.firestore.FieldValue.serverTimestamp()
+          }).catch(() => {});
+        }
+      });
+      
+      window.addEventListener('offline', () => {
+        updateConnectionStatus(false);
+      });
+      
+      // مراقبة اتصال Firebase
+      firebase.firestore().enableNetwork().catch(() => {});
+      
+      setInterval(() => {
+        if (currentUser && !navigator.onLine) {
+          updateConnectionStatus(false);
+        } else if (currentUser && navigator.onLine) {
+          updateConnectionStatus(true);
+        }
+      }, 5000);
+      
+      updateConnectionStatus(navigator.onLine);
+    }
+
+    // ========== عرض آخر ظهور ==========
+    function formatLastSeen(lastSeenDate, isOnline, status) {
+      if (isOnline && status === 'online') return 'متصل الآن';
+      if (isOnline && status === 'away') return 'غير نشط حالياً';
+      if (!lastSeenDate) return 'غير معروف';
+      
+      const now = new Date();
+      const lastSeen = lastSeenDate.toDate();
+      const diffMs = now - lastSeen;
+      const diffMins = Math.floor(diffMs / 60000);
+      const diffHours = Math.floor(diffMs / 3600000);
+      const diffDays = Math.floor(diffMs / 86400000);
+      
+      if (diffMins < 1) return 'منذ لحظات';
+      if (diffMins < 60) return `آخر ظهور منذ ${diffMins} دقيقة`;
+      if (diffHours < 24) return `آخر ظهور منذ ${diffHours} ساعة`;
+      if (diffDays === 1) return 'آخر ظهور أمس';
+      return `آخر ظهور ${lastSeen.toLocaleDateString('ar-EG')}`;
+    }
+
+    // ========== الدوال الأساسية ==========
     function getUserColorClass(userId) {
       if (!userColors.has(userId)) {
         userColors.set(userId, availableColors[colorIndex % availableColors.length]);
@@ -984,13 +1212,9 @@
     async function setupUserPresence() {
       if (!currentUser) return;
       const userRef = db.collection('users').doc(currentUser.uid);
-      const userStatusRef = db.collection('status').doc(currentUser.uid);
       try {
         await userRef.update({ online: true, status: 'online', lastSeen: firebase.firestore.FieldValue.serverTimestamp(), lastActive: firebase.firestore.FieldValue.serverTimestamp() });
         userRef.onDisconnect().update({ online: false, status: 'offline', lastSeen: firebase.firestore.FieldValue.serverTimestamp() });
-        userStatusRef.onDisconnect().set({ uid: currentUser.uid, status: 'offline', lastSeen: firebase.firestore.FieldValue.serverTimestamp() });
-        window.addEventListener('online', () => userRef.update({ online: true, status: 'online', lastSeen: firebase.firestore.FieldValue.serverTimestamp() }).catch(() => {}));
-        window.addEventListener('offline', () => userRef.update({ online: false, status: 'offline', lastSeen: firebase.firestore.FieldValue.serverTimestamp() }).catch(() => {}));
         window.addEventListener('beforeunload', () => userRef.update({ online: false, status: 'offline', lastSeen: firebase.firestore.FieldValue.serverTimestamp() }).catch(() => {}));
       } catch (err) { console.error(err); }
     }
@@ -1052,7 +1276,6 @@
     function loadOnlineUsers() {
       if (unsubscribeOnline) unsubscribeOnline();
       const queryBase = db.collection('users').where('emailVerified', '==', true);
-      // Try ordering by lastActive first, if fails due to missing index, fall back to client sort
       unsubscribeOnline = queryBase.orderBy('lastActive', 'desc').onSnapshot(
         snapshot => {
           const users = [];
@@ -1178,10 +1401,7 @@
       try { 
         const result = await auth.signInWithPopup(googleProvider); 
         const email = result.user.email; 
-        // استخدام البريد الإلكتروني فقط لإنشاء اسم المستخدم بشكل مؤقت
-        // سيتم التحقق من وجود اسم مستخدم مخصص عند تسجيل الدخول
         const usernameFromEmail = email.split('@')[0].substring(0, 15); 
-        // استخدام set مع merge لتجنب الكتابة فوق البيانات الموجودة
         await db.collection('users').doc(result.user.uid).set({ 
           username: usernameFromEmail, 
           email: email, 
@@ -1234,6 +1454,11 @@
           messageDiv.innerHTML = content;
           messagesDiv.appendChild(messageDiv);
           loadReactions(doc.id);
+          
+          // إشعار للرسائل العامة إذا كانت الشاشة غير مرئية
+          if (!isOwn && document.visibilityState !== 'visible') {
+            sendNotification(`رسالة جديدة من ${msg.username}`, msg.text?.substring(0, 50) || '📷 صورة');
+          }
         });
         if (wasNearBottom) scrollToBottom(messagesDiv, true);
         isUpdatingMessages = false;
@@ -1250,9 +1475,27 @@
       if (unreadPrivateMessages[uid]) delete unreadPrivateMessages[uid];
       loadPrivateMessages(uid);
       if (unsubscribePartner) unsubscribePartner();
-      unsubscribePartner = db.collection('users').doc(uid).onSnapshot(doc => { if (doc.exists) { const data = doc.data(); if (data.online && data.status === 'online') { privateStatus.textContent = '🟢 متصل'; privateStatus.style.color = '#48bb78'; } else if (data.online && data.status === 'away') { privateStatus.textContent = '🟡 غير نشط'; privateStatus.style.color = '#ecc94b'; } else { privateStatus.textContent = '🔴 غير متصل'; privateStatus.style.color = '#a0aec0'; } } });
+      unsubscribePartner = db.collection('users').doc(uid).onSnapshot(doc => { 
+        if (doc.exists) { 
+          const data = doc.data(); 
+          if (data.online && data.status === 'online') { 
+            privateStatus.textContent = '🟢 متصل'; 
+            privateStatus.style.color = '#48bb78';
+            privateLastSeen.textContent = 'متصل الآن';
+          } else if (data.online && data.status === 'away') { 
+            privateStatus.textContent = '🟡 غير نشط'; 
+            privateStatus.style.color = '#ecc94b';
+            privateLastSeen.textContent = 'غير نشط حالياً';
+          } else { 
+            privateStatus.textContent = '🔴 غير متصل'; 
+            privateStatus.style.color = '#a0aec0';
+            privateLastSeen.textContent = formatLastSeen(data.lastSeen, false, 'offline');
+          }
+        } 
+      });
     };
     window.closePrivateChat = function() { activePartner = null; currentPrivateRoomId = null; privatePage.classList.remove('show'); if (unsubscribePrivate) unsubscribePrivate(); if (unsubscribePartner) unsubscribePartner(); };
+    
     function loadPrivateMessages(partnerUid) {
       if (unsubscribePrivate) unsubscribePrivate();
       const roomId = currentUser.uid < partnerUid ? currentUser.uid + '_' + partnerUid : partnerUid + '_' + currentUser.uid;
@@ -1287,9 +1530,19 @@
           messageDiv.innerHTML = content;
           privateMessages.appendChild(messageDiv);
         });
+        
+        // إشعار للرسائل الخاصة
+        if (activePartner && document.visibilityState !== 'visible') {
+          const lastMsg = snapshot.docs[snapshot.docs.length - 1]?.data();
+          if (lastMsg && lastMsg.uid !== currentUser?.uid) {
+            sendNotification(`رسالة خاصة من ${activePartner.username}`, lastMsg.text?.substring(0, 50) || '📷 صورة');
+          }
+        }
+        
         if (wasNearBottom) scrollToBottom(privateMessages, true);
       });
     }
+    
     window.sendPrivateMessage = function() { if (!currentUser || !activePartner) return; const text = privateInput.value.trim(); if (!text) return; const roomId = currentUser.uid < activePartner.uid ? currentUser.uid + '_' + activePartner.uid : activePartner.uid + '_' + currentUser.uid; db.collection('private_messages').add({ text: text, username: currentUsername, uid: currentUser.uid, email: currentUser.email, toUid: activePartner.uid, roomId: roomId, createdAt: firebase.firestore.FieldValue.serverTimestamp() }).then(() => { privateInput.value = ''; scrollToBottom(privateMessages, true); }).catch(() => showToast('❌ فشل الإرسال', 'error')); };
     function sendWithReply() { if (!currentUser) return; const text = messageInput.value.trim(); if (!text) return; let messageData = { text: text, username: currentUsername, uid: currentUser.uid, email: currentUser.email, createdAt: firebase.firestore.FieldValue.serverTimestamp() }; if (replyingTo) messageData.replyTo = replyingTo; db.collection('messages').add(messageData).then(() => { messageInput.value = ''; cancelReply(); scrollToBottom(messagesDiv, true); }).catch(() => showToast('❌ فشل الإرسال', 'error')); }
     function handleTyping() { if (!currentUser) return; if (!isTyping) { isTyping = true; db.collection('typing').doc(currentUser.uid).set({ username: currentUsername, isTyping: true, timestamp: firebase.firestore.FieldValue.serverTimestamp() }).catch(() => {}); } clearTimeout(typingTimeout); typingTimeout = setTimeout(() => { isTyping = false; db.collection('typing').doc(currentUser.uid).delete().catch(() => {}); }, 2000); }
@@ -1360,21 +1613,16 @@
           const userDoc = await db.collection('users').doc(user.uid).get();
           if (userDoc.exists) {
             const data = userDoc.data();
-            // التحقق مما إذا كان المستخدم لديه اسم مستخدم مخصص أم لا
-            // إذا كان اسم المستخدم مطابقاً للاسم المستخرج من البريد، فهذا يعني أنه لم يتم تعيين اسم مخصص
             const emailUsername = user.email.split('@')[0].substring(0, 15);
             if (data.username && data.username !== emailUsername) {
-              // المستخدم لديه اسم مخصص
               currentUsername = data.username;
             } else {
-              // المستخدم ليس لديه اسم مخصص، نستخدم الاسم من قاعدة البيانات أو ننشئ واحداً
               currentUsername = data.username || emailUsername;
             }
             if (data.emailVerified !== true) {
               await db.collection('users').doc(user.uid).update({ emailVerified: true });
             }
           } else {
-            // مستخدم جديد عبر جوجل أو بريد إلكتروني ولكن لم يتم إنشاء وثيقة بعد
             currentUsername = user.email.split('@')[0].substring(0,15);
             await db.collection('users').doc(user.uid).set({
               username: currentUsername,
@@ -1389,9 +1637,11 @@
           }
           await setupUserPresence();
           setupActivityMonitor();
+          setupConnectionMonitoring();
           loadPublicMessages();
           loadOnlineUsers();
           loadTypingIndicators();
+          checkNotificationPermission();
           setInterval(() => { if (currentUser && document.visibilityState === 'visible' && !document.hidden) db.collection('users').doc(currentUser.uid).update({ lastSeen: firebase.firestore.FieldValue.serverTimestamp(), lastActive: firebase.firestore.FieldValue.serverTimestamp() }).catch(() => {}); }, 60000);
           authDiv.style.display = 'none';
           chatDiv.style.display = 'block';
@@ -1415,4 +1665,4 @@
     setTimeout(() => hideLoadingScreen(), 5000);
   </script>
 </body>
-</html>
+  </html>
