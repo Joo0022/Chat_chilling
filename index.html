@@ -1035,7 +1035,7 @@
             <button class="close-sidebar-btn" onclick="toggleSidebar()"><i class="fas fa-times"></i></button>
           </div>
           <div class="sidebar-search">
-            <input type="text" id="userSearchInput" placeholder="🔍 ابحث عن مستخدم..." oninput="filterUsers(this.value)">
+            <input type="text" id="userSearchInput" placeholder="🔍 ابحث عن مستخدم...">
           </div>
           <div class="users-list" id="onlineList"></div>
         </div>
@@ -1308,7 +1308,7 @@
     let oldestMessageTimestamp = null;
     let loadingMore = false;
     let lastMessageSnapshot = null;
-    let allUsersList = []; // for filtering
+    let allUsers = []; // for filtering
     let currentProfileUserId = null; // for viewing other user profile
     const MESSAGES_LIMIT = 50;
 
@@ -1962,58 +1962,86 @@
     }
 
     // ========== عرض قائمة المستخدمين مع البحث ==========
-    let allUsers = [];
-    async function renderUserList(usersArray) {
-      allUsers = usersArray;
-      filterUsers(userSearchInput?.value || '');
-    }
-
     function filterUsers(searchTerm) {
-      const term = searchTerm.toLowerCase().trim();
+      const term = (searchTerm || '').trim().toLowerCase();
       let filtered = allUsers;
       if (term) {
-        filtered = allUsers.filter(u => u.username.toLowerCase().includes(term) || (u.email && u.email.toLowerCase().includes(term)));
+        filtered = allUsers.filter(user => {
+          const username = (user.username || '').toLowerCase();
+          const email = (user.email || '').toLowerCase();
+          return username.includes(term) || email.includes(term);
+        });
       }
       displayUsersList(filtered);
     }
 
     async function displayUsersList(usersArray) {
-      const unreadCounts = await getUnreadCounts();
-      let html = '';
-      let onlineCount = 0;
-      let awayCount = 0;
-      usersArray.forEach(user => {
-        const unreadCount = unreadCounts[user.id] || 0;
-        const initial = user.username.charAt(0).toUpperCase();
-        let statusText = '', statusClass = '', statusDot = '', lastSeenText = '';
-        if (user.online === true) {
-          if (user.status === 'online') { onlineCount++; statusText = '🟢 متصل'; statusClass = 'online'; statusDot = '<span class="status-dot"></span>'; }
-          else if (user.status === 'away') { awayCount++; statusText = '🟡 غير نشط'; statusClass = 'away'; statusDot = '<span class="status-dot away"></span>'; }
-          else { onlineCount++; statusText = '🟢 متصل'; statusClass = 'online'; statusDot = '<span class="status-dot"></span>'; }
-        } else {
-          statusText = '🔴 غير متصل'; statusClass = 'offline'; statusDot = '<span class="status-dot offline"></span>';
-          if (user.lastSeen?.toDate) {
-            lastSeenText = formatTimeAgo(user.lastSeen.toDate());
+      try {
+        const unreadCounts = await getUnreadCounts();
+        let html = '';
+        let onlineCount = 0;
+        let awayCount = 0;
+        
+        usersArray.forEach(user => {
+          const unreadCount = unreadCounts[user.id] || 0;
+          const initial = user.username.charAt(0).toUpperCase();
+          let statusText = '', statusClass = '', statusDot = '', lastSeenText = '';
+          
+          if (user.online === true) {
+            if (user.status === 'online') { 
+              onlineCount++; 
+              statusText = '🟢 متصل'; 
+              statusClass = 'online'; 
+              statusDot = '<span class="status-dot"></span>'; 
+            } else if (user.status === 'away') { 
+              awayCount++; 
+              statusText = '🟡 غير نشط'; 
+              statusClass = 'away'; 
+              statusDot = '<span class="status-dot away"></span>'; 
+            } else { 
+              onlineCount++; 
+              statusText = '🟢 متصل'; 
+              statusClass = 'online'; 
+              statusDot = '<span class="status-dot"></span>'; 
+            }
+          } else {
+            statusText = '🔴 غير متصل'; 
+            statusClass = 'offline'; 
+            statusDot = '<span class="status-dot offline"></span>';
+            if (user.lastSeen?.toDate) {
+              lastSeenText = formatTimeAgo(user.lastSeen.toDate());
+            }
           }
-        }
-        const adminBadge = isAdmin(user.email) ? '<span class="admin-badge"><i class="fas fa-crown"></i> أدمن</span>' : '';
-        // Avatar background
-        let avatarStyle = '';
-        if (user.profileImage) {
-          avatarStyle = `style="background-image: url('${escapeHtml(user.profileImage)}'); background-size: cover;"`;
-        }
-        html += `<div class="user-item" onclick="openUserProfile('${user.id}')">
-          <div class="user-avatar" ${avatarStyle}>${user.profileImage ? '' : initial}</div>
-          <div class="user-info">
-            <div class="user-name">${escapeHtml(user.username)} ${adminBadge}</div>
-            <div class="user-status ${statusClass}">${statusDot} ${statusText}</div>
-            ${lastSeenText ? `<div class="user-last-seen">آخر ظهور: ${lastSeenText}</div>` : ''}
-          </div>
-          ${unreadCount > 0 ? `<span class="notification-badge-new">${unreadCount}</span>` : ''}
-        </div>`;
-      });
-      onlineList.innerHTML = html || '<div class="no-messages">لا يوجد مستخدمين آخرين</div>';
-      document.getElementById('onlineCount').textContent = `${onlineCount} متصل، ${awayCount} غير نشط`;
+          
+          const adminBadge = isAdmin(user.email) ? '<span class="admin-badge"><i class="fas fa-crown"></i> أدمن</span>' : '';
+          let avatarStyle = '';
+          if (user.profileImage) {
+            avatarStyle = `style="background-image: url('${escapeHtml(user.profileImage)}'); background-size: cover;"`;
+          }
+          
+          html += `<div class="user-item" onclick="openUserProfile('${user.id}')">
+            <div class="user-avatar" ${avatarStyle}>${user.profileImage ? '' : initial}</div>
+            <div class="user-info">
+              <div class="user-name">${escapeHtml(user.username)} ${adminBadge}</div>
+              <div class="user-status ${statusClass}">${statusDot} ${statusText}</div>
+              ${lastSeenText ? `<div class="user-last-seen">آخر ظهور: ${lastSeenText}</div>` : ''}
+            </div>
+            ${unreadCount > 0 ? `<span class="notification-badge-new">${unreadCount}</span>` : ''}
+          </div>`;
+        });
+        
+        onlineList.innerHTML = html || '<div class="no-messages">لا يوجد مستخدمين آخرين</div>';
+        document.getElementById('onlineCount').textContent = `${onlineCount} متصل، ${awayCount} غير نشط`;
+      } catch (error) {
+        console.error('خطأ في عرض المستخدمين:', error);
+        onlineList.innerHTML = '<div class="no-messages">حدث خطأ في تحميل المستخدمين</div>';
+      }
+    }
+
+    function renderUserList(usersArray) {
+      allUsers = usersArray;
+      const searchValue = userSearchInput ? userSearchInput.value : '';
+      filterUsers(searchValue);
     }
 
     function loadOnlineUsers() {
@@ -2445,6 +2473,15 @@
     privateInput.addEventListener('keypress', e => { if (e.key === 'Enter') { e.preventDefault(); sendPrivateMessage(); } });
     document.addEventListener('click', (e) => { if (!e.target.closest('.users-sidebar') && !e.target.closest('[onclick="toggleSidebar()"]')) document.querySelector('.users-sidebar').classList.remove('show'); });
 
+    // Add search event listener after DOM ready
+    document.addEventListener('DOMContentLoaded', function() {
+      if (userSearchInput) {
+        userSearchInput.addEventListener('input', function(e) {
+          filterUsers(e.target.value);
+        });
+      }
+    });
+
     // ========== مراقبة حالة المصادقة ==========
     auth.onAuthStateChanged(async (user) => {
       if (user && user.emailVerified) {
@@ -2507,4 +2544,4 @@
     setTimeout(() => hideLoadingScreen(), 5000);
   </script>
 </body>
-    </html>
+  </html>
