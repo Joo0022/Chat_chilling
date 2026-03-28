@@ -1961,7 +1961,7 @@
       }, 2000);
     }
 
-    // ========== عرض قائمة المستخدمين مع البحث ==========
+    // ========== عرض قائمة المستخدمين مع البحث (إصلاح الخطأ) ==========
     function filterUsers(searchTerm) {
       const term = (searchTerm || '').trim().toLowerCase();
       let filtered = allUsers;
@@ -2034,7 +2034,7 @@
         document.getElementById('onlineCount').textContent = `${onlineCount} متصل، ${awayCount} غير نشط`;
       } catch (error) {
         console.error('خطأ في عرض المستخدمين:', error);
-        onlineList.innerHTML = '<div class="no-messages">حدث خطأ في تحميل المستخدمين</div>';
+        onlineList.innerHTML = '<div class="no-messages">حدث خطأ في تحميل المستخدمين. تأكد من الاتصال بالإنترنت.</div>';
       }
     }
 
@@ -2045,25 +2045,39 @@
     }
 
     function loadOnlineUsers() {
+      if (!currentUser) {
+        console.warn('لا يوجد مستخدم حالي لتحديث القائمة');
+        return;
+      }
       if (unsubscribeOnline) unsubscribeOnline();
-      const queryBase = db.collection('users').where('emailVerified', '==', true);
-      unsubscribeOnline = queryBase.onSnapshot(snapshot => {
-        const users = [];
-        snapshot.forEach(doc => {
-          if (doc.id !== currentUser?.uid) {
-            const data = doc.data();
-            if (data.username) users.push({ id: doc.id, ...data });
-          }
+      try {
+        const queryBase = db.collection('users').where('emailVerified', '==', true);
+        unsubscribeOnline = queryBase.onSnapshot(snapshot => {
+          const users = [];
+          snapshot.forEach(doc => {
+            if (doc.id !== currentUser?.uid) {
+              const data = doc.data();
+              if (data.username) users.push({ id: doc.id, ...data });
+            }
+          });
+          users.sort((a, b) => {
+            const aTime = a.lastActive?.toDate?.() || 0;
+            const bTime = b.lastActive?.toDate?.() || 0;
+            return bTime - aTime;
+          });
+          renderUserList(users);
+        }, error => {
+          console.error('خطأ في تحميل المستخدمين:', error);
+          onlineList.innerHTML = '<div class="no-messages">حدث خطأ في تحميل المستخدمين. تأكد من الاتصال بالإنترنت وحاول تحديث الصفحة.</div>';
+          // محاولة إعادة المحاولة بعد 5 ثوانٍ
+          setTimeout(() => {
+            if (currentUser) loadOnlineUsers();
+          }, 5000);
         });
-        users.sort((a, b) => {
-          const aTime = a.lastActive?.toDate?.() || 0;
-          const bTime = b.lastActive?.toDate?.() || 0;
-          return bTime - aTime;
-        });
-        renderUserList(users);
-      }, error => {
-        onlineList.innerHTML = '<div class="no-messages">خطأ في تحميل المستخدمين: ' + error.message + '</div>';
-      });
+      } catch (err) {
+        console.error('استثناء في loadOnlineUsers:', err);
+        onlineList.innerHTML = '<div class="no-messages">خطأ في الاتصال بقاعدة البيانات. حاول تحديث الصفحة.</div>';
+      }
     }
 
     // ========== دوال الملف الشخصي ==========
