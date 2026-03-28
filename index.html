@@ -519,16 +519,6 @@
       font-size: 0.7rem;
       margin-top: 4px;
     }
-    .retry-button {
-      background: var(--bg-white);
-      border: 1px solid var(--border-color);
-      padding: 8px 16px;
-      border-radius: 30px;
-      margin: 10px auto;
-      display: inline-block;
-      cursor: pointer;
-      color: var(--text-primary);
-    }
 
     /* منطقة المحادثة الرئيسية */
     .chat-main {
@@ -1047,9 +1037,7 @@
           <div class="sidebar-search">
             <input type="text" id="userSearchInput" placeholder="🔍 ابحث عن مستخدم...">
           </div>
-          <div class="users-list" id="onlineList">
-            <div class="no-messages">جاري تحميل المستخدمين...</div>
-          </div>
+          <div class="users-list" id="onlineList"></div>
         </div>
         <div class="chat-main">
           <div class="chat-header">
@@ -1973,7 +1961,7 @@
       }, 2000);
     }
 
-    // ========== عرض قائمة المستخدمين مع البحث (إصلاح كامل) ==========
+    // ========== عرض قائمة المستخدمين مع البحث (إصلاح الخطأ) ==========
     function filterUsers(searchTerm) {
       const term = (searchTerm || '').trim().toLowerCase();
       let filtered = allUsers;
@@ -1994,12 +1982,6 @@
         let onlineCount = 0;
         let awayCount = 0;
         
-        if (!usersArray || usersArray.length === 0) {
-          onlineList.innerHTML = '<div class="no-messages">لا يوجد مستخدمين آخرين</div>';
-          document.getElementById('onlineCount').textContent = `0 متصل، 0 غير نشط`;
-          return;
-        }
-
         usersArray.forEach(user => {
           const unreadCount = unreadCounts[user.id] || 0;
           const initial = user.username.charAt(0).toUpperCase();
@@ -2048,11 +2030,11 @@
           </div>`;
         });
         
-        onlineList.innerHTML = html;
+        onlineList.innerHTML = html || '<div class="no-messages">لا يوجد مستخدمين آخرين</div>';
         document.getElementById('onlineCount').textContent = `${onlineCount} متصل، ${awayCount} غير نشط`;
       } catch (error) {
         console.error('خطأ في عرض المستخدمين:', error);
-        onlineList.innerHTML = `<div class="no-messages">حدث خطأ في تحميل المستخدمين.<br><button class="retry-button" onclick="retryLoadUsers()">إعادة المحاولة</button></div>`;
+        onlineList.innerHTML = '<div class="no-messages">حدث خطأ في تحميل المستخدمين. تأكد من الاتصال بالإنترنت.</div>';
       }
     }
 
@@ -2062,25 +2044,16 @@
       filterUsers(searchValue);
     }
 
-    function retryLoadUsers() {
-      if (currentUser) {
-        onlineList.innerHTML = '<div class="no-messages">جاري إعادة المحاولة...</div>';
-        loadOnlineUsers();
-      }
-    }
-
     function loadOnlineUsers() {
       if (!currentUser) {
         console.warn('لا يوجد مستخدم حالي لتحديث القائمة');
-        onlineList.innerHTML = '<div class="no-messages">الرجاء تسجيل الدخول أولاً</div>';
         return;
       }
       if (unsubscribeOnline) unsubscribeOnline();
       try {
-        console.log('محاولة تحميل المستخدمين...');
-        const queryBase = db.collection('users').where('emailVerified', '==', true);
+        // Remove the where('emailVerified', '==', true) condition to avoid index issues
+        const queryBase = db.collection('users');
         unsubscribeOnline = queryBase.onSnapshot(snapshot => {
-          console.log('تم استلام بيانات المستخدمين، العدد:', snapshot.size);
           const users = [];
           snapshot.forEach(doc => {
             if (doc.id !== currentUser?.uid) {
@@ -2088,7 +2061,6 @@
               if (data.username) users.push({ id: doc.id, ...data });
             }
           });
-          console.log('عدد المستخدمين الآخرين:', users.length);
           users.sort((a, b) => {
             const aTime = a.lastActive?.toDate?.() || 0;
             const bTime = b.lastActive?.toDate?.() || 0;
@@ -2097,11 +2069,15 @@
           renderUserList(users);
         }, error => {
           console.error('خطأ في تحميل المستخدمين:', error);
-          onlineList.innerHTML = `<div class="no-messages">فشل تحميل المستخدمين: ${error.message}<br><button class="retry-button" onclick="retryLoadUsers()">إعادة المحاولة</button></div>`;
+          onlineList.innerHTML = '<div class="no-messages">حدث خطأ في تحميل المستخدمين. تأكد من الاتصال بالإنترنت وحاول تحديث الصفحة.</div>';
+          // محاولة إعادة المحاولة بعد 5 ثوانٍ
+          setTimeout(() => {
+            if (currentUser) loadOnlineUsers();
+          }, 5000);
         });
       } catch (err) {
         console.error('استثناء في loadOnlineUsers:', err);
-        onlineList.innerHTML = `<div class="no-messages">خطأ في الاتصال بقاعدة البيانات.<br><button class="retry-button" onclick="retryLoadUsers()">إعادة المحاولة</button></div>`;
+        onlineList.innerHTML = '<div class="no-messages">خطأ في الاتصال بقاعدة البيانات. حاول تحديث الصفحة.</div>';
       }
     }
 
@@ -2583,4 +2559,4 @@
     setTimeout(() => hideLoadingScreen(), 5000);
   </script>
 </body>
-        </html>
+  </html>
