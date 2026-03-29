@@ -12,7 +12,7 @@
   <!-- Font Awesome -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
-    /* كل الأنماط كما هي دون تغيير */
+    /* جميع الأنماط كما هي دون تغيير (حافظت عليها كما في الإصدار السابق) */
     * {
       margin: 0;
       padding: 0;
@@ -98,571 +98,98 @@
       --user-color-12: #A9D6F0;
     }
 
-    html, body {
-      height: 100%;
-      width: 100%;
-      margin: 0;
-      padding: 0;
-      overflow: hidden;
-    }
-
-    body {
-      background: linear-gradient(135deg, var(--bg-gradient-start), var(--bg-gradient-end));
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      transition: background 0.3s ease;
-    }
-
-    .container {
-      width: 100%;
-      height: 100%;
-      max-width: none;
-      background: var(--container-bg);
-      backdrop-filter: blur(24px);
-      -webkit-backdrop-filter: blur(24px);
-      border-radius: 0;
-      box-shadow: none;
-      overflow: hidden;
-      display: flex;
-      flex-direction: column;
-    }
-
-    #loadingScreen {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: linear-gradient(135deg, #667eea, #764ba2);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      z-index: 10000;
-      transition: opacity 0.5s ease, visibility 0.5s ease;
-    }
-    #loadingScreen.hidden {
-      opacity: 0;
-      visibility: hidden;
-      pointer-events: none;
-    }
-    .loader-content {
-      text-align: center;
-      color: white;
-    }
-    .loader-spinner {
-      width: 70px;
-      height: 70px;
-      border: 6px solid rgba(255,255,255,0.3);
-      border-top-color: white;
-      border-radius: 50%;
-      animation: spin 1s linear infinite;
-      margin: 0 auto 25px;
-    }
+    html, body { height: 100%; width: 100%; margin: 0; padding: 0; overflow: hidden; }
+    body { background: linear-gradient(135deg, var(--bg-gradient-start), var(--bg-gradient-end)); display: flex; align-items: center; justify-content: center; transition: background 0.3s ease; }
+    .container { width: 100%; height: 100%; max-width: none; background: var(--container-bg); backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px); border-radius: 0; box-shadow: none; overflow: hidden; display: flex; flex-direction: column; }
+    #loadingScreen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(135deg, #667eea, #764ba2); display: flex; align-items: center; justify-content: center; z-index: 10000; transition: opacity 0.5s ease, visibility 0.5s ease; }
+    #loadingScreen.hidden { opacity: 0; visibility: hidden; pointer-events: none; }
+    .loader-content { text-align: center; color: white; }
+    .loader-spinner { width: 70px; height: 70px; border: 6px solid rgba(255,255,255,0.3); border-top-color: white; border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto 25px; }
     @keyframes spin { to { transform: rotate(360deg); } }
-
-    .animated-bg {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      z-index: -1;
-      overflow: hidden;
-    }
-    .animated-bg span {
-      position: absolute;
-      display: block;
-      width: 20px;
-      height: 20px;
-      background: rgba(255, 255, 255, 0.1);
-      animation: animate 25s linear infinite;
-      bottom: -150px;
-    }
-    @keyframes animate {
-      0% { transform: translateY(0) rotate(0deg); opacity: 1; }
-      100% { transform: translateY(-1000px) rotate(720deg); opacity: 0; }
-    }
-
-    #auth {
-      height: 100%;
-      display: flex;
-      flex: 1;
-    }
-
-    .auth-side {
-      flex: 1;
-      background: var(--auth-side-bg);
-      backdrop-filter: blur(8px);
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      padding: 40px;
-      color: white;
-      text-align: center;
-      position: relative;
-      overflow: hidden;
-      border-radius: 0;
-    }
-    .auth-side::before {
-      content: '';
-      position: absolute;
-      width: 200%;
-      height: 200%;
-      background: rgba(255, 255, 255, 0.1);
-      transform: rotate(45deg);
-      top: -50%;
-      left: -50%;
-      animation: shine 6s infinite;
-    }
-    @keyframes shine {
-      0% { transform: rotate(45deg) translateY(-100%); }
-      100% { transform: rotate(45deg) translateY(100%); }
-    }
-    .auth-side h1 {
-      font-size: 2.5rem;
-      margin-bottom: 20px;
-      text-shadow: 0 10px 20px rgba(0,0,0,0.3);
-      position: relative;
-    }
-    .auth-side p {
-      font-size: 1rem;
-      max-width: 350px;
-      line-height: 1.6;
-      opacity: 0.9;
-      position: relative;
-    }
-    .auth-main {
-      flex: 1;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 40px;
-      background: var(--auth-main-bg);
-      backdrop-filter: blur(10px);
-      border-radius: 0;
-    }
-    .auth-form-container {
-      width: 100%;
-      max-width: 420px;
-    }
-    .auth-tabs {
-      display: flex;
-      gap: 12px;
-      margin-bottom: 30px;
-      background: rgba(102, 126, 234, 0.1);
-      padding: 6px;
-      border-radius: 60px;
-    }
-    .auth-tab {
-      flex: 1;
-      padding: 12px 16px;
-      border: none;
-      border-radius: 50px;
-      background: transparent;
-      color: var(--text-primary);
-      font-weight: 600;
-      font-size: 0.95rem;
-      cursor: pointer;
-      transition: all 0.3s ease;
-    }
-    .auth-tab.active {
-      background: linear-gradient(135deg, #667eea, #764ba2);
-      color: white;
-      box-shadow: 0 8px 20px -5px rgba(102, 126, 234, 0.5);
-    }
-    .input-group-modern {
-      margin-bottom: 20px;
-    }
-    .input-group-modern label {
-      display: block;
-      color: var(--text-primary);
-      margin-bottom: 8px;
-      font-weight: 500;
-      font-size: 0.9rem;
-    }
-    .input-modern {
-      width: 100%;
-      padding: 12px 18px;
-      border: 2px solid var(--border-color);
-      border-radius: 30px;
-      background: var(--input-bg);
-      color: var(--text-primary);
-      font-size: 0.95rem;
-      transition: all 0.3s ease;
-    }
-    .input-modern:focus {
-      outline: none;
-      border-color: #667eea;
-      box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.15);
-    }
-    .password-wrapper-modern {
-      position: relative;
-    }
-    .password-toggle-modern {
-      position: absolute;
-      left: 18px;
-      top: 50%;
-      transform: translateY(-50%);
-      background: none;
-      border: none;
-      color: var(--text-light);
-      cursor: pointer;
-      font-size: 1.1rem;
-    }
-    .btn-modern {
-      width: 100%;
-      padding: 12px;
-      border: none;
-      border-radius: 50px;
-      font-weight: 600;
-      font-size: 0.95rem;
-      cursor: pointer;
-      transition: all 0.3s ease;
-      background: linear-gradient(135deg, #667eea, #764ba2);
-      color: white;
-      box-shadow: 0 8px 20px -5px rgba(102, 126, 234, 0.5);
-    }
-    .btn-modern:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 12px 25px -5px rgba(102, 126, 234, 0.7);
-    }
-    .btn-modern.google {
-      background: var(--bg-white);
-      color: var(--text-primary);
-      border: 2px solid var(--border-color);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 10px;
-    }
-    .separator-modern {
-      text-align: center;
-      margin: 24px 0;
-      color: var(--text-light);
-      position: relative;
-      font-size: 0.85rem;
-    }
-    .separator-modern::before,
-    .separator-modern::after {
-      content: "";
-      position: absolute;
-      top: 50%;
-      width: 40%;
-      height: 1px;
-      background: var(--border-color);
-    }
+    .animated-bg { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; overflow: hidden; }
+    .animated-bg span { position: absolute; display: block; width: 20px; height: 20px; background: rgba(255, 255, 255, 0.1); animation: animate 25s linear infinite; bottom: -150px; }
+    @keyframes animate { 0% { transform: translateY(0) rotate(0deg); opacity: 1; } 100% { transform: translateY(-1000px) rotate(720deg); opacity: 0; } }
+    #auth { height: 100%; display: flex; flex: 1; }
+    .auth-side { flex: 1; background: var(--auth-side-bg); backdrop-filter: blur(8px); display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 40px; color: white; text-align: center; position: relative; overflow: hidden; border-radius: 0; }
+    .auth-side::before { content: ''; position: absolute; width: 200%; height: 200%; background: rgba(255, 255, 255, 0.1); transform: rotate(45deg); top: -50%; left: -50%; animation: shine 6s infinite; }
+    @keyframes shine { 0% { transform: rotate(45deg) translateY(-100%); } 100% { transform: rotate(45deg) translateY(100%); } }
+    .auth-side h1 { font-size: 2.5rem; margin-bottom: 20px; text-shadow: 0 10px 20px rgba(0,0,0,0.3); position: relative; }
+    .auth-side p { font-size: 1rem; max-width: 350px; line-height: 1.6; opacity: 0.9; position: relative; }
+    .auth-main { flex: 1; display: flex; align-items: center; justify-content: center; padding: 40px; background: var(--auth-main-bg); backdrop-filter: blur(10px); border-radius: 0; }
+    .auth-form-container { width: 100%; max-width: 420px; }
+    .auth-tabs { display: flex; gap: 12px; margin-bottom: 30px; background: rgba(102, 126, 234, 0.1); padding: 6px; border-radius: 60px; }
+    .auth-tab { flex: 1; padding: 12px 16px; border: none; border-radius: 50px; background: transparent; color: var(--text-primary); font-weight: 600; font-size: 0.95rem; cursor: pointer; transition: all 0.3s ease; }
+    .auth-tab.active { background: linear-gradient(135deg, #667eea, #764ba2); color: white; box-shadow: 0 8px 20px -5px rgba(102, 126, 234, 0.5); }
+    .input-group-modern { margin-bottom: 20px; }
+    .input-group-modern label { display: block; color: var(--text-primary); margin-bottom: 8px; font-weight: 500; font-size: 0.9rem; }
+    .input-modern { width: 100%; padding: 12px 18px; border: 2px solid var(--border-color); border-radius: 30px; background: var(--input-bg); color: var(--text-primary); font-size: 0.95rem; transition: all 0.3s ease; }
+    .input-modern:focus { outline: none; border-color: #667eea; box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.15); }
+    .password-wrapper-modern { position: relative; }
+    .password-toggle-modern { position: absolute; left: 18px; top: 50%; transform: translateY(-50%); background: none; border: none; color: var(--text-light); cursor: pointer; font-size: 1.1rem; }
+    .btn-modern { width: 100%; padding: 12px; border: none; border-radius: 50px; font-weight: 600; font-size: 0.95rem; cursor: pointer; transition: all 0.3s ease; background: linear-gradient(135deg, #667eea, #764ba2); color: white; box-shadow: 0 8px 20px -5px rgba(102, 126, 234, 0.5); }
+    .btn-modern:hover { transform: translateY(-2px); box-shadow: 0 12px 25px -5px rgba(102, 126, 234, 0.7); }
+    .btn-modern.google { background: var(--bg-white); color: var(--text-primary); border: 2px solid var(--border-color); display: flex; align-items: center; justify-content: center; gap: 10px; }
+    .separator-modern { text-align: center; margin: 24px 0; color: var(--text-light); position: relative; font-size: 0.85rem; }
+    .separator-modern::before, .separator-modern::after { content: ""; position: absolute; top: 50%; width: 40%; height: 1px; background: var(--border-color); }
     .separator-modern::before { right: 0; }
     .separator-modern::after { left: 0; }
     .validation-message { font-size: 0.75rem; margin-top: 5px; display: none; }
     .validation-message.success { color: var(--success-color); display: block; }
     .validation-message.error { color: var(--danger-color); display: block; }
     .error-message { color: var(--danger-color); font-size: 0.8rem; margin-top: 5px; text-align: center; }
-
-    #chat {
-      height: 100%;
-      display: none;
-      flex: 1;
-    }
-    .chat-container {
-      display: flex;
-      height: 100%;
-      width: 100%;
-    }
-    .users-sidebar {
-      width: 290px;
-      background: var(--sidebar-bg);
-      border-left: 1px solid var(--border-color);
-      display: flex;
-      flex-direction: column;
-      overflow: hidden;
-      transition: right 0.3s ease;
-    }
-    .sidebar-header {
-      padding: 20px;
-      background: var(--auth-side-bg);
-      color: white;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      flex-wrap: wrap;
-    }
-    .sidebar-header h3 {
-      font-size: 1.1rem;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-    .online-count {
-      background: rgba(255, 255, 255, 0.2);
-      padding: 4px 10px;
-      border-radius: 20px;
-      font-size: 0.8rem;
-    }
-    .close-sidebar-btn {
-      background: rgba(255,255,255,0.2);
-      border: none;
-      color: white;
-      width: 32px;
-      height: 32px;
-      border-radius: 8px;
-      cursor: pointer;
-      display: none;
-    }
-    .sidebar-search {
-      padding: 10px 15px;
-      background: var(--bg-light);
-      border-bottom: 1px solid var(--border-color);
-    }
-    .sidebar-search input {
-      width: 100%;
-      padding: 8px 12px;
-      border-radius: 30px;
-      border: 1px solid var(--border-color);
-      background: var(--input-bg);
-      color: var(--text-primary);
-    }
-    .users-list {
-      flex: 1;
-      overflow-y: auto;
-      padding: 15px;
-    }
-    .user-item {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      padding: 12px;
-      background: var(--bg-light);
-      border-radius: 16px;
-      margin-bottom: 8px;
-      cursor: pointer;
-      transition: all 0.3s ease;
-      border: 2px solid transparent;
-    }
-    .user-item:hover {
-      transform: translateX(-4px);
-      border-color: #667eea;
-      background: var(--hover-bg);
-      box-shadow: 0 8px 20px -8px var(--shadow-color);
-    }
-    .user-avatar {
-      width: 42px;
-      height: 42px;
-      background: linear-gradient(135deg, #667eea, #764ba2);
-      border-radius: 14px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: white;
-      font-weight: 600;
-      font-size: 1rem;
-      background-size: cover;
-      background-position: center;
-    }
-    .user-info {
-      flex: 1;
-    }
-    .user-name {
-      font-weight: 600;
-      color: var(--text-primary);
-      font-size: 0.9rem;
-      display: flex;
-      align-items: center;
-      gap: 5px;
-      flex-wrap: wrap;
-    }
-    .admin-badge {
-      background: #fbbf24;
-      color: #1e293b;
-      border-radius: 20px;
-      padding: 2px 8px;
-      font-size: 0.65rem;
-      font-weight: bold;
-      display: inline-flex;
-      align-items: center;
-      gap: 4px;
-    }
-    .user-status {
-      font-size: 0.7rem;
-      display: flex;
-      align-items: center;
-      gap: 4px;
-    }
+    #chat { height: 100%; display: none; flex: 1; }
+    .chat-container { display: flex; height: 100%; width: 100%; }
+    .users-sidebar { width: 290px; background: var(--sidebar-bg); border-left: 1px solid var(--border-color); display: flex; flex-direction: column; overflow: hidden; transition: right 0.3s ease; }
+    .sidebar-header { padding: 20px; background: var(--auth-side-bg); color: white; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; }
+    .sidebar-header h3 { font-size: 1.1rem; display: flex; align-items: center; gap: 10px; }
+    .online-count { background: rgba(255, 255, 255, 0.2); padding: 4px 10px; border-radius: 20px; font-size: 0.8rem; }
+    .close-sidebar-btn { background: rgba(255,255,255,0.2); border: none; color: white; width: 32px; height: 32px; border-radius: 8px; cursor: pointer; display: none; }
+    .sidebar-search { padding: 10px 15px; background: var(--bg-light); border-bottom: 1px solid var(--border-color); }
+    .sidebar-search input { width: 100%; padding: 8px 12px; border-radius: 30px; border: 1px solid var(--border-color); background: var(--input-bg); color: var(--text-primary); }
+    .users-list { flex: 1; overflow-y: auto; padding: 15px; }
+    .user-item { display: flex; align-items: center; gap: 12px; padding: 12px; background: var(--bg-light); border-radius: 16px; margin-bottom: 8px; cursor: pointer; transition: all 0.3s ease; border: 2px solid transparent; }
+    .user-item:hover { transform: translateX(-4px); border-color: #667eea; background: var(--hover-bg); box-shadow: 0 8px 20px -8px var(--shadow-color); }
+    .user-avatar { width: 42px; height: 42px; background: linear-gradient(135deg, #667eea, #764ba2); border-radius: 14px; display: flex; align-items: center; justify-content: center; color: white; font-weight: 600; font-size: 1rem; background-size: cover; background-position: center; }
+    .user-info { flex: 1; }
+    .user-name { font-weight: 600; color: var(--text-primary); font-size: 0.9rem; display: flex; align-items: center; gap: 5px; flex-wrap: wrap; }
+    .admin-badge { background: #fbbf24; color: #1e293b; border-radius: 20px; padding: 2px 8px; font-size: 0.65rem; font-weight: bold; display: inline-flex; align-items: center; gap: 4px; }
+    .user-status { font-size: 0.7rem; display: flex; align-items: center; gap: 4px; }
     .user-status.online { color: var(--online-status); }
     .user-status.away { color: var(--away-status); }
     .user-status.offline { color: var(--offline-status); }
-    .status-dot {
-      width: 8px;
-      height: 8px;
-      border-radius: 50%;
-      display: inline-block;
-    }
+    .status-dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; }
     .status-dot { background: var(--online-status); }
     .status-dot.away { background: var(--away-status); }
     .status-dot.offline { background: var(--offline-status); }
-    .notification-badge-new {
-      background: var(--danger-color);
-      color: white;
-      border-radius: 30px;
-      padding: 2px 8px;
-      font-size: 0.7rem;
-      font-weight: bold;
-    }
-    .user-last-seen {
-      color: var(--text-light);
-      font-size: 0.7rem;
-      margin-top: 4px;
-    }
-
-    .chat-main {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      background: var(--bg-light);
-      overflow: hidden;
-    }
-    .chat-header {
-      padding: 15px 24px;
-      background: var(--bg-white);
-      border-bottom: 1px solid var(--border-color);
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-    }
-    .chat-header h2 {
-      color: var(--text-primary);
-      font-size: 1.2rem;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-    .connection-status {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      font-size: 0.9rem;
-      padding: 4px 12px;
-      border-radius: 20px;
-      background: var(--bg-light);
-    }
+    .notification-badge-new { background: var(--danger-color); color: white; border-radius: 30px; padding: 2px 8px; font-size: 0.7rem; font-weight: bold; }
+    .user-last-seen { color: var(--text-light); font-size: 0.7rem; margin-top: 4px; }
+    .chat-main { flex: 1; display: flex; flex-direction: column; background: var(--bg-light); overflow: hidden; }
+    .chat-header { padding: 15px 24px; background: var(--bg-white); border-bottom: 1px solid var(--border-color); display: flex; align-items: center; justify-content: space-between; }
+    .chat-header h2 { color: var(--text-primary); font-size: 1.2rem; display: flex; align-items: center; gap: 8px; }
+    .connection-status { display: flex; align-items: center; gap: 8px; font-size: 0.9rem; padding: 4px 12px; border-radius: 20px; background: var(--bg-light); }
     .connection-status.online i { color: #10b981; }
     .connection-status.offline i { color: #ef4444; }
     .connection-status.connecting i { color: #f59e0b; animation: pulse 1.5s infinite; }
     .connection-status span { font-size: 0.75rem; color: var(--text-secondary); }
-    @keyframes pulse {
-      0%, 100% { opacity: 1; }
-      50% { opacity: 0.5; }
-    }
-    .header-actions-new {
-      display: flex;
-      gap: 8px;
-    }
-    .btn-icon, .theme-toggle {
-      width: 40px;
-      height: 40px;
-      border: none;
-      border-radius: 14px;
-      background: var(--bg-light);
-      color: var(--icon-color);
-      cursor: pointer;
-      transition: all 0.2s ease;
-      font-size: 1rem;
-    }
-    .btn-icon:hover, .theme-toggle:hover {
-      background: linear-gradient(135deg, #667eea, #764ba2);
-      color: white;
-      transform: scale(1.02);
-    }
-    .search-area {
-      padding: 12px 24px;
-      background: var(--bg-white);
-      border-bottom: 1px solid var(--border-color);
-      display: none;
-    }
+    @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
+    .header-actions-new { display: flex; gap: 8px; }
+    .btn-icon, .theme-toggle { width: 40px; height: 40px; border: none; border-radius: 14px; background: var(--bg-light); color: var(--icon-color); cursor: pointer; transition: all 0.2s ease; font-size: 1rem; }
+    .btn-icon:hover, .theme-toggle:hover { background: linear-gradient(135deg, #667eea, #764ba2); color: white; transform: scale(1.02); }
+    .search-area { padding: 12px 24px; background: var(--bg-white); border-bottom: 1px solid var(--border-color); display: none; }
     .search-area.show { display: block; }
-    .search-input-group {
-      display: flex;
-      gap: 10px;
-    }
-    .search-input {
-      flex: 1;
-      padding: 10px 18px;
-      border: 2px solid var(--border-color);
-      border-radius: 40px;
-      background: var(--input-bg);
-      color: var(--text-primary);
-    }
-    .btn-close {
-      background: var(--danger-color);
-      color: white;
-      border: none;
-      border-radius: 40px;
-      padding: 0 18px;
-      cursor: pointer;
-    }
-    .messages-area {
-      flex: 1;
-      overflow-y: auto;
-      padding: 20px 24px;
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-    }
-    .load-more-container {
-      display: flex;
-      justify-content: center;
-      margin: 10px 0;
-    }
-    .load-more-btn {
-      background: var(--bg-white);
-      border: 1px solid var(--border-color);
-      padding: 8px 16px;
-      border-radius: 40px;
-      cursor: pointer;
-      color: var(--text-primary);
-    }
-    .message-bubble {
-      max-width: 70%;
-      padding: 12px 18px;
-      border-radius: 22px 22px 22px 5px;
-      animation: slideIn 0.2s ease;
-      position: relative;
-    }
-    .message-bubble.own {
-      align-self: flex-end;
-      background: var(--message-own);
-      color: white;
-      border-radius: 22px 22px 5px 22px;
-    }
-    .message-bubble.other {
-      align-self: flex-start;
-      background: var(--message-other);
-      color: var(--text-primary);
-      box-shadow: 0 3px 12px var(--shadow-color);
-    }
-    .message-bubble.search-highlight {
-      background: #fef3c7 !important;
-      transform: scale(1.02);
-    }
-    .message-sender {
-      font-size: 0.7rem;
-      margin-bottom: 4px;
-      font-weight: 600;
-      display: inline-flex;
-      align-items: center;
-      gap: 5px;
-      padding: 2px 8px;
-      border-radius: 20px;
-      background: rgba(0, 0, 0, 0.1);
-      cursor: pointer;
-    }
-    .message-sender:hover {
-      text-decoration: underline;
-    }
-    .message-bubble.other .message-sender {
-      color: var(--text-secondary);
-    }
+    .search-input-group { display: flex; gap: 10px; }
+    .search-input { flex: 1; padding: 10px 18px; border: 2px solid var(--border-color); border-radius: 40px; background: var(--input-bg); color: var(--text-primary); }
+    .btn-close { background: var(--danger-color); color: white; border: none; border-radius: 40px; padding: 0 18px; cursor: pointer; }
+    .messages-area { flex: 1; overflow-y: auto; padding: 20px 24px; display: flex; flex-direction: column; gap: 12px; }
+    .load-more-container { display: flex; justify-content: center; margin: 10px 0; }
+    .load-more-btn { background: var(--bg-white); border: 1px solid var(--border-color); padding: 8px 16px; border-radius: 40px; cursor: pointer; color: var(--text-primary); }
+    .message-bubble { max-width: 70%; padding: 12px 18px; border-radius: 22px 22px 22px 5px; animation: slideIn 0.2s ease; position: relative; }
+    .message-bubble.own { align-self: flex-end; background: var(--message-own); color: white; border-radius: 22px 22px 5px 22px; }
+    .message-bubble.other { align-self: flex-start; background: var(--message-other); color: var(--text-primary); box-shadow: 0 3px 12px var(--shadow-color); }
+    .message-bubble.search-highlight { background: #fef3c7 !important; transform: scale(1.02); }
+    .message-sender { font-size: 0.7rem; margin-bottom: 4px; font-weight: 600; display: inline-flex; align-items: center; gap: 5px; padding: 2px 8px; border-radius: 20px; background: rgba(0, 0, 0, 0.1); cursor: pointer; }
+    .message-sender:hover { text-decoration: underline; }
+    .message-bubble.other .message-sender { color: var(--text-secondary); }
     .message-bubble.other.user-color-1 .message-sender { color: var(--user-color-1); }
     .message-bubble.other.user-color-2 .message-sender { color: var(--user-color-2); }
     .message-bubble.other.user-color-3 .message-sender { color: var(--user-color-3); }
@@ -675,311 +202,59 @@
     .message-bubble.other.user-color-10 .message-sender { color: var(--user-color-10); }
     .message-bubble.other.user-color-11 .message-sender { color: var(--user-color-11); }
     .message-bubble.other.user-color-12 .message-sender { color: var(--user-color-12); }
-
     .message-text { word-break: break-word; line-height: 1.4; font-size: 0.9rem; }
     .message-time { font-size: 0.65rem; opacity: 0.6; margin-top: 5px; display: flex; align-items: center; gap: 6px; }
-    .message-image {
-      max-width: 220px;
-      max-height: 160px;
-      border-radius: 16px;
-      cursor: pointer;
-      margin-top: 6px;
-      border: 1px solid rgba(255,255,255,0.2);
-    }
-    .typing-indicator-new {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      padding: 8px 18px;
-      background: var(--bg-white);
-      border-radius: 40px;
-      width: fit-content;
-      margin: 8px 24px;
-      box-shadow: 0 3px 12px var(--shadow-color);
-    }
+    .message-image { max-width: 220px; max-height: 160px; border-radius: 16px; cursor: pointer; margin-top: 6px; border: 1px solid rgba(255,255,255,0.2); }
+    .typing-indicator-new { display: flex; align-items: center; gap: 8px; padding: 8px 18px; background: var(--bg-white); border-radius: 40px; width: fit-content; margin: 8px 24px; box-shadow: 0 3px 12px var(--shadow-color); }
     .typing-dots { display: flex; gap: 4px; }
-    .typing-dots span {
-      width: 6px;
-      height: 6px;
-      background: #667eea;
-      border-radius: 50%;
-      animation: typing 1.4s infinite;
-    }
-    .input-area-new {
-      padding: 15px 24px;
-      background: var(--bg-white);
-      border-top: 1px solid var(--border-color);
-      display: flex;
-      gap: 12px;
-      align-items: center;
-    }
-    .message-input {
-      flex: 1;
-      padding: 12px 20px;
-      border: 2px solid var(--border-color);
-      border-radius: 40px;
-      background: var(--input-bg);
-      color: var(--text-primary);
-      font-size: 0.9rem;
-      transition: all 0.2s;
-    }
-    .message-input:focus {
-      padding: 14px 20px;
-    }
-    .btn-send, .btn-upload {
-      width: 44px;
-      height: 44px;
-      border: none;
-      border-radius: 50%;
-      cursor: pointer;
-      transition: all 0.2s;
-      font-size: 1rem;
-    }
-    .btn-send {
-      background: linear-gradient(135deg, #667eea, #764ba2);
-      color: white;
-    }
-    .btn-upload {
-      background: var(--bg-light);
-      color: var(--icon-color);
-    }
-
-    .private-page-new {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: var(--bg-light);
-      z-index: 2000;
-      display: none;
-      flex-direction: column;
-      overflow: hidden;
-    }
+    .typing-dots span { width: 6px; height: 6px; background: #667eea; border-radius: 50%; animation: typing 1.4s infinite; }
+    .input-area-new { padding: 15px 24px; background: var(--bg-white); border-top: 1px solid var(--border-color); display: flex; gap: 12px; align-items: center; }
+    .message-input { flex: 1; padding: 12px 20px; border: 2px solid var(--border-color); border-radius: 40px; background: var(--input-bg); color: var(--text-primary); font-size: 0.9rem; transition: all 0.2s; }
+    .message-input:focus { padding: 14px 20px; }
+    .btn-send, .btn-upload { width: 44px; height: 44px; border: none; border-radius: 50%; cursor: pointer; transition: all 0.2s; font-size: 1rem; }
+    .btn-send { background: linear-gradient(135deg, #667eea, #764ba2); color: white; }
+    .btn-upload { background: var(--bg-light); color: var(--icon-color); }
+    .private-page-new { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--bg-light); z-index: 2000; display: none; flex-direction: column; overflow: hidden; }
     .private-page-new.show { display: flex; }
-    .private-header-new {
-      padding: 15px 24px;
-      background: var(--auth-side-bg);
-      color: white;
-      display: flex;
-      align-items: center;
-      gap: 15px;
-      flex-shrink: 0;
-    }
-    .private-header-new button {
-      background: rgba(255,255,255,0.2);
-      border: none;
-      color: white;
-      width: 40px;
-      height: 40px;
-      border-radius: 14px;
-      cursor: pointer;
-    }
-    .private-header-info {
-      flex: 1;
-    }
-    .private-header-info h3 {
-      font-size: 1rem;
-      margin-bottom: 2px;
-    }
-    .private-last-seen {
-      font-size: 0.7rem;
-      opacity: 0.8;
-    }
-    .private-messages-new {
-      flex: 1;
-      overflow-y: auto;
-      padding: 20px;
-      background: var(--bg-light);
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-    }
-    .image-preview-modal {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(0,0,0,0.85);
-      display: none;
-      justify-content: center;
-      align-items: center;
-      z-index: 3000;
-    }
+    .private-header-new { padding: 15px 24px; background: var(--auth-side-bg); color: white; display: flex; align-items: center; gap: 15px; flex-shrink: 0; }
+    .private-header-new button { background: rgba(255,255,255,0.2); border: none; color: white; width: 40px; height: 40px; border-radius: 14px; cursor: pointer; }
+    .private-header-info { flex: 1; }
+    .private-header-info h3 { font-size: 1rem; margin-bottom: 2px; }
+    .private-last-seen { font-size: 0.7rem; opacity: 0.8; }
+    .private-messages-new { flex: 1; overflow-y: auto; padding: 20px; background: var(--bg-light); display: flex; flex-direction: column; gap: 12px; }
+    .image-preview-modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); display: none; justify-content: center; align-items: center; z-index: 3000; }
     .image-preview-modal.show { display: flex; }
-    .preview-content-new img {
-      max-width: 90vw;
-      max-height: 85vh;
-      border-radius: 24px;
-    }
-    .profile-modal {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(0,0,0,0.85);
-      display: none;
-      justify-content: center;
-      align-items: center;
-      z-index: 4000;
-    }
+    .preview-content-new img { max-width: 90vw; max-height: 85vh; border-radius: 24px; }
+    .profile-modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); display: none; justify-content: center; align-items: center; z-index: 4000; }
     .profile-modal.show { display: flex; }
-    .profile-card {
-      background: var(--bg-white);
-      border-radius: 30px;
-      width: 90%;
-      max-width: 500px;
-      max-height: 85vh;
-      overflow-y: auto;
-      padding: 25px;
-      position: relative;
-    }
-    .profile-avatar {
-      width: 100px;
-      height: 100px;
-      border-radius: 50%;
-      background: linear-gradient(135deg, #667eea, #764ba2);
-      margin: 0 auto 15px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 2.5rem;
-      color: white;
-      background-size: cover;
-      background-position: center;
-      cursor: pointer;
-    }
-    .profile-avatar.editable:hover::after {
-      content: "✏️";
-      background: rgba(0,0,0,0.5);
-      width: 100%;
-      height: 100%;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 2rem;
-    }
-    .profile-field {
-      margin-bottom: 20px;
-    }
-    .profile-field label {
-      display: block;
-      font-weight: 500;
-      margin-bottom: 5px;
-      color: var(--text-secondary);
-    }
-    .profile-field input, .profile-field textarea {
-      width: 100%;
-      padding: 10px;
-      border: 2px solid var(--border-color);
-      border-radius: 20px;
-      background: var(--input-bg);
-      color: var(--text-primary);
-    }
-    .profile-field textarea {
-      resize: vertical;
-      min-height: 80px;
-    }
-    .profile-stats {
-      display: flex;
-      justify-content: space-around;
-      margin: 20px 0;
-      text-align: center;
-    }
-    .profile-stat {
-      flex: 1;
-    }
-    .profile-stat-number {
-      font-size: 1.5rem;
-      font-weight: bold;
-      color: var(--text-primary);
-    }
-    .profile-stat-label {
-      font-size: 0.8rem;
-      color: var(--text-light);
-    }
-    .profile-actions {
-      display: flex;
-      gap: 10px;
-      margin-top: 20px;
-    }
-    .profile-actions button {
-      flex: 1;
-      padding: 10px;
-      border-radius: 30px;
-      border: none;
-      cursor: pointer;
-      font-weight: 600;
-    }
-    @keyframes slideIn {
-      from { opacity: 0; transform: translateY(15px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-    @keyframes typing {
-      0%,60%,100% { transform: translateY(0); }
-      30% { transform: translateY(-6px); }
-    }
+    .profile-card { background: var(--bg-white); border-radius: 30px; width: 90%; max-width: 500px; max-height: 85vh; overflow-y: auto; padding: 25px; position: relative; }
+    .profile-avatar { width: 100px; height: 100px; border-radius: 50%; background: linear-gradient(135deg, #667eea, #764ba2); margin: 0 auto 15px; display: flex; align-items: center; justify-content: center; font-size: 2.5rem; color: white; background-size: cover; background-position: center; cursor: pointer; }
+    .profile-avatar.editable:hover::after { content: "✏️"; background: rgba(0,0,0,0.5); width: 100%; height: 100%; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 2rem; }
+    .profile-field { margin-bottom: 20px; }
+    .profile-field label { display: block; font-weight: 500; margin-bottom: 5px; color: var(--text-secondary); }
+    .profile-field input, .profile-field textarea { width: 100%; padding: 10px; border: 2px solid var(--border-color); border-radius: 20px; background: var(--input-bg); color: var(--text-primary); }
+    .profile-field textarea { resize: vertical; min-height: 80px; }
+    .profile-stats { display: flex; justify-content: space-around; margin: 20px 0; text-align: center; }
+    .profile-stat { flex: 1; }
+    .profile-stat-number { font-size: 1.5rem; font-weight: bold; color: var(--text-primary); }
+    .profile-stat-label { font-size: 0.8rem; color: var(--text-light); }
+    .profile-actions { display: flex; gap: 10px; margin-top: 20px; }
+    .profile-actions button { flex: 1; padding: 10px; border-radius: 30px; border: none; cursor: pointer; font-weight: 600; }
+    @keyframes slideIn { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes typing { 0%,60%,100% { transform: translateY(0); } 30% { transform: translateY(-6px); } }
     @media (max-width: 768px) {
       .auth-side { display: none; }
-      .users-sidebar {
-        position: absolute;
-        top: 0;
-        right: -100%;
-        height: 100%;
-        z-index: 1050;
-        width: 280px;
-        transition: right 0.25s ease;
-      }
+      .users-sidebar { position: absolute; top: 0; right: -100%; height: 100%; z-index: 1050; width: 280px; transition: right 0.25s ease; }
       .users-sidebar.show { right: 0; }
       .close-sidebar-btn { display: block; }
       .message-bubble { max-width: 85%; }
       .chat-header h2 { font-size: 1rem; }
-      .message-input:focus {
-        padding: 14px 20px;
-        font-size: 1rem;
-      }
+      .message-input:focus { padding: 14px 20px; font-size: 1rem; }
     }
-    .no-messages {
-      text-align: center;
-      padding: 40px;
-      color: var(--text-light);
-    }
-    .reaction-badge-new {
-      background: rgba(128,128,128,0.2);
-      border-radius: 30px;
-      padding: 2px 8px;
-      font-size: 0.7rem;
-      display: inline-flex;
-      align-items: center;
-      gap: 5px;
-      cursor: pointer;
-    }
-    .notification-permission-banner {
-      position: fixed;
-      bottom: 20px;
-      left: 50%;
-      transform: translateX(-50%);
-      background: var(--bg-white);
-      border-radius: 50px;
-      padding: 10px 20px;
-      box-shadow: 0 5px 20px var(--shadow-color);
-      display: flex;
-      gap: 15px;
-      align-items: center;
-      z-index: 1000;
-      border: 1px solid var(--border-color);
-    }
-    .notification-permission-banner button {
-      background: linear-gradient(135deg, #667eea, #764ba2);
-      border: none;
-      color: white;
-      padding: 6px 16px;
-      border-radius: 30px;
-      cursor: pointer;
-    }
+    .no-messages { text-align: center; padding: 40px; color: var(--text-light); }
+    .reaction-badge-new { background: rgba(128,128,128,0.2); border-radius: 30px; padding: 2px 8px; font-size: 0.7rem; display: inline-flex; align-items: center; gap: 5px; cursor: pointer; }
+    .notification-permission-banner { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); background: var(--bg-white); border-radius: 50px; padding: 10px 20px; box-shadow: 0 5px 20px var(--shadow-color); display: flex; gap: 15px; align-items: center; z-index: 1000; border: 1px solid var(--border-color); }
+    .notification-permission-banner button { background: linear-gradient(135deg, #667eea, #764ba2); border: none; color: white; padding: 6px 16px; border-radius: 30px; cursor: pointer; }
   </style>
 </head>
 <body>
@@ -1196,7 +471,7 @@
 
     const ADMIN_EMAILS = ["y83298252@gmail.com", "y83298252@proton.me"];
 
-    // DOM Elements (اختصاراً - تم تعريفها كاملة في الكود الأصلي، هنا نختصر للاختصار)
+    // DOM Elements
     const loadingScreen = document.getElementById('loadingScreen');
     const authDiv = document.getElementById('auth');
     const chatDiv = document.getElementById('chat');
@@ -1263,6 +538,7 @@
     const profileImageInput = document.getElementById('profileImageInput');
     const userSearchInput = document.getElementById('userSearchInput');
 
+    // Global variables
     let currentUser = null;
     let currentUsername = '';
     let unsubscribePublic = null;
@@ -1291,12 +567,13 @@
     let awayStatusActive = false;
     let typingCleanupInterval = null;
     let lastNotifiedPrivateMessageId = null;
+    let currentSearchTerm = ''; // تم إضافة هذا المتغير المفقود
 
     const userColors = new Map();
     const availableColors = Array.from({ length: 12 }, (_, i) => `user-color-${i + 1}`);
     let colorIndex = 0;
 
-    // ========== دوال مساعدة ==========
+    // Helper functions
     function showToast(message, type = 'success') {
       const toast = document.createElement('div');
       toast.style.cssText = `position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:${type==='success'?'#48bb78':'#f56565'};color:white;padding:12px 24px;border-radius:50px;z-index:10000;animation:slideIn 0.3s ease;box-shadow:0 10px 30px rgba(0,0,0,0.2);font-weight:500;`;
@@ -1361,7 +638,7 @@
     }
     loadSavedTheme();
 
-    // ========== إدارة حالة الاتصال ==========
+    // Connection monitoring
     function updateConnectionStatus(online) {
       isOnline = online;
       if (online) {
@@ -1390,7 +667,117 @@
       updateConnectionStatus(navigator.onLine);
     }
 
-    // ========== دوال الرسائل العامة ==========
+    // User presence and activity
+    async function setupUserPresence() {
+      if (!currentUser) return;
+      const userRef = db.collection('users').doc(currentUser.uid);
+      try {
+        await userRef.update({ online: true, status: 'online', lastSeen: firebase.firestore.FieldValue.serverTimestamp(), lastActive: firebase.firestore.FieldValue.serverTimestamp() });
+        userRef.onDisconnect().update({ online: false, status: 'offline', lastSeen: firebase.firestore.FieldValue.serverTimestamp() });
+        window.addEventListener('beforeunload', () => userRef.update({ online: false, status: 'offline', lastSeen: firebase.firestore.FieldValue.serverTimestamp() }).catch(()=>{}));
+      } catch (err) {}
+    }
+
+    function setupActivityMonitor() {
+      if (!currentUser) return;
+      const userRef = db.collection('users').doc(currentUser.uid);
+      let lastActivity = Date.now();
+      function updateLastActivity() {
+        lastActivity = Date.now();
+        if (awayStatusActive) {
+          awayStatusActive = false;
+          userRef.update({ status: 'online', online: true, lastActive: firebase.firestore.FieldValue.serverTimestamp() }).catch(()=>{});
+        }
+        clearTimeout(inactivityTimeout);
+        inactivityTimeout = setTimeout(() => {
+          if (document.visibilityState === 'hidden') {
+            awayStatusActive = true;
+            userRef.update({ status: 'away', online: true, lastActive: firebase.firestore.FieldValue.serverTimestamp() }).catch(()=>{});
+          } else if (Date.now() - lastActivity > 30000) {
+            awayStatusActive = true;
+            userRef.update({ status: 'away', online: true, lastActive: firebase.firestore.FieldValue.serverTimestamp() }).catch(()=>{});
+          }
+        }, 30000);
+      }
+      ['mousedown', 'keydown', 'touchstart', 'mousemove', 'scroll'].forEach(ev => document.addEventListener(ev, updateLastActivity, { passive: true }));
+      document.addEventListener('visibilitychange', () => {
+        if (document.hidden) {
+          clearTimeout(inactivityTimeout);
+          awayStatusActive = true;
+          userRef.update({ status: 'away', online: true, lastActive: firebase.firestore.FieldValue.serverTimestamp() }).catch(()=>{});
+        } else updateLastActivity();
+      });
+      updateLastActivity();
+    }
+
+    // Unread counts
+    async function updateUnreadCount(partnerId, increment = true) {
+      if (!currentUser) return;
+      const userMetaRef = db.collection('user_private_meta').doc(currentUser.uid);
+      await db.runTransaction(async (transaction) => {
+        const doc = await transaction.get(userMetaRef);
+        const currentCounts = doc.exists ? doc.data().unreadCounts || {} : {};
+        let newCount = (currentCounts[partnerId] || 0);
+        if (increment) newCount++; else newCount = 0;
+        currentCounts[partnerId] = newCount;
+        transaction.set(userMetaRef, { unreadCounts: currentCounts }, { merge: true });
+      }).catch(()=>{});
+      cachedUnreadCounts[partnerId] = increment ? (cachedUnreadCounts[partnerId] || 0) + 1 : 0;
+    }
+
+    async function refreshUnreadCounts() {
+      if (!currentUser) return {};
+      const doc = await db.collection('user_private_meta').doc(currentUser.uid).get();
+      if (doc.exists) cachedUnreadCounts = doc.data().unreadCounts || {};
+      else cachedUnreadCounts = {};
+      return cachedUnreadCounts;
+    }
+
+    async function resetUnreadCount(partnerId) {
+      if (!currentUser) return;
+      const userMetaRef = db.collection('user_private_meta').doc(currentUser.uid);
+      await db.runTransaction(async (transaction) => {
+        const doc = await transaction.get(userMetaRef);
+        const currentCounts = doc.exists ? doc.data().unreadCounts || {} : {};
+        if (currentCounts[partnerId]) delete currentCounts[partnerId];
+        transaction.set(userMetaRef, { unreadCounts: currentCounts }, { merge: true });
+      }).catch(()=>{});
+      if (cachedUnreadCounts[partnerId]) delete cachedUnreadCounts[partnerId];
+    }
+
+    // Notifications
+    function checkNotificationPermission() {
+      if (!('Notification' in window)) return false;
+      if (Notification.permission === 'granted') { notificationsEnabled = true; notificationBanner.style.display = 'none'; return true; }
+      else if (Notification.permission === 'denied') { notificationBanner.style.display = 'none'; return false; }
+      else { notificationBanner.style.display = 'flex'; return false; }
+    }
+
+    window.requestNotificationPermission = function() {
+      if (!('Notification' in window)) { showToast('المتصفح لا يدعم الإشعارات', 'error'); return; }
+      Notification.requestPermission().then(permission => {
+        if (permission === 'granted') { notificationsEnabled = true; notificationBanner.style.display = 'none'; showToast('✅ تم تفعيل الإشعارات'); }
+        else showToast('❌ لم يتم تفعيل الإشعارات', 'error');
+      });
+    };
+
+    function closeNotificationBanner() { notificationBanner.style.display = 'none'; }
+
+    function sendNotification(title, body, icon = null) {
+      if (!notificationsEnabled) return;
+      if (document.visibilityState === 'visible') return;
+      try {
+        const notification = new Notification(title, {
+          body: body,
+          icon: icon || 'https://i.postimg.cc/rsbg47X7/8f55b377-3e6f-4bc9-bbc5-9b1ed3057599.png',
+          silent: false
+        });
+        notification.onclick = () => { window.focus(); notification.close(); };
+        setTimeout(() => notification.close(), 5000);
+      } catch (e) {}
+    }
+
+    // Public messages
     async function loadMoreMessages() {
       if (loadingMore || !hasMorePublicMessages) return;
       loadingMore = true;
@@ -1411,7 +798,7 @@
             if (!msg.text && !msg.imageUrl) return;
             newMessages.push({ id: doc.id, ...msg });
           });
-          newMessages.reverse(); // تصاعدي
+          newMessages.reverse();
           publicMessagesCache = [...newMessages, ...publicMessagesCache];
           lastPublicDocSnapshot = snapshot.docs[snapshot.docs.length - 1];
           hasMorePublicMessages = snapshot.docs.length === 50;
@@ -1512,7 +899,7 @@
       } catch (err) {}
     };
 
-    // ========== المحادثات الخاصة ==========
+    // Private messages
     async function loadPrivateMessages(partnerUid) {
       if (unsubscribePrivate) unsubscribePrivate();
       const roomId = currentUser.uid < partnerUid ? currentUser.uid + '_' + partnerUid : partnerUid + '_' + currentUser.uid;
@@ -1587,74 +974,7 @@
       scrollToBottom(privateMessages, true);
     };
 
-    // ========== إدارة عدد الرسائل غير المقروءة ==========
-    async function updateUnreadCount(partnerId, increment = true) {
-      if (!currentUser) return;
-      const userMetaRef = db.collection('user_private_meta').doc(currentUser.uid);
-      await db.runTransaction(async (transaction) => {
-        const doc = await transaction.get(userMetaRef);
-        const currentCounts = doc.exists ? doc.data().unreadCounts || {} : {};
-        let newCount = (currentCounts[partnerId] || 0);
-        if (increment) newCount++; else newCount = 0;
-        currentCounts[partnerId] = newCount;
-        transaction.set(userMetaRef, { unreadCounts: currentCounts }, { merge: true });
-      }).catch(()=>{});
-      cachedUnreadCounts[partnerId] = increment ? (cachedUnreadCounts[partnerId] || 0) + 1 : 0;
-    }
-
-    async function refreshUnreadCounts() {
-      if (!currentUser) return {};
-      const doc = await db.collection('user_private_meta').doc(currentUser.uid).get();
-      if (doc.exists) cachedUnreadCounts = doc.data().unreadCounts || {};
-      else cachedUnreadCounts = {};
-      return cachedUnreadCounts;
-    }
-
-    async function resetUnreadCount(partnerId) {
-      if (!currentUser) return;
-      const userMetaRef = db.collection('user_private_meta').doc(currentUser.uid);
-      await db.runTransaction(async (transaction) => {
-        const doc = await transaction.get(userMetaRef);
-        const currentCounts = doc.exists ? doc.data().unreadCounts || {} : {};
-        if (currentCounts[partnerId]) delete currentCounts[partnerId];
-        transaction.set(userMetaRef, { unreadCounts: currentCounts }, { merge: true });
-      }).catch(()=>{});
-      if (cachedUnreadCounts[partnerId]) delete cachedUnreadCounts[partnerId];
-    }
-
-    // ========== إشعارات سطح المكتب ==========
-    function checkNotificationPermission() {
-      if (!('Notification' in window)) return false;
-      if (Notification.permission === 'granted') { notificationsEnabled = true; notificationBanner.style.display = 'none'; return true; }
-      else if (Notification.permission === 'denied') { notificationBanner.style.display = 'none'; return false; }
-      else { notificationBanner.style.display = 'flex'; return false; }
-    }
-
-    window.requestNotificationPermission = function() {
-      if (!('Notification' in window)) { showToast('المتصفح لا يدعم الإشعارات', 'error'); return; }
-      Notification.requestPermission().then(permission => {
-        if (permission === 'granted') { notificationsEnabled = true; notificationBanner.style.display = 'none'; showToast('✅ تم تفعيل الإشعارات'); }
-        else showToast('❌ لم يتم تفعيل الإشعارات', 'error');
-      });
-    };
-
-    function closeNotificationBanner() { notificationBanner.style.display = 'none'; }
-
-    function sendNotification(title, body, icon = null) {
-      if (!notificationsEnabled) return;
-      if (document.visibilityState === 'visible') return;
-      try {
-        const notification = new Notification(title, {
-          body: body,
-          icon: icon || 'https://i.postimg.cc/rsbg47X7/8f55b377-3e6f-4bc9-bbc5-9b1ed3057599.png',
-          silent: false
-        });
-        notification.onclick = () => { window.focus(); notification.close(); };
-        setTimeout(() => notification.close(), 5000);
-      } catch (e) {}
-    }
-
-    // ========== عرض قائمة المستخدمين ==========
+    // Online users list
     async function displayUsersList(usersArray) {
       if (!cachedUnreadCounts || Object.keys(cachedUnreadCounts).length === 0) await refreshUnreadCounts();
       let html = '';
@@ -1712,7 +1032,7 @@
       }, error => { onlineList.innerHTML = '<div class="no-messages">خطأ في تحميل المستخدمين: ' + error.message + '</div>'; });
     }
 
-    // ========== دوال الملف الشخصي ==========
+    // Profile functions
     window.openMyProfile = async function() {
       if (!currentUser) return;
       const userDoc = await db.collection('users').doc(currentUser.uid).get();
@@ -1842,7 +1162,7 @@
       cancelReply();
     };
 
-    // ========== مؤشر الكتابة ==========
+    // Typing indicators
     function setupTypingListener() {
       if (unsubscribeTyping) unsubscribeTyping();
       unsubscribeTyping = db.collection('typing').onSnapshot(snapshot => {
@@ -1910,7 +1230,7 @@
       }, 2000);
     }
 
-    // ========== دوال المصادقة ==========
+    // Auth functions
     window.switchAuthTab = function(tab) {
       if (tab === 'login') { loginTab.classList.add('active'); registerTab.classList.remove('active'); loginForm.style.display = 'block'; registerForm.style.display = 'none'; loginError.style.display = 'none'; registerError.style.display = 'none'; }
       else { registerTab.classList.add('active'); loginTab.classList.remove('active'); registerForm.style.display = 'block'; loginForm.style.display = 'none'; loginError.style.display = 'none'; registerError.style.display = 'none'; }
@@ -2018,7 +1338,7 @@
       } catch (error) { showToast('❌ خطأ في تسجيل الخروج', 'error'); }
     };
 
-    // ========== دوال المحادثة العامة ==========
+    // Chat functions
     function sendWithReply() { if (!currentUser) return; const text = messageInput.value.trim(); if (!text) return; let messageData = { text: text, username: currentUsername, uid: currentUser.uid, email: currentUser.email, createdAt: firebase.firestore.FieldValue.serverTimestamp() }; if (replyingTo) messageData.replyTo = replyingTo; db.collection('messages').add(messageData).then(() => { messageInput.value = ''; cancelReply(); scrollToBottom(messagesDiv, true); }).catch(() => showToast('❌ فشل الإرسال', 'error')); }
     function cancelReply() { replyingTo = null; replyIndicator.style.display = 'none'; }
     function setReply(messageId, messageText, username) { replyingTo = { id: messageId, text: messageText, username: username }; replyToName.textContent = username; replyText.textContent = messageText.substring(0,30) + (messageText.length>30?'...':''); replyIndicator.style.display = 'flex'; }
@@ -2095,7 +1415,7 @@
     privateInput.addEventListener('keypress', e => { if (e.key === 'Enter') { e.preventDefault(); sendPrivateMessage(); } });
     document.addEventListener('click', (e) => { if (!e.target.closest('.users-sidebar') && !e.target.closest('[onclick="toggleSidebar()"]')) document.querySelector('.users-sidebar').classList.remove('show'); });
 
-    // ========== دوال البحث ==========
+    // Search functions
     function searchMessages(term) {
       currentSearchTerm = term.trim();
       if (!currentSearchTerm) { clearSearchHighlights(); return; }
@@ -2115,14 +1435,13 @@
     function toggleSearch() { searchBar.classList.toggle('show'); if (searchBar.classList.contains('show')) searchInput.focus(); }
     function toggleSidebar() { document.querySelector('.users-sidebar').classList.toggle('show'); }
 
-    // ========== إعداد الرسائل العامة الأولية ==========
+    // Setup public messages
     async function setupPublicMessages() {
       publicMessagesCache = [];
       hasMorePublicMessages = true;
       lastPublicDocSnapshot = null;
       messagesDiv.innerHTML = '<div class="load-more-container" id="loadMoreContainer" style="display: none;"><button class="load-more-btn" onclick="loadMoreMessages()">تحميل المزيد</button></div>';
       await loadMoreMessages();
-      // بعد تحميل الصفحة الأولى، نستمع للرسائل الجديدة فقط
       if (unsubscribePublic) unsubscribePublic();
       let query = db.collection('messages').orderBy('createdAt', 'desc').limit(1);
       unsubscribePublic = query.onSnapshot(snapshot => {
@@ -2143,50 +1462,7 @@
       });
     }
 
-    // ========== إعداد حالة المستخدم ==========
-    async function setupUserPresence() {
-      if (!currentUser) return;
-      const userRef = db.collection('users').doc(currentUser.uid);
-      try {
-        await userRef.update({ online: true, status: 'online', lastSeen: firebase.firestore.FieldValue.serverTimestamp(), lastActive: firebase.firestore.FieldValue.serverTimestamp() });
-        userRef.onDisconnect().update({ online: false, status: 'offline', lastSeen: firebase.firestore.FieldValue.serverTimestamp() });
-        window.addEventListener('beforeunload', () => userRef.update({ online: false, status: 'offline', lastSeen: firebase.firestore.FieldValue.serverTimestamp() }).catch(()=>{}));
-      } catch (err) {}
-    }
-
-    function setupActivityMonitor() {
-      if (!currentUser) return;
-      const userRef = db.collection('users').doc(currentUser.uid);
-      let lastActivity = Date.now();
-      function updateLastActivity() {
-        lastActivity = Date.now();
-        if (awayStatusActive) {
-          awayStatusActive = false;
-          userRef.update({ status: 'online', online: true, lastActive: firebase.firestore.FieldValue.serverTimestamp() }).catch(()=>{});
-        }
-        clearTimeout(inactivityTimeout);
-        inactivityTimeout = setTimeout(() => {
-          if (document.visibilityState === 'hidden') {
-            awayStatusActive = true;
-            userRef.update({ status: 'away', online: true, lastActive: firebase.firestore.FieldValue.serverTimestamp() }).catch(()=>{});
-          } else if (Date.now() - lastActivity > 30000) {
-            awayStatusActive = true;
-            userRef.update({ status: 'away', online: true, lastActive: firebase.firestore.FieldValue.serverTimestamp() }).catch(()=>{});
-          }
-        }, 30000);
-      }
-      ['mousedown', 'keydown', 'touchstart', 'mousemove', 'scroll'].forEach(ev => document.addEventListener(ev, updateLastActivity, { passive: true }));
-      document.addEventListener('visibilitychange', () => {
-        if (document.hidden) {
-          clearTimeout(inactivityTimeout);
-          awayStatusActive = true;
-          userRef.update({ status: 'away', online: true, lastActive: firebase.firestore.FieldValue.serverTimestamp() }).catch(()=>{});
-        } else updateLastActivity();
-      });
-      updateLastActivity();
-    }
-
-    // ========== مراقبة حالة المصادقة ==========
+    // Auth state observer
     auth.onAuthStateChanged(async (user) => {
       if (user && user.emailVerified) {
         currentUser = user;
