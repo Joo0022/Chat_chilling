@@ -12,7 +12,6 @@
   <!-- Font Awesome -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
-    /* جميع الأنماط كما هي دون تغيير (حافظت عليها كما في الإصدار السابق) */
     * {
       margin: 0;
       padding: 0;
@@ -100,7 +99,7 @@
 
     html, body { height: 100%; width: 100%; margin: 0; padding: 0; overflow: hidden; }
     body { background: linear-gradient(135deg, var(--bg-gradient-start), var(--bg-gradient-end)); display: flex; align-items: center; justify-content: center; transition: background 0.3s ease; }
-    .container { width: 100%; height: 100%; max-width: none; background: var(--container-bg); backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px); border-radius: 0; box-shadow: none; overflow: hidden; display: flex; flex-direction: column; }
+    .container { width: 100%; height: 100%; max-width: none; background: var(--container-bg); backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px); border-radius: 0; overflow: hidden; display: flex; flex-direction: column; }
     #loadingScreen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(135deg, #667eea, #764ba2); display: flex; align-items: center; justify-content: center; z-index: 10000; transition: opacity 0.5s ease, visibility 0.5s ease; }
     #loadingScreen.hidden { opacity: 0; visibility: hidden; pointer-events: none; }
     .loader-content { text-align: center; color: white; }
@@ -1304,104 +1303,71 @@
       }
     };
     window.hideVerificationModal = function() { verificationModal.classList.remove('show'); };
-
-    // تحسين دالة تسجيل الدخول بجوجل مع دعم popup والتبديل إلى redirect إذا لزم الأمر
+    
+    // FIXED: Google Login - now properly sets emailVerified to true and handles auth state
     window.googleLogin = async function() {
-      if (!navigator.onLine) {
-        showToast('❌ لا يوجد اتصال بالإنترنت', 'error');
-        return;
-      }
       try {
-        // محاولة تسجيل الدخول باستخدام popup أولاً
+        // Show loading state on button
+        const googleBtn = document.getElementById('googleBtn');
+        const originalText = googleBtn.innerHTML;
+        googleBtn.innerHTML = '<i class="fas fa-spinner fa-pulse"></i> جاري التسجيل...';
+        googleBtn.disabled = true;
+        
         const result = await auth.signInWithPopup(googleProvider);
-        // بعد نجاح popup نقوم بتحديث أو إنشاء وثيقة المستخدم في Firestore
         const user = result.user;
-        const email = user.email;
-        const usernameFromEmail = email.split('@')[0].substring(0, 15);
-        // التحقق من وجود المستخدم في Firestore
-        const userDoc = await db.collection('users').doc(user.uid).get();
-        if (!userDoc.exists) {
-          await db.collection('users').doc(user.uid).set({
-            username: usernameFromEmail,
-            email: email,
-            online: true,
-            status: 'online',
-            emailVerified: true,
-            createdAt: firebase.firestore.FieldValue.serverTimestamp(),
-            lastSeen: firebase.firestore.FieldValue.serverTimestamp(),
-            lastActive: firebase.firestore.FieldValue.serverTimestamp(),
-            bio: '',
-            statusMessage: ''
-          });
-        } else {
-          // تحديث حالة الاتصال فقط
-          await db.collection('users').doc(user.uid).update({
-            online: true,
-            status: 'online',
-            lastSeen: firebase.firestore.FieldValue.serverTimestamp(),
-            lastActive: firebase.firestore.FieldValue.serverTimestamp()
-          });
-        }
-        showToast('✅ تم تسجيل الدخول بنجاح بحساب Google');
-      } catch (error) {
-        console.error('Google sign-in error:', error);
-        // إذا كان الخطأ بسبب حظر النوافذ المنبثقة أو خطأ في التهيئة، نستخدم redirect
-        if (error.code === 'auth/popup-blocked' || error.code === 'auth/popup-closed-by-user' || error.code === 'auth/unauthorized-domain') {
-          showToast('⚠️ تم حظر النافذة المنبثقة، جاري التوجيه إلى صفحة تسجيل الدخول...', 'warning');
-          // استخدام redirect بدلاً من popup
-          await auth.signInWithRedirect(googleProvider);
-        } else {
-          // عرض رسالة خطأ مفيدة للمستخدم
-          let errorMessage = '❌ فشل تسجيل الدخول بحساب Google: ';
-          switch (error.code) {
-            case 'auth/account-exists-with-different-credential':
-              errorMessage += 'يوجد حساب بنفس البريد الإلكتروني مسجل بطريقة أخرى. الرجاء تسجيل الدخول باستخدام البريد وكلمة المرور.';
-              break;
-            case 'auth/unauthorized-domain':
-              errorMessage += 'النطاق غير مسموح. الرجاء إضافة هذا النطاق إلى قائمة النطاقات المسموحة في Firebase Console.';
-              break;
-            default:
-              errorMessage += error.message;
+        
+        if (user) {
+          // Google users are automatically verified
+          const usernameFromEmail = user.email.split('@')[0].substring(0, 15);
+          
+          // Check if user document exists
+          const userDocRef = db.collection('users').doc(user.uid);
+          const userDoc = await userDocRef.get();
+          
+          if (!userDoc.exists) {
+            // Create new user document
+            await userDocRef.set({
+              username: usernameFromEmail,
+              email: user.email,
+              online: true,
+              status: 'online',
+              emailVerified: true,
+              createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+              lastSeen: firebase.firestore.FieldValue.serverTimestamp(),
+              lastActive: firebase.firestore.FieldValue.serverTimestamp(),
+              bio: '',
+              statusMessage: ''
+            });
+          } else {
+            // Update existing user - ensure emailVerified is true
+            await userDocRef.update({
+              online: true,
+              status: 'online',
+              emailVerified: true,
+              lastSeen: firebase.firestore.FieldValue.serverTimestamp(),
+              lastActive: firebase.firestore.FieldValue.serverTimestamp()
+            });
           }
-          showToast(errorMessage, 'error');
+          
+          showToast('✅ تم تسجيل الدخول بنجاح بحساب Google');
+          // The auth state observer will handle navigation to chat
         }
+      } catch (error) {
+        console.error('Google login error:', error);
+        let errorMessage = '❌ خطأ في تسجيل الدخول بحساب Google';
+        if (error.code === 'auth/popup-closed-by-user') {
+          errorMessage = '❌ تم إغلاق نافذة التسجيل';
+        } else if (error.code === 'auth/popup-blocked') {
+          errorMessage = '❌ تم حظر النافذة المنبثقة. الرجاء السماح بالنوافذ المنبثقة';
+        }
+        showToast(errorMessage, 'error');
+      } finally {
+        const googleBtn = document.getElementById('googleBtn');
+        googleBtn.innerHTML = '<i class="fab fa-google"></i> تسجيل بحساب Google';
+        googleBtn.disabled = false;
       }
     };
-
-    // معالجة نتيجة redirect (في حالة استخدام signInWithRedirect)
-    auth.getRedirectResult().then(async (result) => {
-      if (result && result.user) {
-        const user = result.user;
-        const email = user.email;
-        const usernameFromEmail = email.split('@')[0].substring(0, 15);
-        const userDoc = await db.collection('users').doc(user.uid).get();
-        if (!userDoc.exists) {
-          await db.collection('users').doc(user.uid).set({
-            username: usernameFromEmail,
-            email: email,
-            online: true,
-            status: 'online',
-            emailVerified: true,
-            createdAt: firebase.firestore.FieldValue.serverTimestamp(),
-            lastSeen: firebase.firestore.FieldValue.serverTimestamp(),
-            lastActive: firebase.firestore.FieldValue.serverTimestamp(),
-            bio: '',
-            statusMessage: ''
-          });
-        } else {
-          await db.collection('users').doc(user.uid).update({
-            online: true,
-            status: 'online',
-            lastSeen: firebase.firestore.FieldValue.serverTimestamp(),
-            lastActive: firebase.firestore.FieldValue.serverTimestamp()
-          });
-        }
-        showToast('✅ تم تسجيل الدخول بنجاح بحساب Google');
-      }
-    }).catch((error) => {
-      console.error('Redirect sign-in error:', error);
-    });
-
+    
     window.logout = async function() {
       try {
         if (currentUser) {
@@ -1548,52 +1514,84 @@
       });
     }
 
-    // Auth state observer
+    // Auth state observer - FIXED to handle Google login properly
     auth.onAuthStateChanged(async (user) => {
-      if (user && user.emailVerified) {
-        currentUser = user;
-        try {
-          const userDoc = await db.collection('users').doc(user.uid).get();
-          if (userDoc.exists) {
-            const data = userDoc.data();
-            const emailUsername = user.email.split('@')[0].substring(0, 15);
-            if (data.username && data.username !== emailUsername) currentUsername = data.username;
-            else currentUsername = data.username || emailUsername;
-            if (data.emailVerified !== true) await db.collection('users').doc(user.uid).update({ emailVerified: true });
-          } else {
-            currentUsername = user.email.split('@')[0].substring(0,15);
-            await db.collection('users').doc(user.uid).set({
-              username: currentUsername, email: user.email, online: true, status: 'online', emailVerified: true,
-              createdAt: firebase.firestore.FieldValue.serverTimestamp(), lastSeen: firebase.firestore.FieldValue.serverTimestamp(),
-              lastActive: firebase.firestore.FieldValue.serverTimestamp(), bio: '', statusMessage: ''
-            });
+      if (user) {
+        // Check if user is verified (Google users are auto-verified)
+        const isVerified = user.emailVerified || user.providerData[0]?.providerId === 'google.com';
+        
+        if (isVerified) {
+          currentUser = user;
+          try {
+            const userDoc = await db.collection('users').doc(user.uid).get();
+            if (userDoc.exists) {
+              const data = userDoc.data();
+              // Ensure emailVerified is set to true for Google users
+              if (data.emailVerified !== true && user.providerData[0]?.providerId === 'google.com') {
+                await db.collection('users').doc(user.uid).update({ emailVerified: true });
+              }
+              const emailUsername = user.email.split('@')[0].substring(0, 15);
+              if (data.username && data.username !== emailUsername) currentUsername = data.username;
+              else currentUsername = data.username || emailUsername;
+            } else {
+              // Create user document if doesn't exist (should have been created in login)
+              currentUsername = user.email.split('@')[0].substring(0,15);
+              await db.collection('users').doc(user.uid).set({
+                username: currentUsername,
+                email: user.email,
+                online: true,
+                status: 'online',
+                emailVerified: true,
+                createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+                lastSeen: firebase.firestore.FieldValue.serverTimestamp(),
+                lastActive: firebase.firestore.FieldValue.serverTimestamp(),
+                bio: '',
+                statusMessage: ''
+              });
+            }
+            await setupUserPresence();
+            setupActivityMonitor();
+            setupConnectionMonitoring();
+            await refreshUnreadCounts();
+            await setupPublicMessages();
+            loadOnlineUsers();
+            setupTypingListener();
+            checkNotificationPermission();
+            setInterval(() => { if (currentUser && document.visibilityState === 'visible' && !document.hidden) db.collection('users').doc(currentUser.uid).update({ lastSeen: firebase.firestore.FieldValue.serverTimestamp(), lastActive: firebase.firestore.FieldValue.serverTimestamp() }).catch(()=>{}); }, 60000);
+            authDiv.style.display = 'none';
+            chatDiv.style.display = 'block';
+            privatePage.classList.remove('show');
+            hideLoadingScreen();
+          } catch (error) {
+            console.error('Error in auth state change:', error);
+            hideLoadingScreen();
+            showToast('حدث خطأ في تحميل البيانات', 'error');
           }
-          await setupUserPresence();
-          setupActivityMonitor();
-          setupConnectionMonitoring();
-          await refreshUnreadCounts();
-          await setupPublicMessages();
-          loadOnlineUsers();
-          setupTypingListener();
-          checkNotificationPermission();
-          setInterval(() => { if (currentUser && document.visibilityState === 'visible' && !document.hidden) db.collection('users').doc(currentUser.uid).update({ lastSeen: firebase.firestore.FieldValue.serverTimestamp(), lastActive: firebase.firestore.FieldValue.serverTimestamp() }).catch(()=>{}); }, 60000);
-          authDiv.style.display = 'none';
-          chatDiv.style.display = 'block';
-          privatePage.classList.remove('show');
+        } else {
+          // User exists but email not verified
           hideLoadingScreen();
-        } catch (error) { console.error(error); hideLoadingScreen(); }
+          authDiv.style.display = 'flex';
+          chatDiv.style.display = 'none';
+          if (user) {
+            showToast('⚠️ الرجاء تفعيل بريدك الإلكتروني أولاً', 'warning');
+          }
+        }
       } else {
+        // No user logged in
         hideLoadingScreen();
         authDiv.style.display = 'flex';
         chatDiv.style.display = 'none';
         privatePage.classList.remove('show');
-        currentUser = null; currentUsername = ''; activePartner = null;
+        currentUser = null;
+        currentUsername = '';
+        activePartner = null;
         if (unsubscribePublic) unsubscribePublic();
         if (unsubscribeTyping) unsubscribeTyping();
         if (typingCleanupInterval) clearInterval(typingCleanupInterval);
         if (inactivityTimeout) clearTimeout(inactivityTimeout);
       }
     });
+    
     function createAnimatedBg() { const bg = document.getElementById('animatedBg'); for (let i = 0; i < 30; i++) { const span = document.createElement('span'); span.style.left = Math.random() * 100 + '%'; span.style.width = Math.random() * 30 + 10 + 'px'; span.style.height = span.style.width; span.style.animationDuration = Math.random() * 20 + 10 + 's'; span.style.animationDelay = Math.random() * 5 + 's'; bg.appendChild(span); } }
     createAnimatedBg();
     setTimeout(() => hideLoadingScreen(), 5000);
