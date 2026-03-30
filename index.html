@@ -567,7 +567,7 @@
     let awayStatusActive = false;
     let typingCleanupInterval = null;
     let lastNotifiedPrivateMessageId = null;
-    let currentSearchTerm = ''; // تم إضافة هذا المتغير المفقود
+    let currentSearchTerm = '';
 
     const userColors = new Map();
     const availableColors = Array.from({ length: 12 }, (_, i) => `user-color-${i + 1}`);
@@ -1304,18 +1304,104 @@
       }
     };
     window.hideVerificationModal = function() { verificationModal.classList.remove('show'); };
+
+    // تحسين دالة تسجيل الدخول بجوجل مع دعم popup والتبديل إلى redirect إذا لزم الأمر
     window.googleLogin = async function() {
+      if (!navigator.onLine) {
+        showToast('❌ لا يوجد اتصال بالإنترنت', 'error');
+        return;
+      }
       try {
+        // محاولة تسجيل الدخول باستخدام popup أولاً
         const result = await auth.signInWithPopup(googleProvider);
-        const email = result.user.email;
+        // بعد نجاح popup نقوم بتحديث أو إنشاء وثيقة المستخدم في Firestore
+        const user = result.user;
+        const email = user.email;
         const usernameFromEmail = email.split('@')[0].substring(0, 15);
-        await db.collection('users').doc(result.user.uid).set({
-          username: usernameFromEmail, email: email, online: true, status: 'online', emailVerified: true,
-          lastSeen: firebase.firestore.FieldValue.serverTimestamp(), lastActive: firebase.firestore.FieldValue.serverTimestamp(),
-          bio: '', statusMessage: ''
-        }, { merge: true });
-      } catch (error) { showToast('❌ خطأ في تسجيل الدخول بحساب Google', 'error'); }
+        // التحقق من وجود المستخدم في Firestore
+        const userDoc = await db.collection('users').doc(user.uid).get();
+        if (!userDoc.exists) {
+          await db.collection('users').doc(user.uid).set({
+            username: usernameFromEmail,
+            email: email,
+            online: true,
+            status: 'online',
+            emailVerified: true,
+            createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+            lastSeen: firebase.firestore.FieldValue.serverTimestamp(),
+            lastActive: firebase.firestore.FieldValue.serverTimestamp(),
+            bio: '',
+            statusMessage: ''
+          });
+        } else {
+          // تحديث حالة الاتصال فقط
+          await db.collection('users').doc(user.uid).update({
+            online: true,
+            status: 'online',
+            lastSeen: firebase.firestore.FieldValue.serverTimestamp(),
+            lastActive: firebase.firestore.FieldValue.serverTimestamp()
+          });
+        }
+        showToast('✅ تم تسجيل الدخول بنجاح بحساب Google');
+      } catch (error) {
+        console.error('Google sign-in error:', error);
+        // إذا كان الخطأ بسبب حظر النوافذ المنبثقة أو خطأ في التهيئة، نستخدم redirect
+        if (error.code === 'auth/popup-blocked' || error.code === 'auth/popup-closed-by-user' || error.code === 'auth/unauthorized-domain') {
+          showToast('⚠️ تم حظر النافذة المنبثقة، جاري التوجيه إلى صفحة تسجيل الدخول...', 'warning');
+          // استخدام redirect بدلاً من popup
+          await auth.signInWithRedirect(googleProvider);
+        } else {
+          // عرض رسالة خطأ مفيدة للمستخدم
+          let errorMessage = '❌ فشل تسجيل الدخول بحساب Google: ';
+          switch (error.code) {
+            case 'auth/account-exists-with-different-credential':
+              errorMessage += 'يوجد حساب بنفس البريد الإلكتروني مسجل بطريقة أخرى. الرجاء تسجيل الدخول باستخدام البريد وكلمة المرور.';
+              break;
+            case 'auth/unauthorized-domain':
+              errorMessage += 'النطاق غير مسموح. الرجاء إضافة هذا النطاق إلى قائمة النطاقات المسموحة في Firebase Console.';
+              break;
+            default:
+              errorMessage += error.message;
+          }
+          showToast(errorMessage, 'error');
+        }
+      }
     };
+
+    // معالجة نتيجة redirect (في حالة استخدام signInWithRedirect)
+    auth.getRedirectResult().then(async (result) => {
+      if (result && result.user) {
+        const user = result.user;
+        const email = user.email;
+        const usernameFromEmail = email.split('@')[0].substring(0, 15);
+        const userDoc = await db.collection('users').doc(user.uid).get();
+        if (!userDoc.exists) {
+          await db.collection('users').doc(user.uid).set({
+            username: usernameFromEmail,
+            email: email,
+            online: true,
+            status: 'online',
+            emailVerified: true,
+            createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+            lastSeen: firebase.firestore.FieldValue.serverTimestamp(),
+            lastActive: firebase.firestore.FieldValue.serverTimestamp(),
+            bio: '',
+            statusMessage: ''
+          });
+        } else {
+          await db.collection('users').doc(user.uid).update({
+            online: true,
+            status: 'online',
+            lastSeen: firebase.firestore.FieldValue.serverTimestamp(),
+            lastActive: firebase.firestore.FieldValue.serverTimestamp()
+          });
+        }
+        showToast('✅ تم تسجيل الدخول بنجاح بحساب Google');
+      }
+    }).catch((error) => {
+      console.error('Redirect sign-in error:', error);
+    });
+
     window.logout = async function() {
       try {
         if (currentUser) {
