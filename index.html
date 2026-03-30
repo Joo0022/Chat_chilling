@@ -6,7 +6,7 @@
   <title>Chat_With_Us 💬 | تواصل بسلاسة</title>
   <link rel="icon" type="image/png" href="https://i.postimg.cc/rsbg47X7/8f55b377-3e6f-4bc9-bbc5-9b1ed3057599.png">
   <!-- PWA Manifest -->
-  <link rel="manifest" href="/manifest.json">
+  <link rel="manifest" href="manifest.json">
   <meta name="theme-color" content="#667eea">
   <!-- Firebase SDK -->
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
@@ -16,7 +16,7 @@
   <!-- Font Awesome -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
-    /* ========== جميع الأنماط الأصلية مع الإضافات ========== */
+    /* ========== جميع الأنماط كما هي مع تعديلات طفيفة ========== */
     * {
       margin: 0;
       padding: 0;
@@ -156,9 +156,13 @@
       align-items: center;
       justify-content: center;
       z-index: 10000;
-      transition: opacity 0.5s;
+      transition: opacity 0.5s ease, visibility 0.5s ease;
     }
-    #loadingScreen.hidden { opacity: 0; visibility: hidden; }
+    #loadingScreen.hidden {
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+    }
     .loader-spinner {
       width: 70px;
       height: 70px;
@@ -230,11 +234,9 @@
     .btn-send { background: linear-gradient(135deg, #667eea, #764ba2); color: white; }
     .typing-indicator-new { display: flex; align-items: center; gap: 8px; padding: 8px 18px; background: var(--bg-white); border-radius: 40px; width: fit-content; margin: 8px 24px; box-shadow: 0 3px 12px var(--shadow-color); }
     .load-more-btn { background: var(--bg-white); border: none; padding: 8px 16px; border-radius: 30px; margin: 10px auto; display: block; cursor: pointer; color: var(--text-primary); text-align: center; width: fit-content; }
-    /* تحجيم الخط */
     .small-font .message-text { font-size: 0.8rem; }
     .medium-font .message-text { font-size: 1rem; }
     .large-font .message-text { font-size: 1.2rem; }
-    /* المودال */
     .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); display: none; justify-content: center; align-items: center; z-index: 5000; }
     .modal.show { display: flex; }
     .modal-content { background: var(--bg-white); border-radius: 30px; padding: 25px; max-width: 400px; width: 90%; color: var(--text-primary); }
@@ -408,6 +410,10 @@
     const typingText = document.getElementById('typingText');
 
     // ========== مساعدات ==========
+    function hideLoadingScreen() {
+      loadingScreen.classList.add('hidden');
+    }
+
     function showToast(message, type = 'success') {
       const toast = document.createElement('div');
       toast.style.cssText = `position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:${type==='success'?'#48bb78':'#f56565'};color:white;padding:12px 24px;border-radius:50px;z-index:10000;animation:slideIn 0.3s;box-shadow:0 10px 30px rgba(0,0,0,0.2);`;
@@ -460,7 +466,6 @@
     avatarInput.addEventListener('change', async (e) => {
       const file = e.target.files[0];
       if (!file) return;
-      // ضغط الصورة
       const compressed = await compressImage(file);
       const storageRef = storage.ref(`avatars/${currentUser.uid}`);
       await storageRef.put(compressed);
@@ -786,43 +791,52 @@
 
     // ========== مراقبة حالة المصادقة ==========
     auth.onAuthStateChanged(async (user) => {
-      if (user && user.emailVerified) {
-        currentUser = user;
-        const userDoc = await db.collection('users').doc(user.uid).get();
-        if (!userDoc.exists) {
-          currentUsername = user.email.split('@')[0].substring(0,15);
-          await db.collection('users').doc(user.uid).set({
-            username: currentUsername,
-            email: user.email,
-            emailVerified: true,
-            createdAt: firebase.firestore.FieldValue.serverTimestamp(),
-            online: true
-          });
+      try {
+        if (user && user.emailVerified) {
+          currentUser = user;
+          const userDoc = await db.collection('users').doc(user.uid).get();
+          if (!userDoc.exists) {
+            currentUsername = user.email.split('@')[0].substring(0,15);
+            await db.collection('users').doc(user.uid).set({
+              username: currentUsername,
+              email: user.email,
+              emailVerified: true,
+              createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+              online: true
+            });
+          } else {
+            currentUsername = userDoc.data().username;
+            navUsername.innerText = currentUsername;
+            if (userDoc.data().avatar) navAvatar.src = userDoc.data().avatar;
+            if (userDoc.data().customStatus) customStatusInput.value = userDoc.data().customStatus;
+            currentUser.customStatus = userDoc.data().customStatus || '';
+          }
+          // تحديث حالة الاتصال
+          await db.collection('users').doc(user.uid).update({ online: true, lastSeen: firebase.firestore.FieldValue.serverTimestamp() });
+          db.collection('users').doc(user.uid).onDisconnect().update({ online: false });
+          authDiv.style.display = 'none';
+          chatDiv.style.display = 'flex';
+          loadPublicMessages();
+          loadOnlineUsers();
+          const savedTheme = localStorage.getItem('chat-theme') || 'light';
+          setTheme(savedTheme);
+          const savedFont = localStorage.getItem('chat-font-size') || 'medium';
+          setFontSize(savedFont);
         } else {
-          currentUsername = userDoc.data().username;
-          navUsername.innerText = currentUsername;
-          if (userDoc.data().avatar) navAvatar.src = userDoc.data().avatar;
-          if (userDoc.data().customStatus) customStatusInput.value = userDoc.data().customStatus;
-          currentUser.customStatus = userDoc.data().customStatus || '';
+          authDiv.style.display = 'flex';
+          chatDiv.style.display = 'none';
         }
-        // تحديث حالة الاتصال
-        await db.collection('users').doc(user.uid).update({ online: true, lastSeen: firebase.firestore.FieldValue.serverTimestamp() });
-        db.collection('users').doc(user.uid).onDisconnect().update({ online: false });
-        authDiv.style.display = 'none';
-        chatDiv.style.display = 'flex';
-        loadPublicMessages();
-        loadOnlineUsers();
-        const savedTheme = localStorage.getItem('chat-theme') || 'light';
-        setTheme(savedTheme);
-        const savedFont = localStorage.getItem('chat-font-size') || 'medium';
-        setFontSize(savedFont);
-        loadingScreen.classList.add('hidden');
-      } else {
-        authDiv.style.display = 'flex';
-        chatDiv.style.display = 'none';
-        loadingScreen.classList.add('hidden');
+      } catch (err) {
+        console.error(err);
+      } finally {
+        hideLoadingScreen();
       }
     });
+
+    // تأمين: في حال تأخر Firebase، نخفي شاشة التحميل بعد 3 ثوان
+    setTimeout(() => {
+      hideLoadingScreen();
+    }, 3000);
 
     // خلفية متحركة
     const bg = document.getElementById('animatedBg');
