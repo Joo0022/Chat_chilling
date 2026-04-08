@@ -16,14 +16,14 @@
       margin: 0;
       padding: 0;
       box-sizing: border-box;
-      font-family: 'Cairo', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      font-family: 'Tajawal', 'Cairo', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     }
 
     /* --- المتغيرات اللونية (ثيم فاتح/داكن) --- */
     :root[data-theme="light"] {
       --bg-gradient-start: #667eea;
       --bg-gradient-end: #764ba2;
-      --container-bg: rgba(255, 255, 255, 0.12);
+      --container-bg: rgba(255, 255, 255, 0.08);
       --auth-side-bg: linear-gradient(135deg, rgba(102, 126, 234, 0.88), rgba(118, 75, 162, 0.88));
       --auth-main-bg: rgba(255, 255, 255, 0.96);
       --text-primary: #1e293b;
@@ -60,12 +60,12 @@
     }
 
     :root[data-theme="dark"] {
-      --bg-gradient-start: #0f172a;
-      --bg-gradient-end: #1e293b;
-      --container-bg: rgba(0, 0, 0, 0.35);
+      --bg-gradient-start: #0b1120;
+      --bg-gradient-end: #111827;
+      --container-bg: rgba(0, 0, 0, 0.4);
       --auth-side-bg: linear-gradient(135deg, rgba(30, 41, 59, 0.9), rgba(15, 23, 42, 0.9));
       --auth-main-bg: rgba(30, 41, 59, 0.96);
-      --text-primary: #f1f5f9;
+      --text-primary: #f3f4f6;
       --text-secondary: #cbd5e1;
       --text-light: #94a3b8;
       --bg-white: #1e293b;
@@ -73,11 +73,11 @@
       --border-color: #334155;
       --shadow-color: rgba(0, 0, 0, 0.4);
       --message-own: linear-gradient(135deg, #4f46e5, #7c3aed);
-      --message-other: #1e293b;
-      --sidebar-bg: #0f172a;
+      --message-other: #1f2937;
+      --sidebar-bg: #0f172ad9;
       --input-bg: #1e293b;
       --icon-color: #cbd5e1;
-      --hover-bg: #334155;
+      --hover-bg: #374151;
       --online-status: #10b981;
       --away-status: #f59e0b;
       --offline-status: #64748b;
@@ -120,10 +120,12 @@
       height: 100%;
       max-width: none;
       background: var(--container-bg);
-      backdrop-filter: blur(24px);
-      -webkit-backdrop-filter: blur(24px);
-      border-radius: 0;
-      box-shadow: none;
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-radius: 32px;
+      margin: 12px;
+      height: calc(100% - 24px);
+      box-shadow: 0 25px 45px rgba(0,0,0,0.2);
       overflow: hidden;
       display: flex;
       flex-direction: column;
@@ -179,11 +181,12 @@
       width: 20px;
       height: 20px;
       background: rgba(255, 255, 255, 0.1);
-      animation: animate 25s linear infinite;
+      animation: animate 30s linear infinite;
       bottom: -150px;
+      opacity: 0.4;
     }
     @keyframes animate {
-      0% { transform: translateY(0) rotate(0deg); opacity: 1; }
+      0% { transform: translateY(0) rotate(0deg); opacity: 0.4; }
       100% { transform: translateY(-1000px) rotate(720deg); opacity: 0; }
     }
 
@@ -253,28 +256,32 @@
     }
     .auth-tabs {
       display: flex;
-      gap: 12px;
+      gap: 0;
       margin-bottom: 30px;
-      background: rgba(102, 126, 234, 0.1);
-      padding: 6px;
-      border-radius: 60px;
+      background: transparent;
+      border-bottom: 2px solid var(--border-color);
+      border-radius: 0;
+      padding: 0;
     }
     .auth-tab {
       flex: 1;
-      padding: 12px 16px;
+      padding: 12px 0;
       border: none;
-      border-radius: 50px;
+      border-radius: 0;
       background: transparent;
-      color: var(--text-primary);
+      color: var(--text-secondary);
       font-weight: 600;
       font-size: 0.95rem;
       cursor: pointer;
-      transition: all 0.3s ease;
+      transition: all 0.2s;
+      margin: 0 8px;
     }
     .auth-tab.active {
-      background: linear-gradient(135deg, #667eea, #764ba2);
-      color: white;
-      box-shadow: 0 8px 20px -5px rgba(102, 126, 234, 0.5);
+      background: transparent;
+      color: #667eea;
+      box-shadow: none;
+      border-bottom: 3px solid #667eea;
+      transform: scale(1.02);
     }
     .input-group-modern {
       margin-bottom: 20px;
@@ -327,6 +334,22 @@
       background: linear-gradient(135deg, #667eea, #764ba2);
       color: white;
       box-shadow: 0 8px 20px -5px rgba(102, 126, 234, 0.5);
+      position: relative;
+      overflow: hidden;
+    }
+    .btn-modern:active::after, .btn-icon:active::after, .btn-send:active::after {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 100%;
+      height: 100%;
+      background: radial-gradient(circle, rgba(255,255,255,0.5) 0%, rgba(255,255,255,0) 80%);
+      transform: translate(-50%, -50%) scale(0);
+      animation: ripple 0.4s ease-out;
+    }
+    @keyframes ripple {
+      to { transform: translate(-50%, -50%) scale(2); opacity: 0; }
     }
     .btn-modern:hover {
       transform: translateY(-2px);
@@ -382,7 +405,7 @@
       display: flex;
       flex-direction: column;
       overflow: hidden;
-      transition: right 0.3s ease;
+      transition: right 0.2s cubic-bezier(0.2, 0.9, 0.4, 1.1);
     }
     .sidebar-header {
       padding: 20px;
@@ -405,6 +428,17 @@
       flex: 1;
       overflow-y: auto;
       padding: 15px;
+    }
+    .users-list::-webkit-scrollbar, .messages-area::-webkit-scrollbar, .private-messages-new::-webkit-scrollbar {
+      width: 6px;
+    }
+    .users-list::-webkit-scrollbar-track, .messages-area::-webkit-scrollbar-track, .private-messages-new::-webkit-scrollbar-track {
+      background: var(--border-color);
+      border-radius: 10px;
+    }
+    .users-list::-webkit-scrollbar-thumb, .messages-area::-webkit-scrollbar-thumb, .private-messages-new::-webkit-scrollbar-thumb {
+      background: #667eea;
+      border-radius: 10px;
     }
     .user-item {
       display: flex;
@@ -473,17 +507,19 @@
       height: 8px;
       border-radius: 50%;
       display: inline-block;
+      box-shadow: 0 0 0 1px var(--bg-white);
     }
     .status-dot { background: var(--online-status); }
     .status-dot.away { background: var(--away-status); }
     .status-dot.offline { background: var(--offline-status); }
     /* نبض للمستخدمين المتصلين */
     .user-item .status-dot:not(.offline):not(.away) {
-      animation: pulse 1.5s infinite;
+      animation: pulse 2s infinite;
     }
     @keyframes pulse {
-      0% { opacity: 0.4; transform: scale(0.8); }
-      100% { opacity: 1; transform: scale(1); }
+      0% { opacity: 0.6; transform: scale(0.9); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.4); }
+      70% { opacity: 1; transform: scale(1.1); box-shadow: 0 0 0 4px rgba(16, 185, 129, 0); }
+      100% { opacity: 0.6; transform: scale(0.9); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
     }
     .notification-badge-new {
       background: var(--danger-color);
@@ -549,6 +585,8 @@
       cursor: pointer;
       transition: all 0.2s ease;
       font-size: 1rem;
+      position: relative;
+      overflow: hidden;
     }
     .btn-icon:hover, .theme-toggle:hover {
       background: linear-gradient(135deg, #667eea, #764ba2);
@@ -598,12 +636,18 @@
       animation: slideIn 0.2s ease;
       position: relative;
       word-wrap: break-word;
+      transition: all 0.2s ease;
+      box-shadow: 0 2px 8px var(--shadow-color);
+    }
+    .message-bubble:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px var(--shadow-color);
     }
     .message-bubble.own {
       align-self: flex-end;
       background: var(--message-own);
       color: white;
-      border-bottom-right-radius: 5px;
+      border-radius: 24px 24px 6px 24px;
     }
     .message-bubble.own::before {
       content: '';
@@ -620,7 +664,7 @@
       background: var(--message-other);
       color: var(--text-primary);
       box-shadow: 0 3px 12px var(--shadow-color);
-      border-bottom-left-radius: 5px;
+      border-radius: 24px 24px 24px 6px;
     }
     .message-bubble.other::before {
       content: '';
@@ -669,6 +713,11 @@
       cursor: pointer;
       margin-top: 6px;
       border: 1px solid rgba(255,255,255,0.2);
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .message-image:hover {
+      transform: scale(1.02);
+      box-shadow: 0 8px 20px rgba(0,0,0,0.2);
     }
     .typing-indicator-new {
       display: flex;
@@ -715,6 +764,7 @@
     }
     .message-input:focus {
       border-color: #667eea;
+      box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.2);
       outline: none;
     }
     .btn-send, .btn-upload {
@@ -725,6 +775,8 @@
       cursor: pointer;
       transition: all 0.2s;
       font-size: 1rem;
+      position: relative;
+      overflow: hidden;
     }
     .btn-send {
       background: linear-gradient(135deg, #667eea, #764ba2);
@@ -839,7 +891,8 @@
         height: 100%;
         z-index: 1050;
         width: 280px;
-        transition: right 0.25s ease;
+        transition: right 0.2s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+        box-shadow: -5px 0 20px rgba(0,0,0,0.3);
       }
       .users-sidebar.show { right: 0; }
       .message-bubble { max-width: 85%; }
@@ -847,8 +900,19 @@
     }
     .no-messages {
       text-align: center;
-      padding: 40px;
+      padding: 60px 20px;
       color: var(--text-light);
+      font-size: 0.9rem;
+      background: var(--bg-white);
+      border-radius: 32px;
+      margin: 20px;
+    }
+    .no-messages::before {
+      content: '💬';
+      display: block;
+      font-size: 3rem;
+      margin-bottom: 12px;
+      opacity: 0.5;
     }
     .reaction-badge-new {
       background: rgba(128,128,128,0.2);
@@ -888,7 +952,7 @@
       border-left-color: #4f46e5;
     }
     [data-theme="dark"] .message-bubble.other::before {
-      border-right-color: #1e293b;
+      border-right-color: #1f2937;
     }
   </style>
 </head>
@@ -1202,7 +1266,6 @@
         updateConnectionStatus(false);
       });
       
-      // مراقبة اتصال Firebase
       firebase.firestore().enableNetwork().catch(() => {});
       
       setInterval(() => {
@@ -1655,7 +1718,7 @@
       } 
     };
     function toggleSidebar() { document.querySelector('.users-sidebar').classList.toggle('show'); }
-    function createAnimatedBg() { const bg = document.getElementById('animatedBg'); for (let i = 0; i < 30; i++) { const span = document.createElement('span'); span.style.left = Math.random() * 100 + '%'; span.style.width = Math.random() * 30 + 10 + 'px'; span.style.height = span.style.width; span.style.animationDuration = Math.random() * 20 + 10 + 's'; span.style.animationDelay = Math.random() * 5 + 's'; bg.appendChild(span); } }
+    function createAnimatedBg() { const bg = document.getElementById('animatedBg'); for (let i = 0; i < 15; i++) { const span = document.createElement('span'); span.style.left = Math.random() * 100 + '%'; span.style.width = Math.random() * 30 + 10 + 'px'; span.style.height = span.style.width; span.style.animationDuration = Math.random() * 20 + 10 + 's'; span.style.animationDelay = Math.random() * 5 + 's'; bg.appendChild(span); } }
     window.copyMessage = function(text) { navigator.clipboard.writeText(text); showToast('✅ تم النسخ'); };
     window.deleteMessage = async function(messageId) { if (!currentUser) { showToast('❌ يجب تسجيل الدخول أولاً', 'error'); return; } try { const msgDoc = await db.collection('messages').doc(messageId).get(); if (!msgDoc.exists) { showToast('❌ الرسالة غير موجودة', 'error'); return; } const msgData = msgDoc.data(); if (msgData.uid !== currentUser.uid) { showToast('❌ لا يمكنك حذف رسائل الآخرين', 'error'); return; } if (confirm('هل أنت متأكد من حذف هذه الرسالة؟')) { await db.collection('messages').doc(messageId).delete(); showToast('✅ تم حذف الرسالة'); } } catch (err) { showToast('❌ فشل الحذف', 'error'); } };
     document.addEventListener('contextmenu', function(e) { const messageElement = e.target.closest('.message-bubble'); if (!messageElement || !currentUser) return; e.preventDefault(); const messageId = messageElement.dataset.messageId; const messageText = messageElement.querySelector('.message-text')?.textContent || ''; const senderName = messageElement.querySelector('.message-sender')?.textContent || ''; const messageOwnerId = messageElement.dataset.uid; const menu = document.createElement('div'); menu.style.cssText = `position:fixed;left:${e.pageX}px;top:${e.pageY}px;background:var(--bg-white);border-radius:12px;box-shadow:0 10px 30px var(--shadow-color);padding:5px;z-index:10000;border:1px solid var(--border-color);`; let menuHTML = `<button onclick="copyMessage('${escapeHtml(messageText)}')" style="display:block;width:100%;padding:8px 16px;border:none;background:none;text-align:right;cursor:pointer;border-radius:8px;color:var(--text-primary);"><i class="fas fa-copy"></i> نسخ</button><button onclick="setReply('${messageId}', '${escapeHtml(messageText)}', '${escapeHtml(senderName)}')" style="display:block;width:100%;padding:8px 16px;border:none;background:none;text-align:right;cursor:pointer;border-radius:8px;color:var(--text-primary);"><i class="fas fa-reply"></i> رد</button>`; if (messageOwnerId === currentUser.uid) menuHTML += `<button onclick="deleteMessage('${messageId}')" style="display:block;width:100%;padding:8px 16px;border:none;background:none;text-align:right;cursor:pointer;border-radius:8px;color:#f56565;"><i class="fas fa-trash"></i> حذف</button>`; menu.innerHTML = menuHTML; document.body.appendChild(menu); setTimeout(() => { document.addEventListener('click', function removeMenu() { menu.remove(); document.removeEventListener('click', removeMenu); }, { once: true }); }, 100); });
