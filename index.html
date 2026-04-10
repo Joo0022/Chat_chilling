@@ -340,7 +340,7 @@
       }
     }
 
-
+    {
     function toggleSidebar() { document.querySelector('.users-sidebar').classList.toggle('show'); }
     function createAnimatedBg() { const bg = document.getElementById('animatedBg'); for (let i = 0; i < 15; i++) { const span = document.createElement('span'); span.style.left = Math.random() * 100 + '%'; span.style.width = Math.random() * 30 + 10 + 'px'; span.style.height = span.style.width; span.style.animationDuration = Math.random() * 20 + 10 + 's'; span.style.animationDelay = Math.random() * 5 + 's'; bg.appendChild(span); } }
     window.copyMessage = function(text) { navigator.clipboard.writeText(text); showToast('✅ تم النسخ'); };
