@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes, viewport-fit=cover">
-  <title>✨️Arab cat✨️</title>
+  <title>✨️Arab chat✨️</title>
   <link rel="icon" type="image/png" href="https://i.postimg.cc/rsbg47X7/8f55b377-3e6f-4bc9-bbc5-9b1ed3057599.png">
   <!-- Firebase SDK -->
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
@@ -12,6 +12,7 @@
   <!-- Font Awesome -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
+    /* ... (الأنماط كما هي بدون تغيير) ... */
     * {
       margin: 0;
       padding: 0;
@@ -2406,6 +2407,8 @@
     window.hideForgotPasswordModal = function() { forgotPasswordModal.classList.remove('show'); };
     window.validateResetEmail = function() { const emailVal = resetEmail.value.trim(), emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/; const isValid = emailRegex.test(emailVal); if (!emailVal) { resetEmailValidation.style.display = 'none'; return false; } resetEmailValidation.style.display = 'block'; if (isValid) { resetEmailValidation.className = 'validation-message success'; resetEmailValidation.innerHTML = '✅ البريد الإلكتروني صالح'; } else { resetEmailValidation.className = 'validation-message error'; resetEmailValidation.innerHTML = '❌ البريد الإلكتروني غير صالح'; } return isValid; };
     resetEmail.addEventListener('input', validateResetEmail);
+    
+    // ========== دالة إرسال رابط استعادة كلمة المرور مع مؤقت 5 دقائق ==========
     window.sendPasswordReset = async function() { 
       const emailVal = resetEmail.value.trim(); 
       if (!emailVal) { 
@@ -2413,12 +2416,29 @@
         forgotPasswordMessage.style.color = '#f56565'; 
         return; 
       } 
-      if (!validateResetEmail()) return; 
+      if (!validateResetEmail()) return;
+      
+      // التحقق من آخر محاولة إرسال لهذا البريد
+      const storageKey = 'last_reset_' + emailVal;
+      const lastResetTime = localStorage.getItem(storageKey);
+      if (lastResetTime) {
+        const elapsed = Date.now() - parseInt(lastResetTime);
+        const cooldownPeriod = 5 * 60 * 1000; // 5 دقائق
+        if (elapsed < cooldownPeriod) {
+          const remainingMinutes = Math.ceil((cooldownPeriod - elapsed) / 60000);
+          forgotPasswordMessage.innerHTML = `⏳ يرجى الانتظار ${remainingMinutes} دقيقة قبل إعادة المحاولة`;
+          forgotPasswordMessage.style.color = '#f59e0b';
+          return;
+        }
+      }
+      
       resetLoading.style.display = 'block'; 
       sendResetBtn.disabled = true; 
       cancelResetBtn.disabled = true; 
       try { 
         await auth.sendPasswordResetEmail(emailVal); 
+        // حفظ وقت الإرسال الحالي
+        localStorage.setItem(storageKey, Date.now().toString());
         forgotPasswordMessage.innerHTML = '✅ تم إرسال رابط إعادة التعيين إلى بريدك الإلكتروني'; 
         forgotPasswordMessage.style.color = '#48bb78'; 
         setTimeout(() => hideForgotPasswordModal(), 3000); 
@@ -2507,4 +2527,4 @@
     setTimeout(() => hideLoadingScreen(), 5000);
   </script>
 </body>
-    </html>
+  </html>
