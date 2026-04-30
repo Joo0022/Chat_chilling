@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes, viewport-fit=cover">
-  <title>✨️Arab chat✨️</title>
+  <title>✨️Arab cat✨️</title>
   <link rel="icon" type="image/png" href="https://i.postimg.cc/rsbg47X7/8f55b377-3e6f-4bc9-bbc5-9b1ed3057599.png">
   <!-- Firebase SDK -->
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
@@ -12,7 +12,6 @@
   <!-- Font Awesome -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
-    /* ... (الأنماط كما هي بدون تغيير) ... */
     * {
       margin: 0;
       padding: 0;
@@ -20,7 +19,6 @@
       font-family: 'Cairo', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     }
 
-    /* --- المتغيرات اللونية (ثيم فاتح/داكن) --- */
     :root[data-theme="light"] {
       --bg-gradient-start: #667eea;
       --bg-gradient-end: #764ba2;
@@ -99,7 +97,6 @@
       --user-color-12: #A9D6F0;
     }
 
-    /* --- هيكل الصفحة الرئيسي --- */
     html, body {
       height: 100%;
       width: 100%;
@@ -130,7 +127,6 @@
       flex-direction: column;
     }
 
-    /* --- شاشة التحميل --- */
     #loadingScreen {
       position: fixed;
       top: 0;
@@ -164,7 +160,6 @@
     }
     @keyframes spin { to { transform: rotate(360deg); } }
 
-    /* خلفية متحركة */
     .animated-bg {
       position: fixed;
       top: 0;
@@ -188,13 +183,11 @@
       100% { transform: translateY(-1000px) rotate(720deg); opacity: 0; }
     }
 
-    /* ========== شاشة المصادقة ========== */
     #auth {
       height: 100%;
       display: flex;
       flex: 1;
     }
-
     .auth-side {
       flex: 1;
       background: var(--auth-side-bg);
@@ -365,7 +358,6 @@
     .validation-message.error { color: var(--danger-color); display: block; }
     .error-message { color: var(--danger-color); font-size: 0.8rem; margin-top: 5px; text-align: center; }
 
-    /* ========== واجهة الدردشة ========== */
     #chat {
       height: 100%;
       display: none;
@@ -504,7 +496,6 @@
       border-radius: 50%;
       display: inline-block;
     }
-    .status-dot { background: var(--online-status); }
     .status-dot.away { background: var(--away-status); }
     .status-dot.offline { background: var(--offline-status); }
     .notification-badge-new {
@@ -521,7 +512,6 @@
       margin-top: 4px;
     }
 
-    /* منطقة المحادثة الرئيسية */
     .chat-main {
       flex: 1;
       display: flex;
@@ -544,7 +534,6 @@
       align-items: center;
       gap: 8px;
     }
-    /* حالة الاتصال - علامة WiFi */
     .connection-status {
       display: flex;
       align-items: center;
@@ -554,130 +543,69 @@
       border-radius: 20px;
       background: var(--bg-light);
     }
-    .connection-status.online i { 
-      color: #10b981; 
-    }
-    .connection-status.offline i { 
-      color: #ef4444; 
-    }
-    .connection-status.connecting i { 
-      color: #f59e0b; 
-      animation: pulse 1.5s infinite;
-    }
-    .connection-status span {
-      font-size: 0.75rem;
-      color: var(--text-secondary);
-    }
-    @keyframes pulse {
-      0%, 100% { opacity: 1; }
-      50% { opacity: 0.5; }
-    }
-    .header-actions-new {
-      display: flex;
-      gap: 8px;
-    }
+    .connection-status.online i { color: #10b981; }
+    .connection-status.offline i { color: #ef4444; }
+    .connection-status.connecting i { color: #f59e0b; animation: pulse 1.5s infinite; }
+    .connection-status span { font-size: 0.75rem; color: var(--text-secondary); }
+    @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.5} }
+    .header-actions-new { display: flex; gap: 8px; }
     .btn-icon, .theme-toggle {
-      width: 40px;
-      height: 40px;
-      border: none;
-      border-radius: 14px;
-      background: var(--bg-light);
-      color: var(--icon-color);
-      cursor: pointer;
-      transition: all 0.2s ease;
-      font-size: 1rem;
+      width: 40px; height: 40px; border: none; border-radius: 14px;
+      background: var(--bg-light); color: var(--icon-color); cursor: pointer;
+      transition: all 0.2s ease; font-size: 1rem;
     }
     .btn-icon:hover, .theme-toggle:hover {
       background: linear-gradient(135deg, #667eea, #764ba2);
-      color: white;
-      transform: scale(1.02);
+      color: white; transform: scale(1.02);
     }
     .search-area {
-      padding: 12px 24px;
-      background: var(--bg-white);
-      border-bottom: 1px solid var(--border-color);
-      display: none;
+      padding: 12px 24px; background: var(--bg-white);
+      border-bottom: 1px solid var(--border-color); display: none;
     }
     .search-area.show { display: block; }
-    .search-input-group {
-      display: flex;
-      gap: 10px;
-    }
+    .search-input-group { display: flex; gap: 10px; }
     .search-input {
-      flex: 1;
-      padding: 10px 18px;
-      border: 2px solid var(--border-color);
-      border-radius: 40px;
-      background: var(--input-bg);
-      color: var(--text-primary);
+      flex: 1; padding: 10px 18px; border: 2px solid var(--border-color);
+      border-radius: 40px; background: var(--input-bg); color: var(--text-primary);
     }
     .btn-close {
-      background: var(--danger-color);
-      color: white;
-      border: none;
-      border-radius: 40px;
-      padding: 0 18px;
-      cursor: pointer;
+      background: var(--danger-color); color: white; border: none;
+      border-radius: 40px; padding: 0 18px; cursor: pointer;
     }
     .messages-area {
-      flex: 1;
-      overflow-y: auto;
-      padding: 20px 24px;
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
+      flex: 1; overflow-y: auto; padding: 20px 24px;
+      display: flex; flex-direction: column; gap: 12px;
     }
-    .load-more-container {
-      display: flex;
-      justify-content: center;
-      margin: 10px 0;
-    }
+    .load-more-container { display: flex; justify-content: center; margin: 10px 0; }
     .load-more-btn {
-      background: var(--bg-white);
-      border: 1px solid var(--border-color);
-      padding: 8px 16px;
-      border-radius: 40px;
-      cursor: pointer;
-      color: var(--text-primary);
+      background: var(--bg-white); border: 1px solid var(--border-color);
+      padding: 8px 16px; border-radius: 40px; cursor: pointer; color: var(--text-primary);
     }
     .message-bubble {
-      max-width: 70%;
-      padding: 12px 18px;
-      border-radius: 22px 22px 22px 5px;
-      animation: slideIn 0.2s ease;
-      position: relative;
+      max-width: 70%; padding: 12px 18px; border-radius: 22px 22px 22px 5px;
+      animation: slideIn 0.2s ease; position: relative;
     }
     .message-bubble.own {
-      align-self: flex-end;
-      background: var(--message-own);
-      color: white;
-      border-radius: 22px 22px 5px 22px;
+      align-self: flex-end; background: var(--message-own);
+      color: white; border-radius: 22px 22px 5px 22px;
     }
     .message-bubble.other {
-      align-self: flex-start;
-      background: var(--message-other);
-      color: var(--text-primary);
-      box-shadow: 0 3px 12px var(--shadow-color);
+      align-self: flex-start; background: var(--message-other);
+      color: var(--text-primary); box-shadow: 0 3px 12px var(--shadow-color);
+    }
+    .message-sender-wrapper {
+      display: flex; align-items: center; gap: 8px; margin-bottom: 4px;
+    }
+    .message-sender-avatar {
+      width: 26px; height: 26px; border-radius: 50%;
+      background-size: cover; background-position: center; flex-shrink: 0;
+      border: 2px solid rgba(255,255,255,0.3); display: inline-block;
     }
     .message-sender {
-      font-size: 0.7rem;
-      margin-bottom: 4px;
-      font-weight: 600;
-      display: inline-flex;
-      align-items: center;
-      gap: 5px;
-      padding: 2px 8px;
-      border-radius: 20px;
-      background: rgba(0, 0, 0, 0.1);
-      cursor: pointer;
+      font-size: 0.7rem; font-weight: 600; cursor: pointer;
+      padding: 2px 8px; border-radius: 20px; background: rgba(0,0,0,0.1);
     }
-    .message-sender:hover {
-      text-decoration: underline;
-    }
-    /* ألوان أسماء المستخدمين */
-    .message-bubble.other .message-sender {
-      color: var(--text-secondary);
-    }
+    .message-sender:hover { text-decoration: underline; }
     .message-bubble.other.user-color-1 .message-sender { color: var(--user-color-1); }
     .message-bubble.other.user-color-2 .message-sender { color: var(--user-color-2); }
     .message-bubble.other.user-color-3 .message-sender { color: var(--user-color-3); }
@@ -694,309 +622,120 @@
     .message-text { word-break: break-word; line-height: 1.4; font-size: 0.9rem; }
     .message-time { font-size: 0.65rem; opacity: 0.6; margin-top: 5px; display: flex; align-items: center; gap: 6px; }
     .read-receipt { font-size: 0.7rem; margin-left: 5px; }
-    .message-image {
-      max-width: 220px;
-      max-height: 160px;
-      border-radius: 16px;
-      cursor: pointer;
-      margin-top: 6px;
-      border: 1px solid rgba(255,255,255,0.2);
-    }
+    .message-image { max-width: 220px; max-height: 160px; border-radius: 16px; cursor: pointer; margin-top: 6px; border: 1px solid rgba(255,255,255,0.2); }
     .typing-indicator-new {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      padding: 8px 18px;
-      background: var(--bg-white);
-      border-radius: 40px;
-      width: fit-content;
-      margin: 8px 24px;
-      box-shadow: 0 3px 12px var(--shadow-color);
+      display: flex; align-items: center; gap: 8px; padding: 8px 18px;
+      background: var(--bg-white); border-radius: 40px; width: fit-content;
+      margin: 8px 24px; box-shadow: 0 3px 12px var(--shadow-color);
     }
     .typing-dots { display: flex; gap: 4px; }
     .typing-dots span {
-      width: 6px;
-      height: 6px;
-      background: #667eea;
-      border-radius: 50%;
-      animation: typing 1.4s infinite;
+      width: 6px; height: 6px; background: #667eea;
+      border-radius: 50%; animation: typing 1.4s infinite;
     }
     .input-area-new {
-      padding: 15px 24px;
-      background: var(--bg-white);
-      border-top: 1px solid var(--border-color);
-      display: flex;
-      gap: 12px;
-      align-items: center;
+      padding: 15px 24px; background: var(--bg-white);
+      border-top: 1px solid var(--border-color); display: flex;
+      gap: 12px; align-items: center;
     }
     .message-input {
-      flex: 1;
-      padding: 12px 20px;
-      border: 2px solid var(--border-color);
-      border-radius: 40px;
-      background: var(--input-bg);
-      color: var(--text-primary);
-      font-size: 0.9rem;
-      transition: all 0.2s;
-    }
-    .message-input:focus {
-      padding: 14px 20px;
+      flex: 1; padding: 12px 20px; border: 2px solid var(--border-color);
+      border-radius: 40px; background: var(--input-bg); color: var(--text-primary);
+      font-size: 0.9rem; transition: all 0.2s;
     }
     .btn-send, .btn-upload {
-      width: 44px;
-      height: 44px;
-      border: none;
-      border-radius: 50%;
-      cursor: pointer;
-      transition: all 0.2s;
-      font-size: 1rem;
+      width: 44px; height: 44px; border: none; border-radius: 50%;
+      cursor: pointer; transition: all 0.2s; font-size: 1rem;
     }
-    .btn-send {
-      background: linear-gradient(135deg, #667eea, #764ba2);
-      color: white;
-    }
-    .btn-upload {
-      background: var(--bg-light);
-      color: var(--icon-color);
-    }
+    .btn-send { background: linear-gradient(135deg, #667eea, #764ba2); color: white; }
+    .btn-upload { background: var(--bg-light); color: var(--icon-color); }
 
-    /* المحادثة الخاصة */
     .private-page-new {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: var(--bg-light);
-      z-index: 2000;
-      display: none;
-      flex-direction: column;
-      overflow: hidden;
+      position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+      background: var(--bg-light); z-index: 2000; display: none;
+      flex-direction: column; overflow: hidden;
     }
     .private-page-new.show { display: flex; }
     .private-header-new {
-      padding: 15px 24px;
-      background: var(--auth-side-bg);
-      color: white;
-      display: flex;
-      align-items: center;
-      gap: 15px;
-      flex-shrink: 0;
+      padding: 15px 24px; background: var(--auth-side-bg);
+      color: white; display: flex; align-items: center; gap: 15px; flex-shrink: 0;
     }
     .private-header-new button {
-      background: rgba(255,255,255,0.2);
-      border: none;
-      color: white;
-      width: 40px;
-      height: 40px;
-      border-radius: 14px;
-      cursor: pointer;
+      background: rgba(255,255,255,0.2); border: none; color: white;
+      width: 40px; height: 40px; border-radius: 14px; cursor: pointer;
     }
-    .private-header-info {
-      flex: 1;
-    }
-    .private-header-info h3 {
-      font-size: 1rem;
-      margin-bottom: 2px;
-    }
-    .private-last-seen {
-      font-size: 0.7rem;
-      opacity: 0.8;
-    }
+    .private-header-info { flex: 1; }
+    .private-header-info h3 { font-size: 1rem; margin-bottom: 2px; }
+    .private-last-seen { font-size: 0.7rem; opacity: 0.8; }
     .private-messages-new {
-      flex: 1;
-      overflow-y: auto;
-      padding: 20px;
-      background: var(--bg-light);
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
+      flex: 1; overflow-y: auto; padding: 20px; background: var(--bg-light);
+      display: flex; flex-direction: column; gap: 12px;
     }
     .image-preview-modal {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(0,0,0,0.85);
-      display: none;
-      justify-content: center;
-      align-items: center;
-      z-index: 3000;
+      position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(0,0,0,0.85); display: none; justify-content: center;
+      align-items: center; z-index: 3000;
     }
     .image-preview-modal.show { display: flex; }
-    .preview-content-new img {
-      max-width: 90vw;
-      max-height: 85vh;
-      border-radius: 24px;
-    }
-    /* الملف الشخصي */
+    .preview-content-new img { max-width: 90vw; max-height: 85vh; border-radius: 24px; }
     .profile-modal {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(0,0,0,0.85);
-      display: none;
-      justify-content: center;
-      align-items: center;
-      z-index: 4000;
+      position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(0,0,0,0.85); display: none; justify-content: center;
+      align-items: center; z-index: 4000;
     }
     .profile-modal.show { display: flex; }
     .profile-card {
-      background: var(--bg-white);
-      border-radius: 30px;
-      width: 90%;
-      max-width: 500px;
-      max-height: 85vh;
-      overflow-y: auto;
-      padding: 25px;
-      position: relative;
+      background: var(--bg-white); border-radius: 30px; width: 90%;
+      max-width: 500px; max-height: 85vh; overflow-y: auto; padding: 25px; position: relative;
     }
     .profile-avatar {
-      width: 100px;
-      height: 100px;
-      border-radius: 50%;
-      background: linear-gradient(135deg, #667eea, #764ba2);
-      margin: 0 auto 15px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 2.5rem;
-      color: white;
-      background-size: cover;
-      background-position: center;
-      cursor: pointer;
+      width: 100px; height: 100px; border-radius: 50%;
+      background: linear-gradient(135deg, #667eea, #764ba2); margin: 0 auto 15px;
+      display: flex; align-items: center; justify-content: center; font-size: 2.5rem;
+      color: white; background-size: cover; background-position: center; cursor: pointer;
     }
     .profile-avatar.editable:hover::after {
-      content: "✏️";
-      background: rgba(0,0,0,0.5);
-      width: 100%;
-      height: 100%;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
+      content: "✏️"; background: rgba(0,0,0,0.5); width: 100%; height: 100%;
+      border-radius: 50%; display: flex; align-items: center; justify-content: center;
       font-size: 2rem;
     }
-    .profile-field {
-      margin-bottom: 20px;
-    }
-    .profile-field label {
-      display: block;
-      font-weight: 500;
-      margin-bottom: 5px;
-      color: var(--text-secondary);
-    }
+    .profile-field { margin-bottom: 20px; }
+    .profile-field label { display: block; font-weight: 500; margin-bottom: 5px; color: var(--text-secondary); }
     .profile-field input, .profile-field textarea {
-      width: 100%;
-      padding: 10px;
-      border: 2px solid var(--border-color);
-      border-radius: 20px;
-      background: var(--input-bg);
-      color: var(--text-primary);
+      width: 100%; padding: 10px; border: 2px solid var(--border-color);
+      border-radius: 20px; background: var(--input-bg); color: var(--text-primary);
     }
-    .profile-field textarea {
-      resize: vertical;
-      min-height: 80px;
-    }
-    .profile-stats {
-      display: flex;
-      justify-content: space-around;
-      margin: 20px 0;
-      text-align: center;
-    }
-    .profile-stat {
-      flex: 1;
-    }
-    .profile-stat-number {
-      font-size: 1.5rem;
-      font-weight: bold;
-      color: var(--text-primary);
-    }
-    .profile-stat-label {
-      font-size: 0.8rem;
-      color: var(--text-light);
-    }
-    .profile-actions {
-      display: flex;
-      gap: 10px;
-      margin-top: 20px;
-    }
-    .profile-actions button {
-      flex: 1;
-      padding: 10px;
-      border-radius: 30px;
-      border: none;
-      cursor: pointer;
-      font-weight: 600;
-    }
-    @keyframes slideIn {
-      from { opacity: 0; transform: translateY(15px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-    @keyframes typing {
-      0%,60%,100% { transform: translateY(0); }
-      30% { transform: translateY(-6px); }
-    }
+    .profile-field textarea { resize: vertical; min-height: 80px; }
+    .profile-stats { display: flex; justify-content: space-around; margin: 20px 0; text-align: center; }
+    .profile-stat { flex: 1; }
+    .profile-stat-number { font-size: 1.5rem; font-weight: bold; color: var(--text-primary); }
+    .profile-stat-label { font-size: 0.8rem; color: var(--text-light); }
+    .profile-actions { display: flex; gap: 10px; margin-top: 20px; }
+    .profile-actions button { flex: 1; padding: 10px; border-radius: 30px; border: none; cursor: pointer; font-weight: 600; }
+    @keyframes slideIn { from{opacity:0;transform:translateY(15px)} to{opacity:1;transform:translateY(0)} }
+    @keyframes typing { 0%,60%,100%{transform:translateY(0)} 30%{transform:translateY(-6px)} }
     @media (max-width: 768px) {
       .auth-side { display: none; }
-      .users-sidebar {
-        position: absolute;
-        top: 0;
-        right: -100%;
-        height: 100%;
-        z-index: 1050;
-        width: 280px;
-        transition: right 0.25s ease;
-      }
+      .users-sidebar { position: absolute; top: 0; right: -100%; height: 100%; z-index: 1050; width: 280px; transition: right 0.25s ease; }
       .users-sidebar.show { right: 0; }
       .close-sidebar-btn { display: block; }
       .message-bubble { max-width: 85%; }
       .chat-header h2 { font-size: 1rem; }
-      .message-input:focus {
-        padding: 14px 20px;
-        font-size: 1rem;
-      }
     }
-    .no-messages {
-      text-align: center;
-      padding: 40px;
-      color: var(--text-light);
-    }
+    .no-messages { text-align: center; padding: 40px; color: var(--text-light); }
     .reaction-badge-new {
-      background: rgba(128,128,128,0.2);
-      border-radius: 30px;
-      padding: 2px 8px;
-      font-size: 0.7rem;
-      display: inline-flex;
-      align-items: center;
-      gap: 5px;
-      cursor: pointer;
+      background: rgba(128,128,128,0.2); border-radius: 30px; padding: 2px 8px;
+      font-size: 0.7rem; display: inline-flex; align-items: center; gap: 5px; cursor: pointer;
     }
     .notification-permission-banner {
-      position: fixed;
-      bottom: 20px;
-      left: 50%;
-      transform: translateX(-50%);
-      background: var(--bg-white);
-      border-radius: 50px;
-      padding: 10px 20px;
-      box-shadow: 0 5px 20px var(--shadow-color);
-      display: flex;
-      gap: 15px;
-      align-items: center;
-      z-index: 1000;
-      border: 1px solid var(--border-color);
+      position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);
+      background: var(--bg-white); border-radius: 50px; padding: 10px 20px;
+      box-shadow: 0 5px 20px var(--shadow-color); display: flex; gap: 15px;
+      align-items: center; z-index: 1000; border: 1px solid var(--border-color);
     }
     .notification-permission-banner button {
-      background: linear-gradient(135deg, #667eea, #764ba2);
-      border: none;
-      color: white;
-      padding: 6px 16px;
-      border-radius: 30px;
-      cursor: pointer;
+      background: linear-gradient(135deg, #667eea, #764ba2); border: none;
+      color: white; padding: 6px 16px; border-radius: 30px; cursor: pointer;
     }
   </style>
 </head>
@@ -1070,7 +809,6 @@
       </div>
     </div>
   </div>
-  <!-- باقي العناصر (خاص, معاينة) -->
   <div class="private-page-new" id="privatePage">
     <div class="private-header-new">
       <button onclick="closePrivateChat()"><i class="fas fa-arrow-right"></i></button>
@@ -1098,7 +836,6 @@
   </div>
   <div class="image-preview-modal" id="uploadProgress"><div style="background: var(--bg-white); border-radius: 30px; padding: 30px; text-align: center;"><div style="width: 40px; height: 40px; border: 3px solid var(--border-color); border-top-color: #667eea; border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto 15px;"></div><p style="color: var(--text-primary);">جاري رفع الصورة...</p></div></div>
   
-  <!-- نوافذ الملف الشخصي -->
   <div class="profile-modal" id="myProfileModal">
     <div class="profile-card">
       <h2 style="text-align: center; margin-bottom: 20px;">ملفي الشخصي</h2>
@@ -1157,7 +894,6 @@
     </div>
   </div>
   
-  <!-- نافذة استعادة كلمة المرور -->
   <div class="image-preview-modal" id="forgotPasswordModal">
     <div style="background: var(--bg-white); border-radius: 30px; padding: 30px; max-width: 380px;">
       <h3 style="color: var(--text-primary);">استعادة كلمة المرور</h3>
@@ -1175,7 +911,6 @@
     </div>
   </div>
   
-  <!-- نافذة تأكيد التحقق من البريد الإلكتروني -->
   <div class="image-preview-modal" id="verificationModal">
     <div style="background: var(--bg-white); border-radius: 30px; padding: 30px; max-width: 500px; text-align: center;">
       <i class="fas fa-envelope" style="font-size: 4rem; color: #667eea; margin-bottom: 20px;"></i>
@@ -1191,7 +926,6 @@
     </div>
   </div>
   
-  <!-- نافذة طلب إذن الإشعارات -->
   <div class="notification-permission-banner" id="notificationBanner" style="display: none;">
     <span>🔔 تفعيل الإشعارات لتصلك رسائل جديدة</span>
     <button onclick="requestNotificationPermission()">تفعيل</button>
@@ -1200,7 +934,6 @@
   
   <input type="file" id="imageFileInput" accept="image/*" style="display: none;">
   <script>
-    // Firebase Configuration
     const firebaseConfig = {
       apiKey: "AIzaSyANJjbTOFTKUAuT-g1BKY7LU9a4OabSEDQ",
       authDomain: "enhanced-app-492f6.firebaseapp.com",
@@ -1216,10 +949,8 @@
     const CLOUD_NAME = "dn0knjzpi";
     const UPLOAD_PRESET = "chat-app";
 
-    // Admin emails
     const ADMIN_EMAILS = ["y83298252@gmail.com", "y83298252@proton.me"];
 
-    // DOM Elements
     const loadingScreen = document.getElementById('loadingScreen');
     const authDiv = document.getElementById('auth');
     const chatDiv = document.getElementById('chat');
@@ -1309,20 +1040,31 @@
     let oldestMessageTimestamp = null;
     let loadingMore = false;
     let lastMessageSnapshot = null;
-    let allUsersList = []; // for filtering
-    let currentProfileUserId = null; // for viewing other user profile
+    let allUsersList = [];
+    let currentProfileUserId = null;
     const MESSAGES_LIMIT = 50;
 
     const userColors = new Map();
     const availableColors = Array.from({ length: 12 }, (_, i) => `user-color-${i + 1}`);
     let colorIndex = 0;
 
-    // ========== إشعارات سطح المكتب ==========
+    const userAvatarsCache = new Map();
+    async function getUserAvatarUrl(userId) {
+      if (userAvatarsCache.has(userId)) return userAvatarsCache.get(userId);
+      try {
+        const doc = await db.collection('users').doc(userId).get();
+        const url = doc.exists ? (doc.data().profileImage || null) : null;
+        userAvatarsCache.set(userId, url);
+        return url;
+      } catch (e) { return null; }
+    }
+    function setCachedAvatar(userId, url) {
+      if (url) userAvatarsCache.set(userId, url);
+      else userAvatarsCache.delete(userId);
+    }
+
     function checkNotificationPermission() {
-      if (!('Notification' in window)) {
-        console.log('المتصفح لا يدعم الإشعارات');
-        return false;
-      }
+      if (!('Notification' in window)) return false;
       if (Notification.permission === 'granted') {
         notificationsEnabled = true;
         notificationBanner.style.display = 'none';
@@ -1337,10 +1079,7 @@
     }
 
     window.requestNotificationPermission = function() {
-      if (!('Notification' in window)) {
-        showToast('المتصفح لا يدعم الإشعارات', 'error');
-        return;
-      }
+      if (!('Notification' in window)) { showToast('المتصفح لا يدعم الإشعارات', 'error'); return; }
       Notification.requestPermission().then(permission => {
         if (permission === 'granted') {
           notificationsEnabled = true;
@@ -1352,9 +1091,7 @@
       });
     };
 
-    function closeNotificationBanner() {
-      notificationBanner.style.display = 'none';
-    }
+    function closeNotificationBanner() { notificationBanner.style.display = 'none'; }
 
     function sendNotification(title, body, icon = null) {
       if (!notificationsEnabled) return;
@@ -1365,27 +1102,18 @@
           icon: icon || 'https://i.postimg.cc/rsbg47X7/8f55b377-3e6f-4bc9-bbc5-9b1ed3057599.png',
           silent: false
         });
-        notification.onclick = () => {
-          window.focus();
-          notification.close();
-        };
+        notification.onclick = () => { window.focus(); notification.close(); };
         setTimeout(() => notification.close(), 5000);
-      } catch (e) {
-        console.error('خطأ في الإشعار:', e);
-      }
+      } catch (e) {}
     }
 
-    // ========== حالة الاتصال (علامة WiFi) ==========
     function updateConnectionStatus(online) {
       isOnline = online;
       if (online) {
         connectionStatus.classList.remove('offline', 'connecting');
         connectionStatus.classList.add('online');
         connectionStatusText.textContent = 'متصل';
-        if (reconnectAttempts > 0) {
-          showToast('🔄 تم إعادة الاتصال');
-          reconnectAttempts = 0;
-        }
+        if (reconnectAttempts > 0) { showToast('🔄 تم إعادة الاتصال'); reconnectAttempts = 0; }
       } else {
         connectionStatus.classList.remove('online', 'connecting');
         connectionStatus.classList.add('offline');
@@ -1393,47 +1121,25 @@
       }
     }
 
-    function setConnectingStatus() {
-      connectionStatus.classList.remove('online', 'offline');
-      connectionStatus.classList.add('connecting');
-      connectionStatusText.textContent = 'جاري الاتصال...';
-    }
-
     function setupConnectionMonitoring() {
       window.addEventListener('online', () => {
         updateConnectionStatus(true);
         if (currentUser) {
-          db.collection('users').doc(currentUser.uid).update({
-            online: true,
-            status: 'online',
-            lastSeen: firebase.firestore.FieldValue.serverTimestamp()
-          }).catch(() => {});
+          db.collection('users').doc(currentUser.uid).update({ online: true, status: 'online', lastSeen: firebase.firestore.FieldValue.serverTimestamp() }).catch(() => {});
         }
       });
-      
-      window.addEventListener('offline', () => {
-        updateConnectionStatus(false);
-      });
-      
-      // مراقبة اتصال Firebase
-      firebase.firestore().enableNetwork().catch(() => {});
-      
+      window.addEventListener('offline', () => updateConnectionStatus(false));
       setInterval(() => {
-        if (currentUser && !navigator.onLine) {
-          updateConnectionStatus(false);
-        } else if (currentUser && navigator.onLine) {
-          updateConnectionStatus(true);
-        }
+        if (currentUser && !navigator.onLine) updateConnectionStatus(false);
+        else if (currentUser && navigator.onLine) updateConnectionStatus(true);
       }, 5000);
-      
       updateConnectionStatus(navigator.onLine);
     }
 
-    // ========== عرض آخر ظهور ==========
     function formatTimeAgo(date) {
       if (!date) return 'غير معروف';
       const now = new Date();
-      const diff = (now - date) / 1000; // seconds
+      const diff = (now - date) / 1000;
       const rtf = new Intl.RelativeTimeFormat('ar', { numeric: 'auto' });
       if (diff < 60) return 'منذ لحظات';
       if (diff < 3600) return rtf.format(-Math.floor(diff / 60), 'minute');
@@ -1443,7 +1149,6 @@
       return rtf.format(-Math.floor(diff / 31536000), 'year');
     }
 
-    // ========== الدوال الأساسية ==========
     function getUserColorClass(userId) {
       if (!userColors.has(userId)) {
         userColors.set(userId, availableColors[colorIndex % availableColors.length]);
@@ -1452,13 +1157,9 @@
       return userColors.get(userId);
     }
 
-    function isAdmin(email) {
-      return email && ADMIN_EMAILS.includes(email);
-    }
+    function isAdmin(email) { return email && ADMIN_EMAILS.includes(email); }
 
-    function hideLoadingScreen() {
-      loadingScreen.classList.add('hidden');
-    }
+    function hideLoadingScreen() { loadingScreen.classList.add('hidden'); }
 
     function toggleTheme() {
       const html = document.documentElement;
@@ -1466,17 +1167,8 @@
       const newTheme = currentTheme === 'light' ? 'dark' : 'light';
       html.setAttribute('data-theme', newTheme);
       localStorage.setItem('chat-theme', newTheme);
-      // Update theme icons
       const sunIcons = document.querySelectorAll('.sun-icon');
-      const moonIcons = document.querySelectorAll('.moon-icon');
-      if (newTheme === 'dark') {
-        sunIcons.forEach(icon => icon.classList.replace('fa-sun', 'fa-moon'));
-        moonIcons.forEach(icon => icon.classList.replace('fa-moon', 'fa-sun'));
-      } else {
-        sunIcons.forEach(icon => icon.classList.replace('fa-moon', 'fa-sun'));
-        moonIcons.forEach(icon => icon.classList.replace('fa-sun', 'fa-moon'));
-      }
-      showToast(newTheme === 'dark' ? '🌙 تم تفعيل الوضع الليلي' : '🌞 تم تفعيل الوضع النهاري');
+      sunIcons.forEach(icon => icon.classList.toggle('fa-moon', newTheme === 'dark'));
     }
 
     function loadSavedTheme() {
@@ -1484,11 +1176,7 @@
       if (savedTheme) {
         document.documentElement.setAttribute('data-theme', savedTheme);
         const sunIcons = document.querySelectorAll('.sun-icon');
-        const moonIcons = document.querySelectorAll('.moon-icon');
-        if (savedTheme === 'dark') {
-          sunIcons.forEach(icon => icon.classList.replace('fa-sun', 'fa-moon'));
-          moonIcons.forEach(icon => icon.classList.replace('fa-moon', 'fa-sun'));
-        }
+        sunIcons.forEach(icon => icon.classList.toggle('fa-moon', savedTheme === 'dark'));
       }
     }
     loadSavedTheme();
@@ -1500,7 +1188,7 @@
         await userRef.update({ online: true, status: 'online', lastSeen: firebase.firestore.FieldValue.serverTimestamp(), lastActive: firebase.firestore.FieldValue.serverTimestamp() });
         userRef.onDisconnect().update({ online: false, status: 'offline', lastSeen: firebase.firestore.FieldValue.serverTimestamp() });
         window.addEventListener('beforeunload', () => userRef.update({ online: false, status: 'offline', lastSeen: firebase.firestore.FieldValue.serverTimestamp() }).catch(() => {}));
-      } catch (err) { console.error(err); }
+      } catch (err) {}
     }
 
     function setupActivityMonitor() {
@@ -1516,12 +1204,50 @@
           else if (Date.now() - lastActivity > 30000) { isAway = true; userRef.update({ status: 'away', online: true, lastActive: firebase.firestore.FieldValue.serverTimestamp() }).catch(() => {}); }
         }, 30000);
       }
-      ['mousedown', 'keydown', 'touchstart', 'mousemove', 'scroll'].forEach(ev => document.addEventListener(ev, updateLastActivity, { passive: true }));
+      ['mousedown','keydown','touchstart','mousemove','scroll'].forEach(ev => document.addEventListener(ev, updateLastActivity, { passive: true }));
       document.addEventListener('visibilitychange', () => { if (document.hidden) { clearTimeout(inactivityTimeout); isAway = true; userRef.update({ status: 'away', online: true, lastActive: firebase.firestore.FieldValue.serverTimestamp() }).catch(() => {}); } else updateLastActivity(); });
       updateLastActivity();
     }
 
-    // ========== إدارة عدد الرسائل غير المقروءة في Firestore ==========
+    let unsubscribeCurrentUser = null;
+    function listenToCurrentUser() {
+      if (!currentUser) return;
+      if (unsubscribeCurrentUser) unsubscribeCurrentUser();
+      unsubscribeCurrentUser = db.collection('users').doc(currentUser.uid).onSnapshot(doc => {
+        if (doc.exists) {
+          const data = doc.data();
+          if (data.username) currentUsername = data.username;
+          if (data.profileImage) setCachedAvatar(currentUser.uid, data.profileImage);
+          if (allUsers.length > 0) {
+            const idx = allUsers.findIndex(u => u.id === currentUser.uid);
+            if (idx !== -1) {
+              allUsers[idx].profileImage = data.profileImage || null;
+              allUsers[idx].username = data.username || currentUsername;
+            }
+            filterUsers(userSearchInput?.value || '');
+          }
+          refreshAvatarsInMessages();
+        }
+      });
+    }
+
+    function refreshAvatarsInMessages() {
+      document.querySelectorAll('.message-bubble.other').forEach(bubble => {
+        const uid = bubble.dataset.uid;
+        if (!uid) return;
+        const avatarSpan = bubble.querySelector('.message-sender-avatar');
+        if (!avatarSpan) return;
+        const cachedUrl = userAvatarsCache.get(uid);
+        if (cachedUrl) {
+          avatarSpan.style.backgroundImage = `url('${cachedUrl}')`;
+          avatarSpan.style.backgroundSize = 'cover';
+          avatarSpan.style.backgroundPosition = 'center';
+          avatarSpan.textContent = '';
+          avatarSpan.style.display = 'inline-block';
+        }
+      });
+    }
+
     async function updateUnreadCount(partnerId, increment = true) {
       if (!currentUser) return;
       const userMetaRef = db.collection('user_private_meta').doc(currentUser.uid);
@@ -1556,10 +1282,9 @@
       }).catch(() => {});
     }
 
-    // ========== تحميل الرسائل العامة مع ترقيم الصفحات ==========
     let publicMessagesQuery = null;
     let publicMessagesUnsubscribe = null;
-    let publicMessages = []; // store messages for pagination
+    let publicMessages = [];
     let hasMoreMessages = true;
 
     function loadPublicMessages(reset = true) {
@@ -1584,7 +1309,7 @@
           if (!msg.text && !msg.imageUrl) return;
           newMessages.push({ id: doc.id, ...msg });
         });
-        newMessages.reverse(); // order ascending
+        newMessages.reverse();
         if (reset) {
           publicMessages = newMessages;
           if (snapshot.docs.length === MESSAGES_LIMIT) {
@@ -1596,7 +1321,6 @@
             loadMoreContainer.style.display = 'none';
           }
         } else {
-          // prepend older messages
           publicMessages = [...newMessages, ...publicMessages];
           if (snapshot.docs.length === MESSAGES_LIMIT) {
             lastMessageSnapshot = snapshot.docs[snapshot.docs.length - 1];
@@ -1609,14 +1333,11 @@
         }
         renderPublicMessages();
         scrollToBottom(messagesDiv, reset);
-      }, error => {
-        console.error(error);
-      });
+      }, error => { console.error(error); });
     }
 
     function renderPublicMessages() {
       const wasNearBottom = messagesDiv.scrollHeight - messagesDiv.scrollTop - messagesDiv.clientHeight < 100;
-      // Keep load more button at top
       const loadMoreDiv = document.getElementById('loadMoreContainer');
       const existing = loadMoreDiv ? loadMoreDiv.cloneNode(true) : null;
       messagesDiv.innerHTML = '';
@@ -1655,7 +1376,6 @@
           loadMoreContainer.style.display = 'none';
         }
         renderPublicMessages();
-        // scroll to keep position
         const firstNewMsg = document.querySelector('.message-bubble');
         if (firstNewMsg) firstNewMsg.scrollIntoView({ block: 'start' });
       }
@@ -1671,7 +1391,8 @@
         const colorClass = getUserColorClass(msg.uid);
         messageDiv.classList.add(colorClass);
       }
-      messageDiv.dataset.messageId = msg.id; messageDiv.dataset.uid = msg.uid;
+      messageDiv.dataset.messageId = msg.id;
+      messageDiv.dataset.uid = msg.uid;
       let time = '';
       if (msg.createdAt?.toDate) {
         const d = msg.createdAt.toDate();
@@ -1679,12 +1400,26 @@
       }
       let content = '';
       if (!isOwn) {
-        let senderHtml = `<span class="message-sender" onclick="event.stopPropagation(); openUserProfile('${msg.uid}')">${escapeHtml(msg.username || 'مجهول')}`;
-        if (msg.email && isAdmin(msg.email)) {
-          senderHtml += ` <span class="admin-badge"><i class="fas fa-crown"></i> أدمن</span>`;
-        }
-        senderHtml += `</span>`;
+        const avatarUrl = userAvatarsCache.get(msg.uid);
+        const avatarHtml = avatarUrl
+          ? `<span class="message-sender-avatar" style="background-image:url('${escapeHtml(avatarUrl)}')"></span>`
+          : `<span class="message-sender-avatar" style="background:linear-gradient(135deg,#667eea,#764ba2);display:inline-flex;align-items:center;justify-content:center;color:white;font-size:0.7rem;">${(msg.username||'?').charAt(0).toUpperCase()}</span>`;
+        let senderHtml = `<div class="message-sender-wrapper">${avatarHtml}<span class="message-sender" onclick="event.stopPropagation(); openUserProfile('${msg.uid}')">${escapeHtml(msg.username || 'مجهول')}`;
+        if (msg.email && isAdmin(msg.email)) senderHtml += ` <span class="admin-badge"><i class="fas fa-crown"></i> أدمن</span>`;
+        senderHtml += `</span></div>`;
         content += senderHtml;
+        if (!avatarUrl) {
+          getUserAvatarUrl(msg.uid).then(url => {
+            const av = messageDiv.querySelector('.message-sender-avatar');
+            if (av && url) {
+              av.style.backgroundImage = `url('${url}')`;
+              av.style.backgroundSize = 'cover';
+              av.style.backgroundPosition = 'center';
+              av.textContent = '';
+              av.style.display = 'inline-block';
+            }
+          });
+        }
       }
       if (msg.replyTo) content += `<div style="background:rgba(0,0,0,0.1);padding:6px;border-radius:8px;margin-bottom:6px;font-size:0.8rem;"><i class="fas fa-reply"></i> ${escapeHtml(msg.replyTo.username)}: ${escapeHtml(msg.replyTo.text.substring(0,30))}</div>`;
       if (msg.text) content += `<div class="message-text">${escapeHtml(msg.text)}</div>`;
@@ -1697,7 +1432,6 @@
       timeHtml += `</div>`;
       content += timeHtml;
       messageDiv.innerHTML = content;
-      // load reactions only once (no listener)
       loadReactionsOnce(msg.id, messageDiv);
       return messageDiv;
     }
@@ -1732,24 +1466,19 @@
         const doc = await reactionRef.get();
         if (doc.exists && doc.data().reaction === reaction) await reactionRef.delete();
         else await reactionRef.set({ reaction: reaction, username: currentUsername, createdAt: firebase.firestore.FieldValue.serverTimestamp() });
-        // refresh reactions for this message
         const messageDiv = document.querySelector(`.message-bubble[data-message-id="${messageId}"]`);
         if (messageDiv) loadReactionsOnce(messageId, messageDiv);
       } catch (err) {}
     };
 
-    // ========== المحادثات الخاصة مع تأكيد القراءة ==========
     async function loadPrivateMessages(partnerUid) {
       if (unsubscribePrivate) unsubscribePrivate();
       const roomId = currentUser.uid < partnerUid ? currentUser.uid + '_' + partnerUid : partnerUid + '_' + currentUser.uid;
       currentPrivateRoomId = roomId;
-      // mark messages as read
       const unreadQuery = db.collection('private_messages').where('roomId', '==', roomId).where('uid', '==', partnerUid).where('read', '==', false);
       const unreadSnap = await unreadQuery.get();
       const batch = db.batch();
-      unreadSnap.forEach(doc => {
-        batch.update(doc.ref, { read: true });
-      });
+      unreadSnap.forEach(doc => batch.update(doc.ref, { read: true }));
       await batch.commit();
       await resetUnreadCount(partnerUid);
       unsubscribePrivate = db.collection('private_messages').where('roomId', '==', roomId).orderBy('createdAt', 'asc').onSnapshot(snapshot => {
@@ -1763,7 +1492,6 @@
           privateMessages.appendChild(messageDiv);
         });
         if (wasNearBottom) scrollToBottom(privateMessages, true);
-        // check for notifications only if chat not visible or partner not active
         const lastMsg = snapshot.docs[snapshot.docs.length - 1]?.data();
         if (lastMsg && lastMsg.uid !== currentUser?.uid && !(privatePage.classList.contains('show') && activePartner && activePartner.uid === partnerUid)) {
           sendNotification(`رسالة خاصة من ${lastMsg.username}`, lastMsg.text?.substring(0, 50) || '📷 صورة');
@@ -1779,7 +1507,8 @@
         const colorClass = getUserColorClass(msg.uid);
         messageDiv.classList.add(colorClass);
       }
-      messageDiv.dataset.messageId = id; messageDiv.dataset.uid = msg.uid;
+      messageDiv.dataset.messageId = id;
+      messageDiv.dataset.uid = msg.uid;
       let time = '';
       if (msg.createdAt?.toDate) {
         const d = msg.createdAt.toDate();
@@ -1787,12 +1516,26 @@
       }
       let content = '';
       if (!isOwn) {
-        let senderHtml = `<span class="message-sender" onclick="event.stopPropagation(); openUserProfile('${msg.uid}')">${escapeHtml(msg.username || 'مجهول')}`;
-        if (msg.email && isAdmin(msg.email)) {
-          senderHtml += ` <span class="admin-badge"><i class="fas fa-crown"></i> أدمن</span>`;
-        }
-        senderHtml += `</span>`;
+        const avatarUrl = userAvatarsCache.get(msg.uid);
+        const avatarHtml = avatarUrl
+          ? `<span class="message-sender-avatar" style="background-image:url('${escapeHtml(avatarUrl)}')"></span>`
+          : `<span class="message-sender-avatar" style="background:linear-gradient(135deg,#667eea,#764ba2);display:inline-flex;align-items:center;justify-content:center;color:white;font-size:0.7rem;">${(msg.username||'?').charAt(0).toUpperCase()}</span>`;
+        let senderHtml = `<div class="message-sender-wrapper">${avatarHtml}<span class="message-sender" onclick="event.stopPropagation(); openUserProfile('${msg.uid}')">${escapeHtml(msg.username || 'مجهول')}`;
+        if (msg.email && isAdmin(msg.email)) senderHtml += ` <span class="admin-badge"><i class="fas fa-crown"></i> أدمن</span>`;
+        senderHtml += `</span></div>`;
         content += senderHtml;
+        if (!avatarUrl) {
+          getUserAvatarUrl(msg.uid).then(url => {
+            const av = messageDiv.querySelector('.message-sender-avatar');
+            if (av && url) {
+              av.style.backgroundImage = `url('${url}')`;
+              av.style.backgroundSize = 'cover';
+              av.style.backgroundPosition = 'center';
+              av.textContent = '';
+              av.style.display = 'inline-block';
+            }
+          });
+        }
       }
       if (msg.text) content += `<div class="message-text">${escapeHtml(msg.text)}</div>`;
       if (msg.imageUrl) content += `<img src="${escapeHtml(msg.imageUrl)}" class="message-image" onclick="showFullImage('${escapeHtml(msg.imageUrl)}')">`;
@@ -1812,23 +1555,16 @@
       if (!text) return;
       const roomId = currentUser.uid < activePartner.uid ? currentUser.uid + '_' + activePartner.uid : activePartner.uid + '_' + currentUser.uid;
       const messageData = {
-        text: text,
-        username: currentUsername,
-        uid: currentUser.uid,
-        email: currentUser.email,
-        toUid: activePartner.uid,
-        roomId: roomId,
-        read: false,
-        createdAt: firebase.firestore.FieldValue.serverTimestamp()
+        text, username: currentUsername, uid: currentUser.uid,
+        email: currentUser.email, toUid: activePartner.uid, roomId,
+        read: false, createdAt: firebase.firestore.FieldValue.serverTimestamp()
       };
       await db.collection('private_messages').add(messageData);
-      // increment partner's unread count
       await updateUnreadCount(activePartner.uid, true);
       privateInput.value = '';
       scrollToBottom(privateMessages, true);
     };
 
-    // ========== إرسال الصور مع تعليق ==========
     window.sendImageMessage = async function() {
       if (!selectedImageFile || !currentUser) return;
       const caption = document.getElementById('imageCaption').value.trim();
@@ -1844,25 +1580,15 @@
         if (currentImageMessageContext === 'private' && activePartner) {
           const roomId = currentUser.uid < activePartner.uid ? currentUser.uid + '_' + activePartner.uid : activePartner.uid + '_' + currentUser.uid;
           await db.collection('private_messages').add({
-            imageUrl: data.secure_url,
-            username: currentUsername,
-            uid: currentUser.uid,
-            email: currentUser.email,
-            toUid: activePartner.uid,
-            roomId: roomId,
-            caption: caption,
-            read: false,
-            createdAt: firebase.firestore.FieldValue.serverTimestamp()
+            imageUrl: data.secure_url, username: currentUsername, uid: currentUser.uid,
+            email: currentUser.email, toUid: activePartner.uid, roomId,
+            caption, read: false, createdAt: firebase.firestore.FieldValue.serverTimestamp()
           });
           await updateUnreadCount(activePartner.uid, true);
         } else {
           await db.collection('messages').add({
-            imageUrl: data.secure_url,
-            username: currentUsername,
-            uid: currentUser.uid,
-            email: currentUser.email,
-            caption: caption,
-            createdAt: firebase.firestore.FieldValue.serverTimestamp()
+            imageUrl: data.secure_url, username: currentUsername, uid: currentUser.uid,
+            email: currentUser.email, caption, createdAt: firebase.firestore.FieldValue.serverTimestamp()
           });
         }
         showToast('✅ تم إرسال الصورة');
@@ -1881,7 +1607,6 @@
       document.getElementById('imageCaption').value = '';
     };
 
-    // ========== مؤشر الكتابة مع الطابع الزمني ==========
     function setupTypingListener() {
       if (unsubscribeTyping) unsubscribeTyping();
       unsubscribeTyping = db.collection('typing').onSnapshot(snapshot => {
@@ -1890,13 +1615,9 @@
         snapshot.forEach(doc => {
           const data = doc.data();
           if (doc.id !== currentUser?.uid && data.isTyping) {
-            const timestamp = data.timestamp?.toDate?.()?.getTime();
-            if (!timestamp || now - timestamp < 5000) {
-              typingUsers.push(data.username);
-            } else {
-              // clean up stale
-              db.collection('typing').doc(doc.id).delete().catch(() => {});
-            }
+            const ts = data.timestamp?.toDate?.()?.getTime();
+            if (!ts || now - ts < 5000) typingUsers.push(data.username);
+            else db.collection('typing').doc(doc.id).delete().catch(() => {});
           }
         });
         if (typingUsers.length > 0) {
@@ -1911,17 +1632,15 @@
       const roomId = currentUser.uid < activePartner.uid ? currentUser.uid + '_' + activePartner.uid : activePartner.uid + '_' + currentUser.uid;
       const unsubscribe = db.collection('private_typing').doc(roomId).onSnapshot(doc => {
         if (doc.exists && doc.data().isTyping && doc.data().uid !== currentUser.uid) {
-          const timestamp = doc.data().timestamp?.toDate?.()?.getTime();
-          if (!timestamp || Date.now() - timestamp < 5000) {
+          const ts = doc.data().timestamp?.toDate?.()?.getTime();
+          if (!ts || Date.now() - ts < 5000) {
             privateTypingText.textContent = `${doc.data().username} يكتب...`;
             privateTypingIndicator.style.display = 'flex';
           } else {
             privateTypingIndicator.style.display = 'none';
             db.collection('private_typing').doc(roomId).delete().catch(() => {});
           }
-        } else {
-          privateTypingIndicator.style.display = 'none';
-        }
+        } else privateTypingIndicator.style.display = 'none';
       });
       return unsubscribe;
     }
@@ -1931,8 +1650,7 @@
       if (!isTyping) {
         isTyping = true;
         db.collection('typing').doc(currentUser.uid).set({
-          username: currentUsername,
-          isTyping: true,
+          username: currentUsername, isTyping: true,
           timestamp: firebase.firestore.FieldValue.serverTimestamp()
         }).catch(() => {});
       }
@@ -1949,9 +1667,7 @@
       if (!isTyping) {
         isTyping = true;
         db.collection('private_typing').doc(roomId).set({
-          username: currentUsername,
-          uid: currentUser.uid,
-          isTyping: true,
+          username: currentUsername, uid: currentUser.uid, isTyping: true,
           timestamp: firebase.firestore.FieldValue.serverTimestamp()
         }).catch(() => {});
       }
@@ -1962,7 +1678,6 @@
       }, 2000);
     }
 
-    // ========== عرض قائمة المستخدمين مع البحث ==========
     let allUsers = [];
     async function renderUserList(usersArray) {
       allUsers = usersArray;
@@ -1972,17 +1687,14 @@
     function filterUsers(searchTerm) {
       const term = searchTerm.toLowerCase().trim();
       let filtered = allUsers;
-      if (term) {
-        filtered = allUsers.filter(u => u.username.toLowerCase().includes(term) || (u.email && u.email.toLowerCase().includes(term)));
-      }
+      if (term) filtered = allUsers.filter(u => u.username.toLowerCase().includes(term) || (u.email && u.email.toLowerCase().includes(term)));
       displayUsersList(filtered);
     }
 
     async function displayUsersList(usersArray) {
       const unreadCounts = await getUnreadCounts();
       let html = '';
-      let onlineCount = 0;
-      let awayCount = 0;
+      let onlineCount = 0, awayCount = 0;
       usersArray.forEach(user => {
         const unreadCount = unreadCounts[user.id] || 0;
         const initial = user.username.charAt(0).toUpperCase();
@@ -1993,15 +1705,13 @@
           else { onlineCount++; statusText = '🟢 متصل'; statusClass = 'online'; statusDot = '<span class="status-dot"></span>'; }
         } else {
           statusText = '🔴 غير متصل'; statusClass = 'offline'; statusDot = '<span class="status-dot offline"></span>';
-          if (user.lastSeen?.toDate) {
-            lastSeenText = formatTimeAgo(user.lastSeen.toDate());
-          }
+          if (user.lastSeen?.toDate) lastSeenText = formatTimeAgo(user.lastSeen.toDate());
         }
         const adminBadge = isAdmin(user.email) ? '<span class="admin-badge"><i class="fas fa-crown"></i> أدمن</span>' : '';
-        // Avatar background
         let avatarStyle = '';
         if (user.profileImage) {
           avatarStyle = `style="background-image: url('${escapeHtml(user.profileImage)}'); background-size: cover;"`;
+          setCachedAvatar(user.id, user.profileImage);
         }
         html += `<div class="user-item" onclick="openUserProfile('${user.id}')">
           <div class="user-avatar" ${avatarStyle}>${user.profileImage ? '' : initial}</div>
@@ -2025,21 +1735,19 @@
         snapshot.forEach(doc => {
           if (doc.id !== currentUser?.uid) {
             const data = doc.data();
-            if (data.username) users.push({ id: doc.id, ...data });
+            if (data.username) {
+              users.push({ id: doc.id, ...data });
+              if (data.profileImage) setCachedAvatar(doc.id, data.profileImage);
+            }
           }
         });
-        users.sort((a, b) => {
-          const aTime = a.lastActive?.toDate?.() || 0;
-          const bTime = b.lastActive?.toDate?.() || 0;
-          return bTime - aTime;
-        });
+        users.sort((a, b) => (b.lastActive?.toDate?.() || 0) - (a.lastActive?.toDate?.() || 0));
         renderUserList(users);
       }, error => {
         onlineList.innerHTML = '<div class="no-messages">خطأ في تحميل المستخدمين: ' + error.message + '</div>';
       });
     }
 
-    // ========== دوال الملف الشخصي ==========
     window.openMyProfile = async function() {
       if (!currentUser) return;
       const userDoc = await db.collection('users').doc(currentUser.uid).get();
@@ -2056,10 +1764,8 @@
           myProfileAvatar.style.backgroundImage = '';
           myProfileAvatar.innerHTML = '<i class="fas fa-camera"></i>';
         }
-        // stats
         const joinedDate = data.createdAt?.toDate();
         statJoined.textContent = joinedDate ? formatTimeAgo(joinedDate) : 'غير معروف';
-        // get message count
         const publicCount = await db.collection('messages').where('uid', '==', currentUser.uid).get();
         const privateCount = await db.collection('private_messages').where('uid', '==', currentUser.uid).get();
         statMessages.textContent = publicCount.size + privateCount.size;
@@ -2067,28 +1773,16 @@
       myProfileModal.classList.add('show');
     };
 
-    window.closeMyProfile = function() {
-      myProfileModal.classList.remove('show');
-    };
+    window.closeMyProfile = function() { myProfileModal.classList.remove('show'); };
 
     window.saveMyProfile = async function() {
       const newUsername = profileUsername.value.trim();
-      if (!newUsername) {
-        showToast('اسم المستخدم مطلوب', 'error');
-        return;
-      }
-      if (newUsername.length > 15) {
-        showToast('اسم المستخدم يجب ألا يزيد عن 15 حرف', 'error');
-        return;
-      }
-      // check availability if changed
+      if (!newUsername) { showToast('اسم المستخدم مطلوب', 'error'); return; }
+      if (newUsername.length > 15) { showToast('اسم المستخدم يجب ألا يزيد عن 15 حرف', 'error'); return; }
       const userDoc = await db.collection('users').doc(currentUser.uid).get();
       if (userDoc.exists && userDoc.data().username !== newUsername) {
         const existing = await db.collection('users').where('username', '==', newUsername).get();
-        if (!existing.empty) {
-          showToast('اسم المستخدم غير متاح', 'error');
-          return;
-        }
+        if (!existing.empty) { showToast('اسم المستخدم غير متاح', 'error'); return; }
       }
       const updateData = {
         username: newUsername,
@@ -2098,17 +1792,24 @@
       };
       await db.collection('users').doc(currentUser.uid).update(updateData);
       currentUsername = newUsername;
-      showToast('تم حفظ الملف الشخصي');
+      setCachedAvatar(currentUser.uid, userDoc.data()?.profileImage || null);
+      if (allUsers.length > 0) {
+        const idx = allUsers.findIndex(u => u.id === currentUser.uid);
+        if (idx !== -1) {
+          allUsers[idx].username = newUsername;
+          allUsers[idx].bio = profileBio.value;
+          allUsers[idx].statusMessage = profileStatusMessage.value;
+        }
+        filterUsers(userSearchInput?.value || '');
+      }
+      showToast('✅ تم حفظ التغييرات بنجاح');
       closeMyProfile();
     };
 
     profileImageInput.addEventListener('change', async function(e) {
       const file = e.target.files[0];
       if (!file) return;
-      if (file.size > 2 * 1024 * 1024) {
-        showToast('حجم الصورة يجب أن لا يتجاوز 2 ميجابايت', 'error');
-        return;
-      }
+      if (file.size > 2 * 1024 * 1024) { showToast('حجم الصورة يجب أن لا يتجاوز 2 ميجابايت', 'error'); return; }
       const formData = new FormData();
       formData.append('file', file);
       formData.append('upload_preset', UPLOAD_PRESET);
@@ -2120,18 +1821,14 @@
         myProfileAvatar.style.backgroundImage = `url('${data.secure_url}')`;
         myProfileAvatar.style.backgroundSize = 'cover';
         myProfileAvatar.innerHTML = '';
+        setCachedAvatar(currentUser.uid, data.secure_url);
         showToast('تم تحديث الصورة');
-      } catch (err) {
-        showToast('فشل رفع الصورة', 'error');
-      }
+      } catch (err) { showToast('فشل رفع الصورة', 'error'); }
     });
 
     window.openUserProfile = async function(userId) {
       if (!currentUser) return;
-      if (userId === currentUser.uid) {
-        openMyProfile();
-        return;
-      }
+      if (userId === currentUser.uid) { openMyProfile(); return; }
       currentProfileUserId = userId;
       const userDoc = await db.collection('users').doc(userId).get();
       if (userDoc.exists) {
@@ -2149,7 +1846,6 @@
         }
         const joinedDate = data.createdAt?.toDate();
         userProfileJoined.textContent = joinedDate ? formatTimeAgo(joinedDate) : 'غير معروف';
-        // get message count
         const publicCount = await db.collection('messages').where('uid', '==', userId).get();
         const privateCount = await db.collection('private_messages').where('uid', '==', userId).get();
         userProfileMessages.textContent = publicCount.size + privateCount.size;
@@ -2157,19 +1853,13 @@
       }
     };
 
-    window.closeUserProfile = function() {
-      userProfileModal.classList.remove('show');
-      currentProfileUserId = null;
-    };
+    window.closeUserProfile = function() { userProfileModal.classList.remove('show'); currentProfileUserId = null; };
 
     window.startPrivateChatFromProfile = function() {
       if (!currentProfileUserId) return;
       closeUserProfile();
-      // Get username
       db.collection('users').doc(currentProfileUserId).get().then(doc => {
-        if (doc.exists) {
-          openPrivateChatFromProfile(currentProfileUserId, doc.data().username);
-        }
+        if (doc.exists) openPrivateChatFromProfile(currentProfileUserId, doc.data().username);
       });
     };
 
@@ -2180,51 +1870,32 @@
       privatePage.classList.add('show');
       loadPrivateMessages(uid);
       if (unsubscribePartner) unsubscribePartner();
-      unsubscribePartner = db.collection('users').doc(uid).onSnapshot(doc => { 
-        if (doc.exists) { 
-          const data = doc.data(); 
-          if (data.online && data.status === 'online') { 
-            privateStatus.textContent = '🟢 متصل'; 
-            privateStatus.style.color = '#48bb78';
-            privateLastSeen.textContent = 'متصل الآن';
-          } else if (data.online && data.status === 'away') { 
-            privateStatus.textContent = '🟡 غير نشط'; 
-            privateStatus.style.color = '#ecc94b';
-            privateLastSeen.textContent = 'غير نشط حالياً';
-          } else { 
-            privateStatus.textContent = '🔴 غير متصل'; 
-            privateStatus.style.color = '#a0aec0';
-            privateLastSeen.textContent = formatTimeAgo(data.lastSeen?.toDate());
-          }
-        } 
+      unsubscribePartner = db.collection('users').doc(uid).onSnapshot(doc => {
+        if (doc.exists) {
+          const data = doc.data();
+          if (data.online && data.status === 'online') { privateStatus.textContent = '🟢 متصل'; privateStatus.style.color = '#48bb78'; privateLastSeen.textContent = 'متصل الآن'; }
+          else if (data.online && data.status === 'away') { privateStatus.textContent = '🟡 غير نشط'; privateStatus.style.color = '#ecc94b'; privateLastSeen.textContent = 'غير نشط حالياً'; }
+          else { privateStatus.textContent = '🔴 غير متصل'; privateStatus.style.color = '#a0aec0'; privateLastSeen.textContent = formatTimeAgo(data.lastSeen?.toDate()); }
+        }
       });
-      // setup private typing listener
       if (window._privateTypingUnsub) window._privateTypingUnsub();
       window._privateTypingUnsub = setupPrivateTypingListener();
     }
 
-    window.openPrivateChat = function(uid, username) {
-      openPrivateChatFromProfile(uid, username);
-    };
+    window.openPrivateChat = function(uid, username) { openPrivateChatFromProfile(uid, username); };
 
-    window.closePrivateChat = function() { 
-      activePartner = null; 
-      currentPrivateRoomId = null; 
-      privatePage.classList.remove('show'); 
-      if (unsubscribePrivate) unsubscribePrivate(); 
-      if (unsubscribePartner) unsubscribePartner(); 
-      if (window._privateTypingUnsub) window._privateTypingUnsub(); 
+    window.closePrivateChat = function() {
+      activePartner = null; currentPrivateRoomId = null; privatePage.classList.remove('show');
+      if (unsubscribePrivate) unsubscribePrivate();
+      if (unsubscribePartner) unsubscribePartner();
+      if (window._privateTypingUnsub) window._privateTypingUnsub();
       cancelReply();
     };
 
-    // ========== دوال البحث المحسنة ==========
     let currentSearchTerm = '';
     function searchMessages(term) {
       currentSearchTerm = term.trim();
-      if (!currentSearchTerm) {
-        clearSearchHighlights();
-        return;
-      }
+      if (!currentSearchTerm) { clearSearchHighlights(); return; }
       const msgs = document.querySelectorAll('.message-bubble');
       let found = false;
       msgs.forEach(msg => {
@@ -2232,42 +1903,26 @@
         if (text.toLowerCase().includes(currentSearchTerm.toLowerCase())) {
           msg.style.background = msg.classList.contains('own') ? 'linear-gradient(135deg, #8b5cf6, #7c3aed)' : '#fef3c7';
           msg.style.transform = 'scale(1.02)';
-          if (!found) {
-            msg.scrollIntoView({ behavior: 'smooth', block: 'center' });
-            found = true;
-          }
-        } else {
-          msg.style.background = '';
-          msg.style.transform = '';
-        }
+          if (!found) { msg.scrollIntoView({ behavior: 'smooth', block: 'center' }); found = true; }
+        } else { msg.style.background = ''; msg.style.transform = ''; }
       });
       if (!found) showToast('❌ لا توجد رسائل مطابقة', 'warning');
     }
 
     function clearSearchHighlights() {
-      document.querySelectorAll('.message-bubble').forEach(msg => {
-        msg.style.background = '';
-        msg.style.transform = '';
-      });
+      document.querySelectorAll('.message-bubble').forEach(msg => { msg.style.background = ''; msg.style.transform = ''; });
     }
 
     function closeSearch() {
-      searchBar.classList.remove('show');
-      searchInput.value = '';
-      currentSearchTerm = '';
-      clearSearchHighlights();
+      searchBar.classList.remove('show'); searchInput.value = ''; currentSearchTerm = ''; clearSearchHighlights();
     }
 
     function toggleSearch() {
-      searchBar.classList.toggle('show');
-      if (searchBar.classList.contains('show')) searchInput.focus();
+      searchBar.classList.toggle('show'); if (searchBar.classList.contains('show')) searchInput.focus();
     }
 
-    function toggleSidebar() {
-      document.querySelector('.users-sidebar').classList.toggle('show');
-    }
+    function toggleSidebar() { document.querySelector('.users-sidebar').classList.toggle('show'); }
 
-    // ========== دوال إضافية ==========
     function showToast(message, type = 'success') {
       const toast = document.createElement('div');
       toast.style.cssText = `position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:${type==='success'?'#48bb78':'#f56565'};color:white;padding:12px 24px;border-radius:50px;z-index:10000;animation:slideIn 0.3s ease;box-shadow:0 10px 30px rgba(0,0,0,0.2);font-weight:500;`;
@@ -2276,196 +1931,50 @@
       setTimeout(() => toast.remove(), 2000);
     }
 
-    function escapeHtml(unsafe) { if (!unsafe) return ''; return String(unsafe).replace(/[&<>]/g, function(m) { if (m === '&') return '&amp;'; if (m === '<') return '&lt;'; if (m === '>') return '&gt;'; return m; }).replace(/["']/g, function(m) { if (m === '"') return '&quot;'; return '&#039;'; }).replace(/`/g, '&#96;'); }
+    function escapeHtml(unsafe) { if (!unsafe) return ''; return String(unsafe).replace(/[&<>]/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;'}[m])).replace(/["']/g, m => ({'"':'&quot;',"'":'&#039;'}[m])).replace(/`/g,'&#96;'); }
 
     function scrollToBottom(element, force = false) {
       if (!element) return;
       if (scrollAnimationFrame) cancelAnimationFrame(scrollAnimationFrame);
       scrollAnimationFrame = requestAnimationFrame(() => {
-        const distanceFromBottom = element.scrollHeight - element.scrollTop - element.clientHeight;
-        if (distanceFromBottom < 150 || force) element.scrollTop = element.scrollHeight;
+        if (element.scrollHeight - element.scrollTop - element.clientHeight < 150 || force) element.scrollTop = element.scrollHeight;
         scrollAnimationFrame = null;
       });
     }
 
-    // ========== دوال المصادقة (مختصرة) ==========
     window.switchAuthTab = function(tab) {
-      if (tab === 'login') { loginTab.classList.add('active'); registerTab.classList.remove('active'); loginForm.style.display = 'block'; registerForm.style.display = 'none'; loginError.style.display = 'none'; registerError.style.display = 'none'; }
-      else { registerTab.classList.add('active'); loginTab.classList.remove('active'); registerForm.style.display = 'block'; loginForm.style.display = 'none'; loginError.style.display = 'none'; registerError.style.display = 'none'; }
+      if (tab === 'login') { loginTab.classList.add('active'); registerTab.classList.remove('active'); loginForm.style.display='block'; registerForm.style.display='none'; loginError.style.display='none'; registerError.style.display='none'; }
+      else { registerTab.classList.add('active'); loginTab.classList.remove('active'); registerForm.style.display='block'; loginForm.style.display='none'; loginError.style.display='none'; registerError.style.display='none'; }
     };
-    window.togglePasswordVisibility = function(inputId, button) { const input = document.getElementById(inputId), icon = button.querySelector('i'); if (input.type === 'password') { input.type = 'text'; icon.className = 'far fa-eye-slash'; } else { input.type = 'password'; icon.className = 'far fa-eye'; } };
-    window.validateEmail = function() { const emailVal = email.value.trim(), emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/; const isValid = emailRegex.test(emailVal); if (!emailVal) { emailValidation.style.display = 'none'; return false; } emailValidation.style.display = 'block'; if (isValid) { emailValidation.className = 'validation-message success'; emailValidation.innerHTML = '✅ البريد الإلكتروني صالح'; } else { emailValidation.className = 'validation-message error'; emailValidation.innerHTML = '❌ البريد الإلكتروني غير صالح'; } return isValid; };
-    window.validateLoginEmail = function() { const emailVal = loginEmail.value.trim(), emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/; const isValid = emailRegex.test(emailVal); if (!emailVal) { loginEmailValidation.style.display = 'none'; return false; } loginEmailValidation.style.display = 'block'; if (isValid) { loginEmailValidation.className = 'validation-message success'; loginEmailValidation.innerHTML = '✅ البريد الإلكتروني صالح'; } else { loginEmailValidation.className = 'validation-message error'; loginEmailValidation.innerHTML = '❌ البريد الإلكتروني غير صالح'; } return isValid; };
-    window.validatePassword = function() { const passVal = password.value; document.getElementById('req-length').style.color = passVal.length >= 8 ? '#48bb78' : 'var(--text-light)'; document.getElementById('req-capital').style.color = /[A-Z]/.test(passVal) ? '#48bb78' : 'var(--text-light)'; document.getElementById('req-number').style.color = /\d/.test(passVal) ? '#48bb78' : 'var(--text-light)'; document.getElementById('req-length').innerHTML = (passVal.length >= 8 ? '✅' : '❌') + ' 8 أحرف على الأقل'; document.getElementById('req-capital').innerHTML = (/[A-Z]/.test(passVal) ? '✅' : '❌') + ' حرف كبير (A-Z)'; document.getElementById('req-number').innerHTML = (/\d/.test(passVal) ? '✅' : '❌') + ' رقم (0-9)'; };
-    window.checkUsernameAvailability = async function() { const usernameVal = username.value.trim(); if (usernameVal.length > 15) { usernameCheck.innerHTML = '❌ اسم المستخدم طويل جداً (الحد الأقصى 15 حرف)'; usernameCheck.style.color = '#f56565'; return; } if (!usernameVal || usernameVal.length < 3) { usernameCheck.innerHTML = ''; return; } usernameCheck.innerHTML = '⏳ جاري التحقق...'; usernameCheck.style.color = 'var(--text-light)'; clearTimeout(window.usernameCheckTimeout); window.usernameCheckTimeout = setTimeout(async () => { try { const snapshot = await db.collection('users').where('username', '==', usernameVal).get(); if (snapshot.empty) { usernameCheck.innerHTML = '✅ اسم المستخدم متاح'; usernameCheck.style.color = '#48bb78'; } else { usernameCheck.innerHTML = '❌ اسم المستخدم غير متاح'; usernameCheck.style.color = '#f56565'; } } catch (error) { usernameCheck.innerHTML = ''; } }, 500); };
-    window.login = async function() { const emailVal = loginEmail.value.trim(), passVal = loginPassword.value.trim(); if (loginError) loginError.style.display = 'none'; if (!emailVal || !passVal) { if (loginError) { loginError.style.display = 'block'; loginError.textContent = '❌ الرجاء إدخال البريد وكلمة المرور'; } return; } if (!validateLoginEmail()) { if (loginError) { loginError.style.display = 'block'; loginError.textContent = '❌ البريد الإلكتروني غير صالح'; } return; } try { const result = await auth.signInWithEmailAndPassword(emailVal, passVal); if (!result.user.emailVerified) { if (loginError) { loginError.style.display = 'block'; loginError.textContent = '⚠️ لم يتم تفعيل بريدك الإلكتروني بعد. الرجاء التحقق من بريدك الإلكتروني'; } await auth.signOut(); return; } } catch (error) { if (loginError) { loginError.style.display = 'block'; switch (error.code) { case 'auth/user-not-found': loginError.textContent = '❌ لا يوجد حساب بهذا البريد الإلكتروني'; break; case 'auth/wrong-password': loginError.textContent = '❌ كلمة المرور غير صحيحة'; break; case 'auth/invalid-email': loginError.textContent = '❌ البريد الإلكتروني غير صالح'; break; case 'auth/too-many-requests': loginError.textContent = '❌ تم تعطيل الحساب مؤقتاً بسبب محاولات كثيرة'; break; default: loginError.textContent = '❌ خطأ في تسجيل الدخول: ' + error.message; } } } };
-    window.register = async function() { 
-      const emailVal = email.value.trim(), passVal = password.value.trim(), userVal = username.value.trim(); 
-      if (registerError) registerError.style.display = 'none'; 
-      if (!emailVal || !passVal || !userVal) { 
-        if (registerError) { registerError.style.display = 'block'; registerError.textContent = '❌ الرجاء ملء جميع الحقول'; } 
-        return; 
-      } 
-      if (userVal.length > 15) { 
-        if (registerError) { registerError.style.display = 'block'; registerError.textContent = '❌ اسم المستخدم يجب ألا يزيد عن 15 حرف'; } 
-        return; 
-      } 
-      if (!validateEmail()) { 
-        if (registerError) { registerError.style.display = 'block'; registerError.textContent = '❌ البريد الإلكتروني غير صالح'; } 
-        return; 
-      } 
-      if (passVal.length < 8 || !/[A-Z]/.test(passVal) || !/\d/.test(passVal)) { 
-        if (registerError) { registerError.style.display = 'block'; registerError.textContent = '❌ كلمة المرور يجب أن تحتوي على 8 أحرف على الأقل، حرف كبير ورقم'; } 
-        return; 
-      } 
-      if (usernameCheck.innerHTML.includes('غير متاح') || usernameCheck.innerHTML.includes('طويل جداً')) { 
-        if (registerError) { registerError.style.display = 'block'; registerError.textContent = '❌ اسم المستخدم غير صالح'; } 
-        return; 
-      } 
-      try { 
-        const result = await auth.createUserWithEmailAndPassword(emailVal, passVal); 
-        await result.user.sendEmailVerification(); 
-        await db.collection('users').doc(result.user.uid).set({ 
-          username: userVal, email: emailVal, online: false, status: 'offline', 
-          emailVerified: false, createdAt: firebase.firestore.FieldValue.serverTimestamp(), 
-          lastSeen: firebase.firestore.FieldValue.serverTimestamp(), 
-          lastActive: firebase.firestore.FieldValue.serverTimestamp(),
-          bio: '', statusMessage: ''
-        }); 
-        verificationEmailSpan.textContent = emailVal;
-        verificationModal.classList.add('show');
-        await auth.signOut();
-        switchAuthTab('login'); 
-        loginEmail.value = emailVal;
-      } catch (error) { 
-        if (registerError) { 
-          registerError.style.display = 'block'; 
-          switch (error.code) { 
-            case 'auth/email-already-in-use': registerError.textContent = '❌ هذا البريد الإلكتروني مستخدم بالفعل'; break; 
-            case 'auth/invalid-email': registerError.textContent = '❌ البريد الإلكتروني غير صالح'; break; 
-            case 'auth/weak-password': registerError.textContent = '❌ كلمة المرور ضعيفة جداً'; break; 
-            default: registerError.textContent = '❌ خطأ: ' + error.message; 
-          } 
-        } 
-      } 
-    };
-    window.hideVerificationModal = function() {
-      verificationModal.classList.remove('show');
-    };
-    window.googleLogin = async function() { 
-      try { 
-        const result = await auth.signInWithPopup(googleProvider); 
-        const email = result.user.email; 
-        const usernameFromEmail = email.split('@')[0].substring(0, 15); 
-        await db.collection('users').doc(result.user.uid).set({ 
-          username: usernameFromEmail, 
-          email: email, 
-          online: true, 
-          status: 'online', 
-          emailVerified: true, 
-          lastSeen: firebase.firestore.FieldValue.serverTimestamp(), 
-          lastActive: firebase.firestore.FieldValue.serverTimestamp(),
-          bio: '', statusMessage: ''
-        }, { merge: true }); 
-      } catch (error) { 
-        showToast('❌ خطأ في تسجيل الدخول بحساب Google', 'error'); 
-      } 
-    };
-    window.logout = async function() { 
-      try { 
-        if (currentUser) { 
-          await db.collection('users').doc(currentUser.uid).update({ online: false, status: 'offline', lastSeen: firebase.firestore.FieldValue.serverTimestamp() }); 
-          if (unsubscribePublic) unsubscribePublic(); 
-          if (unsubscribePrivate) unsubscribePrivate(); 
-          if (unsubscribeOnline) unsubscribeOnline(); 
-          if (unsubscribePartner) unsubscribePartner(); 
-          if (unsubscribeTyping) unsubscribeTyping(); 
-          await db.collection('typing').doc(currentUser.uid).delete().catch(() => {}); 
-        } 
-        await auth.signOut(); 
-        currentUser = null; 
-        currentUsername = ''; 
-        activePartner = null; 
-        chatDiv.style.display = 'none'; 
-        authDiv.style.display = 'flex'; 
-        privatePage.classList.remove('show'); 
-        cancelReply();
-        showToast('✅ تم تسجيل الخروج بنجاح'); 
-      } catch (error) { 
-        showToast('❌ خطأ في تسجيل الخروج', 'error'); 
-      } 
-    };
+    window.togglePasswordVisibility = function(inputId, button) { const input=document.getElementById(inputId), icon=button.querySelector('i'); if(input.type==='password'){input.type='text';icon.className='far fa-eye-slash';}else{input.type='password';icon.className='far fa-eye';} };
+    window.validateEmail = function() { const val=email.value.trim(), re=/^[^\s@]+@[^\s@]+\.[^\s@]+$/; if(!val){emailValidation.style.display='none';return false;} emailValidation.style.display='block'; if(re.test(val)){emailValidation.className='validation-message success';emailValidation.innerHTML='✅ البريد الإلكتروني صالح';return true;} else{emailValidation.className='validation-message error';emailValidation.innerHTML='❌ البريد الإلكتروني غير صالح';return false;} };
+    window.validateLoginEmail = function() { const val=loginEmail.value.trim(), re=/^[^\s@]+@[^\s@]+\.[^\s@]+$/; if(!val){loginEmailValidation.style.display='none';return false;} loginEmailValidation.style.display='block'; if(re.test(val)){loginEmailValidation.className='validation-message success';loginEmailValidation.innerHTML='✅ البريد الإلكتروني صالح';return true;} else{loginEmailValidation.className='validation-message error';loginEmailValidation.innerHTML='❌ البريد الإلكتروني غير صالح';return false;} };
+    window.validatePassword = function() { const val=password.value; document.getElementById('req-length').style.color=val.length>=8?'#48bb78':'var(--text-light)'; document.getElementById('req-capital').style.color=/[A-Z]/.test(val)?'#48bb78':'var(--text-light)'; document.getElementById('req-number').style.color=/\d/.test(val)?'#48bb78':'var(--text-light)'; };
+    window.checkUsernameAvailability = async function() { const val=username.value.trim(); if(val.length>15){usernameCheck.innerHTML='❌ اسم المستخدم طويل جداً (الحد الأقصى 15 حرف)';usernameCheck.style.color='#f56565';return;} if(!val||val.length<3){usernameCheck.innerHTML='';return;} usernameCheck.innerHTML='⏳ جاري التحقق...';usernameCheck.style.color='var(--text-light)';clearTimeout(window.usernameCheckTimeout); window.usernameCheckTimeout=setTimeout(async()=>{ const snap=await db.collection('users').where('username','==',val).get(); if(snap.empty){usernameCheck.innerHTML='✅ اسم المستخدم متاح';usernameCheck.style.color='#48bb78';}else{usernameCheck.innerHTML='❌ اسم المستخدم غير متاح';usernameCheck.style.color='#f56565';} },500); };
+    window.login = async function() { const emailVal=loginEmail.value.trim(), passVal=loginPassword.value.trim(); loginError.style.display='none'; if(!emailVal||!passVal){loginError.style.display='block';loginError.textContent='❌ الرجاء إدخال البريد وكلمة المرور';return;} if(!validateLoginEmail()){loginError.style.display='block';loginError.textContent='❌ البريد الإلكتروني غير صالح';return;} try{ const res=await auth.signInWithEmailAndPassword(emailVal,passVal); if(!res.user.emailVerified){loginError.style.display='block';loginError.textContent='⚠️ لم يتم تفعيل بريدك الإلكتروني بعد. الرجاء التحقق من بريدك الإلكتروني';await auth.signOut();return;} }catch(e){ loginError.style.display='block'; switch(e.code){case'auth/user-not-found':loginError.textContent='❌ لا يوجد حساب بهذا البريد الإلكتروني';break; case'auth/wrong-password':loginError.textContent='❌ كلمة المرور غير صحيحة';break; case'auth/invalid-email':loginError.textContent='❌ البريد الإلكتروني غير صالح';break; case'auth/too-many-requests':loginError.textContent='❌ تم تعطيل الحساب مؤقتاً بسبب محاولات كثيرة';break; default:loginError.textContent='❌ خطأ في تسجيل الدخول: '+e.message;} } };
+    window.register = async function() { const emailVal=email.value.trim(), passVal=password.value.trim(), userVal=username.value.trim(); registerError.style.display='none'; if(!emailVal||!passVal||!userVal){registerError.style.display='block';registerError.textContent='❌ الرجاء ملء جميع الحقول';return;} if(userVal.length>15){registerError.style.display='block';registerError.textContent='❌ اسم المستخدم يجب ألا يزيد عن 15 حرف';return;} if(!validateEmail()){registerError.style.display='block';registerError.textContent='❌ البريد الإلكتروني غير صالح';return;} if(passVal.length<8||!/[A-Z]/.test(passVal)||!/\d/.test(passVal)){registerError.style.display='block';registerError.textContent='❌ كلمة المرور يجب أن تحتوي على 8 أحرف على الأقل، حرف كبير ورقم';return;} if(usernameCheck.innerHTML.includes('غير متاح')||usernameCheck.innerHTML.includes('طويل جداً')){registerError.style.display='block';registerError.textContent='❌ اسم المستخدم غير صالح';return;} try{ const res=await auth.createUserWithEmailAndPassword(emailVal,passVal); await res.user.sendEmailVerification(); await db.collection('users').doc(res.user.uid).set({ username:userVal, email:emailVal, online:false, status:'offline', emailVerified:false, createdAt:firebase.firestore.FieldValue.serverTimestamp(), lastSeen:firebase.firestore.FieldValue.serverTimestamp(), lastActive:firebase.firestore.FieldValue.serverTimestamp(), bio:'', statusMessage:'' }); verificationEmailSpan.textContent=emailVal; verificationModal.classList.add('show'); await auth.signOut(); switchAuthTab('login'); loginEmail.value=emailVal; }catch(e){ registerError.style.display='block'; switch(e.code){case'auth/email-already-in-use':registerError.textContent='❌ هذا البريد الإلكتروني مستخدم بالفعل';break; case'auth/invalid-email':registerError.textContent='❌ البريد الإلكتروني غير صالح';break; case'auth/weak-password':registerError.textContent='❌ كلمة المرور ضعيفة جداً';break; default:registerError.textContent='❌ خطأ: '+e.message;} } };
+    window.hideVerificationModal = function() { verificationModal.classList.remove('show'); };
+    window.googleLogin = async function() { try{ const res=await auth.signInWithPopup(googleProvider); const email=res.user.email; const usernameFromEmail=email.split('@')[0].substring(0,15); await db.collection('users').doc(res.user.uid).set({ username:usernameFromEmail, email:email, online:true, status:'online', emailVerified:true, lastSeen:firebase.firestore.FieldValue.serverTimestamp(), lastActive:firebase.firestore.FieldValue.serverTimestamp(), bio:'', statusMessage:'' },{merge:true}); }catch(e){ showToast('❌ خطأ في تسجيل الدخول بحساب Google','error'); } };
+    window.logout = async function() { try{ if(currentUser){ await db.collection('users').doc(currentUser.uid).update({ online:false, status:'offline', lastSeen:firebase.firestore.FieldValue.serverTimestamp() }); if(unsubscribePublic)unsubscribePublic(); if(unsubscribePrivate)unsubscribePrivate(); if(unsubscribeOnline)unsubscribeOnline(); if(unsubscribePartner)unsubscribePartner(); if(unsubscribeTyping)unsubscribeTyping(); await db.collection('typing').doc(currentUser.uid).delete().catch(()=>{}); } await auth.signOut(); currentUser=null; currentUsername=''; activePartner=null; chatDiv.style.display='none'; authDiv.style.display='flex'; privatePage.classList.remove('show'); cancelReply(); showToast('✅ تم تسجيل الخروج بنجاح'); }catch(e){ showToast('❌ خطأ في تسجيل الخروج','error'); } };
 
-    // ========== دوال المحادثة العامة ==========
-    function sendWithReply() { if (!currentUser) return; const text = messageInput.value.trim(); if (!text) return; let messageData = { text: text, username: currentUsername, uid: currentUser.uid, email: currentUser.email, createdAt: firebase.firestore.FieldValue.serverTimestamp() }; if (replyingTo) messageData.replyTo = replyingTo; db.collection('messages').add(messageData).then(() => { messageInput.value = ''; cancelReply(); scrollToBottom(messagesDiv, true); }).catch(() => showToast('❌ فشل الإرسال', 'error')); }
-    function cancelReply() { replyingTo = null; replyIndicator.style.display = 'none'; }
-    function setReply(messageId, messageText, username) { replyingTo = { id: messageId, text: messageText, username: username }; replyToName.textContent = username; replyText.textContent = messageText.substring(0,30) + (messageText.length>30?'...':''); replyIndicator.style.display = 'flex'; }
-    window.showFullImage = function(url) { document.getElementById('fullImage').src = url; document.getElementById('fullImageModal').classList.add('show'); };
-    window.handleAdvancedImageSelect = function(file) { if (!file) return; if (file.size > 5*1024*1024) { showToast('❌ حجم الصورة كبير جداً (الحد الأقصى 5 ميجابايت)', 'error'); return; } if (!file.type.startsWith('image/')) { showToast('❌ الملف المحدد ليس صورة', 'error'); return; } const reader = new FileReader(); reader.onload = function(e) { selectedImageFile = file; document.getElementById('imagePreview').src = e.target.result; document.getElementById('imagePreviewContainer').classList.add('show'); currentImageMessageContext = privatePage.classList.contains('show') ? 'private' : 'public'; }; reader.readAsDataURL(file); };
-    document.getElementById('imageFileInput').addEventListener('change', function(e) { window.handleAdvancedImageSelect(e.target.files[0]); });
-    window.showForgotPasswordModal = function() { forgotPasswordModal.classList.add('show'); resetEmail.value = ''; resetEmailValidation.style.display = 'none'; forgotPasswordMessage.innerHTML = ''; resetLoading.style.display = 'none'; };
+    function sendWithReply() { if(!currentUser)return; const text=messageInput.value.trim(); if(!text)return; let messageData={text,username:currentUsername,uid:currentUser.uid,email:currentUser.email,createdAt:firebase.firestore.FieldValue.serverTimestamp()}; if(replyingTo)messageData.replyTo=replyingTo; db.collection('messages').add(messageData).then(()=>{ messageInput.value=''; cancelReply(); scrollToBottom(messagesDiv,true); }).catch(()=>showToast('❌ فشل الإرسال','error')); }
+    function cancelReply() { replyingTo=null; replyIndicator.style.display='none'; }
+    function setReply(messageId,messageText,username) { replyingTo={id:messageId,text:messageText,username}; replyToName.textContent=username; replyText.textContent=messageText.substring(0,30)+(messageText.length>30?'...':''); replyIndicator.style.display='flex'; }
+    window.showFullImage = function(url) { document.getElementById('fullImage').src=url; document.getElementById('fullImageModal').classList.add('show'); };
+    window.handleAdvancedImageSelect = function(file) { if(!file)return; if(file.size>5*1024*1024){showToast('❌ حجم الصورة كبير جداً (الحد الأقصى 5 ميجابايت)','error');return;} if(!file.type.startsWith('image/')){showToast('❌ الملف المحدد ليس صورة','error');return;} const reader=new FileReader(); reader.onload=function(e){ selectedImageFile=file; document.getElementById('imagePreview').src=e.target.result; document.getElementById('imagePreviewContainer').classList.add('show'); currentImageMessageContext=privatePage.classList.contains('show')?'private':'public'; }; reader.readAsDataURL(file); };
+    document.getElementById('imageFileInput').addEventListener('change',function(e){ window.handleAdvancedImageSelect(e.target.files[0]); });
+    window.showForgotPasswordModal = function() { forgotPasswordModal.classList.add('show'); resetEmail.value=''; resetEmailValidation.style.display='none'; forgotPasswordMessage.innerHTML=''; resetLoading.style.display='none'; };
     window.hideForgotPasswordModal = function() { forgotPasswordModal.classList.remove('show'); };
-    window.validateResetEmail = function() { const emailVal = resetEmail.value.trim(), emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/; const isValid = emailRegex.test(emailVal); if (!emailVal) { resetEmailValidation.style.display = 'none'; return false; } resetEmailValidation.style.display = 'block'; if (isValid) { resetEmailValidation.className = 'validation-message success'; resetEmailValidation.innerHTML = '✅ البريد الإلكتروني صالح'; } else { resetEmailValidation.className = 'validation-message error'; resetEmailValidation.innerHTML = '❌ البريد الإلكتروني غير صالح'; } return isValid; };
+    window.validateResetEmail = function() { const val=resetEmail.value.trim(), re=/^[^\s@]+@[^\s@]+\.[^\s@]+$/; if(!val){resetEmailValidation.style.display='none';return false;} resetEmailValidation.style.display='block'; if(re.test(val)){resetEmailValidation.className='validation-message success';resetEmailValidation.innerHTML='✅ البريد الإلكتروني صالح';return true;}else{resetEmailValidation.className='validation-message error';resetEmailValidation.innerHTML='❌ البريد الإلكتروني غير صالح';return false;} };
     resetEmail.addEventListener('input', validateResetEmail);
-    
-    // ========== دالة إرسال رابط استعادة كلمة المرور مع مؤقت 5 دقائق ==========
-    window.sendPasswordReset = async function() { 
-      const emailVal = resetEmail.value.trim(); 
-      if (!emailVal) { 
-        forgotPasswordMessage.innerHTML = '❌ الرجاء إدخال البريد الإلكتروني'; 
-        forgotPasswordMessage.style.color = '#f56565'; 
-        return; 
-      } 
-      if (!validateResetEmail()) return;
-      
-      // التحقق من آخر محاولة إرسال لهذا البريد
-      const storageKey = 'last_reset_' + emailVal;
-      const lastResetTime = localStorage.getItem(storageKey);
-      if (lastResetTime) {
-        const elapsed = Date.now() - parseInt(lastResetTime);
-        const cooldownPeriod = 5 * 60 * 1000; // 5 دقائق
-        if (elapsed < cooldownPeriod) {
-          const remainingMinutes = Math.ceil((cooldownPeriod - elapsed) / 60000);
-          forgotPasswordMessage.innerHTML = `⏳ يرجى الانتظار ${remainingMinutes} دقيقة قبل إعادة المحاولة`;
-          forgotPasswordMessage.style.color = '#f59e0b';
-          return;
-        }
-      }
-      
-      resetLoading.style.display = 'block'; 
-      sendResetBtn.disabled = true; 
-      cancelResetBtn.disabled = true; 
-      try { 
-        await auth.sendPasswordResetEmail(emailVal); 
-        // حفظ وقت الإرسال الحالي
-        localStorage.setItem(storageKey, Date.now().toString());
-        forgotPasswordMessage.innerHTML = '✅ تم إرسال رابط إعادة التعيين إلى بريدك الإلكتروني'; 
-        forgotPasswordMessage.style.color = '#48bb78'; 
-        setTimeout(() => hideForgotPasswordModal(), 3000); 
-      } catch (error) { 
-        let errorMessage = ''; 
-        switch (error.code) { 
-          case 'auth/user-not-found': errorMessage = '❌ لا يوجد حساب بهذا البريد الإلكتروني'; break; 
-          case 'auth/invalid-email': errorMessage = '❌ البريد الإلكتروني غير صالح'; break; 
-          case 'auth/too-many-requests': errorMessage = '❌ تم إرسال العديد من الطلبات. الرجاء المحاولة لاحقاً'; break; 
-          default: errorMessage = '❌ حدث خطأ: ' + error.message; 
-        } 
-        forgotPasswordMessage.innerHTML = errorMessage; 
-        forgotPasswordMessage.style.color = '#f56565'; 
-      } finally { 
-        resetLoading.style.display = 'none'; 
-        sendResetBtn.disabled = false; 
-        cancelResetBtn.disabled = false; 
-      } 
-    };
+    window.sendPasswordReset = async function() { const emailVal=resetEmail.value.trim(); if(!emailVal){forgotPasswordMessage.innerHTML='❌ الرجاء إدخال البريد الإلكتروني';forgotPasswordMessage.style.color='#f56565';return;} if(!validateResetEmail())return; resetLoading.style.display='block'; sendResetBtn.disabled=true; cancelResetBtn.disabled=true; try{ await auth.sendPasswordResetEmail(emailVal); forgotPasswordMessage.innerHTML='✅ تم إرسال رابط إعادة التعيين إلى بريدك الإلكتروني'; forgotPasswordMessage.style.color='#48bb78'; setTimeout(()=>hideForgotPasswordModal(),3000); }catch(e){ let msg=''; switch(e.code){case'auth/user-not-found':msg='❌ لا يوجد حساب بهذا البريد الإلكتروني';break; case'auth/invalid-email':msg='❌ البريد الإلكتروني غير صالح';break; case'auth/too-many-requests':msg='❌ تم إرسال العديد من الطلبات. الرجاء المحاولة لاحقاً';break; default:msg='❌ حدث خطأ: '+e.message;} forgotPasswordMessage.innerHTML=msg; forgotPasswordMessage.style.color='#f56565'; }finally{ resetLoading.style.display='none'; sendResetBtn.disabled=false; cancelResetBtn.disabled=false; } };
     window.copyMessage = function(text) { navigator.clipboard.writeText(text); showToast('✅ تم النسخ'); };
-    window.deleteMessage = async function(messageId) { if (!currentUser) { showToast('❌ يجب تسجيل الدخول أولاً', 'error'); return; } try { const msgDoc = await db.collection('messages').doc(messageId).get(); if (!msgDoc.exists) { showToast('❌ الرسالة غير موجودة', 'error'); return; } const msgData = msgDoc.data(); if (msgData.uid !== currentUser.uid) { showToast('❌ لا يمكنك حذف رسائل الآخرين', 'error'); return; } if (confirm('هل أنت متأكد من حذف هذه الرسالة؟')) { await db.collection('messages').doc(messageId).delete(); showToast('✅ تم حذف الرسالة'); } } catch (err) { showToast('❌ فشل الحذف', 'error'); } };
-    document.addEventListener('contextmenu', function(e) { const messageElement = e.target.closest('.message-bubble'); if (!messageElement || !currentUser) return; e.preventDefault(); const messageId = messageElement.dataset.messageId; const messageText = messageElement.querySelector('.message-text')?.textContent || ''; const senderName = messageElement.querySelector('.message-sender')?.textContent || ''; const messageOwnerId = messageElement.dataset.uid; const menu = document.createElement('div'); menu.style.cssText = `position:fixed;left:${e.pageX}px;top:${e.pageY}px;background:var(--bg-white);border-radius:12px;box-shadow:0 10px 30px var(--shadow-color);padding:5px;z-index:10000;border:1px solid var(--border-color);`; let menuHTML = `<button onclick="copyMessage('${escapeHtml(messageText)}')" style="display:block;width:100%;padding:8px 16px;border:none;background:none;text-align:right;cursor:pointer;border-radius:8px;color:var(--text-primary);"><i class="fas fa-copy"></i> نسخ</button><button onclick="setReply('${messageId}', '${escapeHtml(messageText)}', '${escapeHtml(senderName)}')" style="display:block;width:100%;padding:8px 16px;border:none;background:none;text-align:right;cursor:pointer;border-radius:8px;color:var(--text-primary);"><i class="fas fa-reply"></i> رد</button>`; if (messageOwnerId === currentUser.uid) menuHTML += `<button onclick="deleteMessage('${messageId}')" style="display:block;width:100%;padding:8px 16px;border:none;background:none;text-align:right;cursor:pointer;border-radius:8px;color:#f56565;"><i class="fas fa-trash"></i> حذف</button>`; menu.innerHTML = menuHTML; document.body.appendChild(menu); setTimeout(() => { document.addEventListener('click', function removeMenu() { menu.remove(); document.removeEventListener('click', removeMenu); }, { once: true }); }, 100); });
-    messageInput.addEventListener('keypress', e => { if (e.key === 'Enter') { e.preventDefault(); sendWithReply(); } });
-    privateInput.addEventListener('keypress', e => { if (e.key === 'Enter') { e.preventDefault(); sendPrivateMessage(); } });
-    document.addEventListener('click', (e) => { if (!e.target.closest('.users-sidebar') && !e.target.closest('[onclick="toggleSidebar()"]')) document.querySelector('.users-sidebar').classList.remove('show'); });
+    window.deleteMessage = async function(messageId) { if(!currentUser){showToast('❌ يجب تسجيل الدخول أولاً','error');return;} try{ const msgDoc=await db.collection('messages').doc(messageId).get(); if(!msgDoc.exists){showToast('❌ الرسالة غير موجودة','error');return;} if(msgDoc.data().uid!==currentUser.uid){showToast('❌ لا يمكنك حذف رسائل الآخرين','error');return;} if(confirm('هل أنت متأكد من حذف هذه الرسالة؟')){await db.collection('messages').doc(messageId).delete();showToast('✅ تم حذف الرسالة');} }catch(e){showToast('❌ فشل الحذف','error');} };
+    document.addEventListener('contextmenu', function(e) { const msgEl=e.target.closest('.message-bubble'); if(!msgEl||!currentUser)return; e.preventDefault(); const messageId=msgEl.dataset.messageId, messageText=msgEl.querySelector('.message-text')?.textContent||'', senderName=msgEl.querySelector('.message-sender')?.textContent||'', ownerId=msgEl.dataset.uid; const menu=document.createElement('div'); menu.style.cssText=`position:fixed;left:${e.pageX}px;top:${e.pageY}px;background:var(--bg-white);border-radius:12px;box-shadow:0 10px 30px var(--shadow-color);padding:5px;z-index:10000;border:1px solid var(--border-color);`; let html=`<button onclick="copyMessage('${escapeHtml(messageText)}')" style="display:block;width:100%;padding:8px 16px;border:none;background:none;text-align:right;cursor:pointer;border-radius:8px;color:var(--text-primary);"><i class="fas fa-copy"></i> نسخ</button><button onclick="setReply('${messageId}','${escapeHtml(messageText)}','${escapeHtml(senderName)}')" style="display:block;width:100%;padding:8px 16px;border:none;background:none;text-align:right;cursor:pointer;border-radius:8px;color:var(--text-primary);"><i class="fas fa-reply"></i> رد</button>`; if(ownerId===currentUser.uid)html+=`<button onclick="deleteMessage('${messageId}')" style="display:block;width:100%;padding:8px 16px;border:none;background:none;text-align:right;cursor:pointer;border-radius:8px;color:#f56565;"><i class="fas fa-trash"></i> حذف</button>`; menu.innerHTML=html; document.body.appendChild(menu); setTimeout(()=>document.addEventListener('click',function rm(){menu.remove();document.removeEventListener('click',rm);},{once:true}),100); });
+    messageInput.addEventListener('keypress', e => { if(e.key==='Enter'){e.preventDefault();sendWithReply();} });
+    privateInput.addEventListener('keypress', e => { if(e.key==='Enter'){e.preventDefault();sendPrivateMessage();} });
+    document.addEventListener('click', (e) => { if(!e.target.closest('.users-sidebar')&&!e.target.closest('[onclick="toggleSidebar()"]'))document.querySelector('.users-sidebar').classList.remove('show'); });
 
-    // ========== مراقبة حالة المصادقة ==========
     auth.onAuthStateChanged(async (user) => {
       if (user && user.emailVerified) {
         currentUser = user;
@@ -2474,57 +1983,43 @@
           if (userDoc.exists) {
             const data = userDoc.data();
             const emailUsername = user.email.split('@')[0].substring(0, 15);
-            if (data.username && data.username !== emailUsername) {
-              currentUsername = data.username;
-            } else {
-              currentUsername = data.username || emailUsername;
-            }
-            if (data.emailVerified !== true) {
-              await db.collection('users').doc(user.uid).update({ emailVerified: true });
-            }
+            currentUsername = (data.username && data.username !== emailUsername) ? data.username : (data.username || emailUsername);
+            if (data.emailVerified !== true) await db.collection('users').doc(user.uid).update({ emailVerified: true });
           } else {
             currentUsername = user.email.split('@')[0].substring(0,15);
             await db.collection('users').doc(user.uid).set({
-              username: currentUsername,
-              email: user.email,
-              online: true,
-              status: 'online',
-              emailVerified: true,
-              createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+              username: currentUsername, email: user.email, online: true, status: 'online',
+              emailVerified: true, createdAt: firebase.firestore.FieldValue.serverTimestamp(),
               lastSeen: firebase.firestore.FieldValue.serverTimestamp(),
-              lastActive: firebase.firestore.FieldValue.serverTimestamp(),
-              bio: '', statusMessage: ''
+              lastActive: firebase.firestore.FieldValue.serverTimestamp(), bio:'', statusMessage:''
             });
           }
           await setupUserPresence();
           setupActivityMonitor();
+          listenToCurrentUser();
           setupConnectionMonitoring();
           loadPublicMessages();
           loadOnlineUsers();
           setupTypingListener();
           checkNotificationPermission();
-          setInterval(() => { if (currentUser && document.visibilityState === 'visible' && !document.hidden) db.collection('users').doc(currentUser.uid).update({ lastSeen: firebase.firestore.FieldValue.serverTimestamp(), lastActive: firebase.firestore.FieldValue.serverTimestamp() }).catch(() => {}); }, 60000);
+          setInterval(() => { if (currentUser && document.visibilityState === 'visible') db.collection('users').doc(currentUser.uid).update({ lastSeen: firebase.firestore.FieldValue.serverTimestamp(), lastActive: firebase.firestore.FieldValue.serverTimestamp() }).catch(() => {}); }, 60000);
           authDiv.style.display = 'none';
           chatDiv.style.display = 'block';
           privatePage.classList.remove('show');
           hideLoadingScreen();
-        } catch (error) { 
-          console.error(error); 
-          hideLoadingScreen(); 
-        }
+        } catch (error) { console.error(error); hideLoadingScreen(); }
       } else {
         hideLoadingScreen();
         authDiv.style.display = 'flex';
         chatDiv.style.display = 'none';
         privatePage.classList.remove('show');
-        currentUser = null;
-        currentUsername = '';
-        activePartner = null;
+        currentUser = null; currentUsername = ''; activePartner = null;
       }
     });
-    function createAnimatedBg() { const bg = document.getElementById('animatedBg'); for (let i = 0; i < 30; i++) { const span = document.createElement('span'); span.style.left = Math.random() * 100 + '%'; span.style.width = Math.random() * 30 + 10 + 'px'; span.style.height = span.style.width; span.style.animationDuration = Math.random() * 20 + 10 + 's'; span.style.animationDelay = Math.random() * 5 + 's'; bg.appendChild(span); } }
+
+    function createAnimatedBg() { const bg=document.getElementById('animatedBg'); for(let i=0;i<30;i++){ const span=document.createElement('span'); span.style.left=Math.random()*100+'%'; span.style.width=Math.random()*30+10+'px'; span.style.height=span.style.width; span.style.animationDuration=Math.random()*20+10+'s'; span.style.animationDelay=Math.random()*5+'s'; bg.appendChild(span); } }
     createAnimatedBg();
     setTimeout(() => hideLoadingScreen(), 5000);
   </script>
 </body>
-  </html>
+                                                                                </html>
