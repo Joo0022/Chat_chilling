@@ -1855,13 +1855,33 @@
 
     window.closeUserProfile = function() { userProfileModal.classList.remove('show'); currentProfileUserId = null; };
 
+    // ========== التعديل الأساسي: جعل زر "بدء محادثة خاصة" يعمل بشكل موثوق ==========
     window.startPrivateChatFromProfile = function() {
-      if (!currentProfileUserId) return;
+      if (!currentUser) {
+        showToast('يجب تسجيل الدخول أولاً', 'error');
+        return;
+      }
+      if (!currentProfileUserId) {
+        showToast('لم يتم تحديد المستخدم', 'error');
+        return;
+      }
+      const partnerId = currentProfileUserId;
+      // نغلق نافذة الملف الشخصي أولاً
       closeUserProfile();
-      db.collection('users').doc(currentProfileUserId).get().then(doc => {
-        if (doc.exists) openPrivateChatFromProfile(currentProfileUserId, doc.data().username);
+      // نجلب اسم المستخدم من قاعدة البيانات للتأكد (أو نستخدم المعروض)
+      db.collection('users').doc(partnerId).get().then(doc => {
+        if (doc.exists) {
+          const partnerUsername = doc.data().username || 'مستخدم';
+          openPrivateChatFromProfile(partnerId, partnerUsername);
+        } else {
+          showToast('المستخدم غير موجود', 'error');
+        }
+      }).catch(err => {
+        console.error(err);
+        showToast('حدث خطأ أثناء فتح المحادثة', 'error');
       });
     };
+    // ========================================================================
 
     function openPrivateChatFromProfile(uid, username) {
       if (!currentUser) return;
