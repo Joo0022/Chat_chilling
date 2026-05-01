@@ -1965,7 +1965,39 @@
     window.login = async function() { const emailVal=loginEmail.value.trim(), passVal=loginPassword.value.trim(); loginError.style.display='none'; if(!emailVal||!passVal){loginError.style.display='block';loginError.textContent='❌ الرجاء إدخال البريد وكلمة المرور';return;} if(!validateLoginEmail()){loginError.style.display='block';loginError.textContent='❌ البريد الإلكتروني غير صالح';return;} try{ const res=await auth.signInWithEmailAndPassword(emailVal,passVal); if(!res.user.emailVerified){loginError.style.display='block';loginError.textContent='⚠️ لم يتم تفعيل بريدك الإلكتروني بعد. الرجاء التحقق من بريدك الإلكتروني';await auth.signOut();return;} }catch(e){ loginError.style.display='block'; switch(e.code){case'auth/user-not-found':loginError.textContent='❌ لا يوجد حساب بهذا البريد الإلكتروني';break; case'auth/wrong-password':loginError.textContent='❌ كلمة المرور غير صحيحة';break; case'auth/invalid-email':loginError.textContent='❌ البريد الإلكتروني غير صالح';break; case'auth/too-many-requests':loginError.textContent='❌ تم تعطيل الحساب مؤقتاً بسبب محاولات كثيرة';break; default:loginError.textContent='❌ خطأ في تسجيل الدخول: '+e.message;} } };
     window.register = async function() { const emailVal=email.value.trim(), passVal=password.value.trim(), userVal=username.value.trim(); registerError.style.display='none'; if(!emailVal||!passVal||!userVal){registerError.style.display='block';registerError.textContent='❌ الرجاء ملء جميع الحقول';return;} if(userVal.length>15){registerError.style.display='block';registerError.textContent='❌ اسم المستخدم يجب ألا يزيد عن 15 حرف';return;} if(!validateEmail()){registerError.style.display='block';registerError.textContent='❌ البريد الإلكتروني غير صالح';return;} if(passVal.length<8||!/[A-Z]/.test(passVal)||!/\d/.test(passVal)){registerError.style.display='block';registerError.textContent='❌ كلمة المرور يجب أن تحتوي على 8 أحرف على الأقل، حرف كبير ورقم';return;} if(usernameCheck.innerHTML.includes('غير متاح')||usernameCheck.innerHTML.includes('طويل جداً')){registerError.style.display='block';registerError.textContent='❌ اسم المستخدم غير صالح';return;} try{ const res=await auth.createUserWithEmailAndPassword(emailVal,passVal); await res.user.sendEmailVerification(); await db.collection('users').doc(res.user.uid).set({ username:userVal, email:emailVal, online:false, status:'offline', emailVerified:false, createdAt:firebase.firestore.FieldValue.serverTimestamp(), lastSeen:firebase.firestore.FieldValue.serverTimestamp(), lastActive:firebase.firestore.FieldValue.serverTimestamp(), bio:'', statusMessage:'' }); verificationEmailSpan.textContent=emailVal; verificationModal.classList.add('show'); await auth.signOut(); switchAuthTab('login'); loginEmail.value=emailVal; }catch(e){ registerError.style.display='block'; switch(e.code){case'auth/email-already-in-use':registerError.textContent='❌ هذا البريد الإلكتروني مستخدم بالفعل';break; case'auth/invalid-email':registerError.textContent='❌ البريد الإلكتروني غير صالح';break; case'auth/weak-password':registerError.textContent='❌ كلمة المرور ضعيفة جداً';break; default:registerError.textContent='❌ خطأ: '+e.message;} } };
     window.hideVerificationModal = function() { verificationModal.classList.remove('show'); };
-    window.googleLogin = async function() { try{ const res=await auth.signInWithPopup(googleProvider); const email=res.user.email; const usernameFromEmail=email.split('@')[0].substring(0,15); await db.collection('users').doc(res.user.uid).set({ username:usernameFromEmail, email:email, online:true, status:'online', emailVerified:true, lastSeen:firebase.firestore.FieldValue.serverTimestamp(), lastActive:firebase.firestore.FieldValue.serverTimestamp(), bio:'', statusMessage:'' },{merge:true}); }catch(e){ showToast('❌ خطأ في تسجيل الدخول بحساب Google','error'); } };
+    window.googleLogin = async function() {
+      try {
+        const res = await auth.signInWithPopup(googleProvider);
+        const email = res.user.email;
+        const usernameFromEmail = email.split('@')[0].substring(0, 15);
+        await db.collection('users').doc(res.user.uid).set({
+          username: usernameFromEmail,
+          email: email,
+          online: true,
+          status: 'online',
+          emailVerified: true,
+          lastSeen: firebase.firestore.FieldValue.serverTimestamp(),
+          lastActive: firebase.firestore.FieldValue.serverTimestamp(),
+          bio: '',
+          statusMessage: ''
+        }, { merge: true });
+      } catch (e) {
+        console.error('Google sign-in error:', e);
+        switch (e.code) {
+          case 'auth/popup-closed-by-user':
+            showToast('❌ تم إغلاق نافذة تسجيل الدخول', 'error');
+            break;
+          case 'auth/cancelled-popup-request':
+            showToast('❌ تم إلغاء تسجيل الدخول', 'error');
+            break;
+          case 'auth/popup-blocked':
+            showToast('❌ النافذة المنبثقة محظورة. يُرجى السماح بها', 'error');
+            break;
+          default:
+            showToast('❌ خطأ في تسجيل الدخول بحساب Google', 'error');
+        }
+      }
+    };
     window.logout = async function() { try{ if(currentUser){ await db.collection('users').doc(currentUser.uid).update({ online:false, status:'offline', lastSeen:firebase.firestore.FieldValue.serverTimestamp() }); if(unsubscribePublic)unsubscribePublic(); if(unsubscribePrivate)unsubscribePrivate(); if(unsubscribeOnline)unsubscribeOnline(); if(unsubscribePartner)unsubscribePartner(); if(unsubscribeTyping)unsubscribeTyping(); await db.collection('typing').doc(currentUser.uid).delete().catch(()=>{}); } await auth.signOut(); currentUser=null; currentUsername=''; activePartner=null; chatDiv.style.display='none'; authDiv.style.display='flex'; privatePage.classList.remove('show'); cancelReply(); showToast('✅ تم تسجيل الخروج بنجاح'); }catch(e){ showToast('❌ خطأ في تسجيل الخروج','error'); } };
 
     // Forgot password
@@ -1992,37 +2024,65 @@
           if (userDoc.exists) {
             const data = userDoc.data();
             const emailUsername = user.email.split('@')[0].substring(0, 15);
-            currentUsername = (data.username && data.username !== emailUsername) ? data.username : (data.username || emailUsername);
-            if (data.emailVerified !== true) await db.collection('users').doc(user.uid).update({ emailVerified: true });
+            currentUsername = (data.username && data.username !== emailUsername)
+              ? data.username
+              : (data.username || emailUsername);
+            if (data.emailVerified !== true) {
+              await db.collection('users').doc(user.uid).update({ emailVerified: true });
+            }
           } else {
-            currentUsername = user.email.split('@')[0].substring(0,15);
+            currentUsername = user.email.split('@')[0].substring(0, 15);
             await db.collection('users').doc(user.uid).set({
-              username: currentUsername, email: user.email, online: true, status: 'online',
-              emailVerified: true, createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+              username: currentUsername,
+              email: user.email,
+              online: true,
+              status: 'online',
+              emailVerified: true,
+              createdAt: firebase.firestore.FieldValue.serverTimestamp(),
               lastSeen: firebase.firestore.FieldValue.serverTimestamp(),
-              lastActive: firebase.firestore.FieldValue.serverTimestamp(), bio:'', statusMessage:''
+              lastActive: firebase.firestore.FieldValue.serverTimestamp(),
+              bio: '',
+              statusMessage: ''
             });
           }
+
           await setupUserPresence();
           setupActivityMonitor();
-          listenToCurrentUser();
+          // تم إزالة استدعاء listenToCurrentUser() الذي كان غير معرف
           setupConnectionMonitoring();
           loadPublicMessages();
           loadOnlineUsers();
           setupTypingListener();
           checkNotificationPermission();
-          setInterval(() => { if (currentUser && document.visibilityState === 'visible') db.collection('users').doc(currentUser.uid).update({ lastSeen: firebase.firestore.FieldValue.serverTimestamp(), lastActive: firebase.firestore.FieldValue.serverTimestamp() }).catch(() => {}); }, 60000);
+
+          setInterval(() => {
+            if (currentUser && document.visibilityState === 'visible') {
+              db.collection('users').doc(currentUser.uid).update({
+                lastSeen: firebase.firestore.FieldValue.serverTimestamp(),
+                lastActive: firebase.firestore.FieldValue.serverTimestamp()
+              }).catch(() => {});
+            }
+          }, 60000);
+
           authDiv.style.display = 'none';
           chatDiv.style.display = 'block';
           privatePage.classList.remove('show');
           hideLoadingScreen();
-        } catch (error) { console.error(error); hideLoadingScreen(); }
+        } catch (error) {
+          console.error('Error in auth state handler:', error);
+          hideLoadingScreen();
+          // في حالة حدوث خطأ كبير، نعيد عرض واجهة المصادقة
+          authDiv.style.display = 'flex';
+          chatDiv.style.display = 'none';
+        }
       } else {
         hideLoadingScreen();
         authDiv.style.display = 'flex';
         chatDiv.style.display = 'none';
         privatePage.classList.remove('show');
-        currentUser = null; currentUsername = ''; activePartner = null;
+        currentUser = null;
+        currentUsername = '';
+        activePartner = null;
       }
     });
 
@@ -2032,4 +2092,4 @@
     setTimeout(() => hideLoadingScreen(), 5000);
   </script>
 </body>
-      </html>
+  </html>
