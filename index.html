@@ -827,11 +827,11 @@
       <div class="chat-container">
         <div class="users-sidebar">
           <div class="sidebar-header">
-            <h3><i class="fas fa-users"></i> المستخدمون <span class="online-count" id="onlineCount">0</span></h3>
+            <h3><i class="fas fa-comments"></i> المحادثات الخاصة <span class="online-count" id="chatCount">0</span></h3>
             <button class="close-sidebar-btn" onclick="toggleSidebar()"><i class="fas fa-times"></i></button>
           </div>
           <div class="sidebar-search">
-            <input type="text" id="userSearchInput" placeholder="🔍 .....ابحث عن مستخدم" oninput="filterUsers(this.value)">
+            <input type="text" id="userSearchInput" placeholder="🔍 ابحث في المحادثات..." oninput="filterUsers(this.value)">
           </div>
           <div class="users-list" id="onlineList"></div>
         </div>
@@ -1075,13 +1075,13 @@
     const statMessages = document.getElementById('statMessages');
     const profileImageInput = document.getElementById('profileImageInput');
     const userSearchInput = document.getElementById('userSearchInput');
+    const chatCount = document.getElementById('chatCount');
 
     // Global variables
     let currentUser = null;
     let currentUsername = '';
     let unsubscribePublic = null;
     let unsubscribePrivate = null;
-    let unsubscribeOnline = null;
     let unsubscribePartner = null;
     let unsubscribeTyping = null;
     let activePartner = null;
@@ -1100,12 +1100,20 @@
     let loadingMore = false;
     let lastMessageSnapshot = null;
     let allUsersList = [];
+    let allChatPartners = [];
     let currentProfileUserId = null;
     const MESSAGES_LIMIT = 50;
     const userColors = new Map();
     const availableColors = Array.from({ length: 12 }, (_, i) => `user-color-${i + 1}`);
     let colorIndex = 0;
     const userAvatarsCache = new Map();
+    
+    // New variables for private chats sidebar
+    let privateChatsListeners = [];
+    let partnerMap = new Map(); // uid -> { lastTimestamp, lastMessageText }
+    let unreadCountsObj = {};
+    let partnerUserCache = new Map(); // uid -> { username, profileImage }
+    let renderTimeout = null;
 
     // Helper functions
     function hideLoadingScreen() { loadingScreen.classList.add('hidden'); }
@@ -1653,216 +1661,154 @@
       }, 2000);
     }
 
-    // Users list
-    let allUsers = [];
-    async function renderUserList(usersArray) {
-      allUsers = usersArray;
-      filterUsers(userSearchInput?.value || '');
-    }
-    function filterUsers(searchTerm) {
-      const term = searchTerm.toLowerCase().trim();
-      let filtered = allUsers;
-      if (term) filtered = allUsers.filter(u => u.username.toLowerCase().includes(term) || (u.email && u.email.toLowerCase().includes(term)));
-      displayUsersList(filtered);
-    }
-    async function displayUsersList(usersArray) {
-      const unreadCounts = await getUnreadCounts();
-      let html = '';
-      let onlineCount = 0, awayCount = 0;
-      usersArray.forEach(user => {
-        const unreadCount = unreadCounts[user.id] || 0;
-        const initial = user.username.charAt(0).toUpperCase();
-        let statusText = '', statusClass = '', statusDot = '', lastSeenText = '';
-        if (user.online === true) {
-          if (user.status === 'online') { onlineCount++; statusText = '🟢 متصل'; statusClass = 'online'; statusDot = '<span class="status-dot"></span>'; }
-          else if (user.status === 'away') { awayCount++; statusText = '🟡 غير نشط'; statusClass = 'away'; statusDot = '<span class="status-dot away"></span>'; }
-          else { onlineCount++; statusText = '🟢 متصل'; statusClass = 'online'; statusDot = '<span class="status-dot"></span>'; }
-        } else {
-          statusText = '🔴 غير متصل'; statusClass = 'offline'; statusDot = '<span class="status-dot offline"></span>';
-          if (user.lastSeen?.toDate) lastSeenText = formatTimeAgo(user.lastSeen.toDate());
-        }
-        const adminBadge = isAdmin(user.email) ? '<span class="admin-badge"><i class="fas fa-crown"></i> أدمن</span>' : '';
-        let avatarStyle = '';
-        if (user.profileImage) {
-          avatarStyle = `style="background-image: url('${escapeHtml(user.profileImage)}'); background-size: cover;"`;
-          setCachedAvatar(user.id, user.profileImage);
-        }
-        html += `<div class="user-item" onclick="openUserProfile('${user.id}')">
-          <div class="user-avatar" ${avatarStyle}>${user.profileImage ? '' : initial}</div>
-          <div class="user-info">
-            <div class="user-name">${escapeHtml(user.username)} ${adminBadge}</div>
-            <div class="user-status ${statusClass}">${statusDot} ${statusText}</div>
-            ${lastSeenText ? `<div class="user-last-seen">آخر ظهور: ${lastSeenText}</div>` : ''}
-          </div>
-          ${unreadCount > 0 ? `<span class="notification-badge-new">${unreadCount}</span>` : ''}
-        </div>`;
-      });
-      onlineList.innerHTML = html || '<div class="no-messages">لا يوجد مستخدمين آخرين</div>';
-      document.getElementById('onlineCount').textContent = `${onlineCount} متصل، ${awayCount} غير نشط`;
-    }
-    function loadOnlineUsers() {
-      if (unsubscribeOnline) unsubscribeOnline();
-      const queryBase = db.collection('users').where('emailVerified', '==', true);
-      unsubscribeOnline = queryBase.onSnapshot(snapshot => {
-        const users = [];
-        snapshot.forEach(doc => {
-          if (doc.id !== currentUser?.uid) {
-            const data = doc.data();
-            if (data.username) {
-              users.push({ id: doc.id, ...data });
-              if (data.profileImage) setCachedAvatar(doc.id, data.profileImage);
-            }
-          }
+    // New: Private chats sidebar functions
+    function startPrivateChatsListener() {
+      if (!currentUser) return;
+      stopPrivateChatsListener();
+      
+      // Listen to unread counts
+      const unreadMetaUnsub = db.collection('user_private_meta').doc(currentUser.uid)
+        .onSnapshot(doc => {
+          unreadCountsObj = doc.exists ? (doc.data().unreadCounts || {}) : {};
+          scheduleRender();
         });
-        users.sort((a, b) => (b.lastActive?.toDate?.() || 0) - (a.lastActive?.toDate?.() || 0));
-        renderUserList(users);
-      }, error => {
-        onlineList.innerHTML = '<div class="no-messages">خطأ في تحميل المستخدمين: ' + error.message + '</div>';
+      
+      // Received messages
+      const q1 = db.collection('private_messages')
+        .where('toUid', '==', currentUser.uid)
+        .orderBy('createdAt', 'desc');
+      const unsub1 = q1.onSnapshot(snapshot => {
+        processMessages(snapshot, 'received');
       });
+      
+      // Sent messages
+      const q2 = db.collection('private_messages')
+        .where('uid', '==', currentUser.uid)
+        .orderBy('createdAt', 'desc');
+      const unsub2 = q2.onSnapshot(snapshot => {
+        processMessages(snapshot, 'sent');
+      });
+      
+      privateChatsListeners = [unreadMetaUnsub, unsub1, unsub2];
     }
-
-    // Profile
-    window.openMyProfile = async function() {
-      if (!currentUser) return;
-      const userDoc = await db.collection('users').doc(currentUser.uid).get();
-      if (userDoc.exists) {
-        const data = userDoc.data();
-        profileUsername.value = data.username || '';
-        profileStatusMessage.value = data.statusMessage || '';
-        profileBio.value = data.bio || '';
-        if (data.profileImage) {
-          myProfileAvatar.style.backgroundImage = `url('${data.profileImage}')`;
-          myProfileAvatar.style.backgroundSize = 'cover';
-          myProfileAvatar.innerHTML = '';
+    
+    function stopPrivateChatsListener() {
+      privateChatsListeners.forEach(unsub => unsub());
+      privateChatsListeners = [];
+    }
+    
+    function processMessages(snapshot, type) {
+      // Extract partner UID and latest timestamp
+      snapshot.docChanges().forEach(change => {
+        if (change.type === 'removed') return; // ignore deletions for now
+        const msg = change.doc.data();
+        let partnerUid;
+        if (type === 'received') {
+          partnerUid = msg.uid;
         } else {
-          myProfileAvatar.style.backgroundImage = '';
-          myProfileAvatar.innerHTML = '<i class="fas fa-camera"></i>';
+          partnerUid = msg.toUid;
         }
-        const joinedDate = data.createdAt?.toDate();
-        statJoined.textContent = joinedDate ? formatTimeAgo(joinedDate) : 'غير معروف';
-        const publicCount = await db.collection('messages').where('uid', '==', currentUser.uid).get();
-        const privateCount = await db.collection('private_messages').where('uid', '==', currentUser.uid).get();
-        statMessages.textContent = publicCount.size + privateCount.size;
-      }
-      myProfileModal.classList.add('show');
-    };
-    window.closeMyProfile = function() { myProfileModal.classList.remove('show'); };
-    window.saveMyProfile = async function() {
-      const newUsername = profileUsername.value.trim();
-      if (!newUsername) { showToast('اسم المستخدم مطلوب', 'error'); return; }
-      if (newUsername.length > 15) { showToast('اسم المستخدم يجب ألا يزيد عن 15 حرف', 'error'); return; }
-      const userDoc = await db.collection('users').doc(currentUser.uid).get();
-      if (userDoc.exists && userDoc.data().username !== newUsername) {
-        const existing = await db.collection('users').where('username', '==', newUsername).get();
-        if (!existing.empty) { showToast('اسم المستخدم غير متاح', 'error'); return; }
-      }
-      const updateData = {
-        username: newUsername,
-        statusMessage: profileStatusMessage.value,
-        bio: profileBio.value,
-        updatedAt: firebase.firestore.FieldValue.serverTimestamp()
-      };
-      await db.collection('users').doc(currentUser.uid).update(updateData);
-      currentUsername = newUsername;
-      setCachedAvatar(currentUser.uid, userDoc.data()?.profileImage || null);
-      if (allUsers.length > 0) {
-        const idx = allUsers.findIndex(u => u.id === currentUser.uid);
-        if (idx !== -1) {
-          allUsers[idx].username = newUsername;
-          allUsers[idx].bio = profileBio.value;
-          allUsers[idx].statusMessage = profileStatusMessage.value;
-        }
-        filterUsers(userSearchInput?.value || '');
-      }
-      showToast('✅ تم حفظ التغييرات بنجاح');
-      closeMyProfile();
-    };
-    profileImageInput.addEventListener('change', async function(e) {
-      const file = e.target.files[0];
-      if (!file) return;
-      if (file.size > 2 * 1024 * 1024) { showToast('حجم الصورة يجب ألا يتجاوز 2 ميجابايت', 'error'); return; }
-      const formData = new FormData();
-      formData.append('file', file);
-      formData.append('upload_preset', UPLOAD_PRESET);
-      showToast('جاري رفع الصورة...');
-      try {
-        const response = await fetch(`https://api.cloudinary.com/v1_1/${CLOUD_NAME}/image/upload`, { method: 'POST', body: formData });
-        const data = await response.json();
-        await db.collection('users').doc(currentUser.uid).update({ profileImage: data.secure_url });
-        myProfileAvatar.style.backgroundImage = `url('${data.secure_url}')`;
-        myProfileAvatar.style.backgroundSize = 'cover';
-        myProfileAvatar.innerHTML = '';
-        setCachedAvatar(currentUser.uid, data.secure_url);
-        showToast('تم تحديث الصورة');
-      } catch (err) { showToast('فشل رفع الصورة', 'error'); }
-    });
-    window.openUserProfile = async function(userId) {
-      if (!currentUser) return;
-      if (userId === currentUser.uid) { openMyProfile(); return; }
-      currentProfileUserId = userId;
-      const userDoc = await db.collection('users').doc(userId).get();
-      if (userDoc.exists) {
-        const data = userDoc.data();
-        userProfileUsername.value = data.username || '';
-        userProfileStatus.value = data.statusMessage || '';
-        userProfileBio.value = data.bio || '';
-        if (data.profileImage) {
-          userProfileAvatar.style.backgroundImage = `url('${data.profileImage}')`;
-          userProfileAvatar.style.backgroundSize = 'cover';
-          userProfileAvatar.innerHTML = '';
-        } else {
-          userProfileAvatar.style.backgroundImage = '';
-          userProfileAvatar.innerHTML = data.username?.charAt(0).toUpperCase() || '';
-        }
-        const joinedDate = data.createdAt?.toDate();
-        userProfileJoined.textContent = joinedDate ? formatTimeAgo(joinedDate) : 'غير معروف';
-        const publicCount = await db.collection('messages').where('uid', '==', userId).get();
-        const privateCount = await db.collection('private_messages').where('uid', '==', userId).get();
-        userProfileMessages.textContent = publicCount.size + privateCount.size;
-        userProfileModal.classList.add('show');
-      }
-    };
-    window.closeUserProfile = function() { userProfileModal.classList.remove('show'); currentProfileUserId = null; };
-    window.startPrivateChatFromProfile = function() {
-      if (!currentUser) { showToast('يجب تسجيل الدخول أولاً', 'error'); return; }
-      if (!currentProfileUserId) { showToast('لم يتم تحديد المستخدم', 'error'); return; }
-      const partnerId = currentProfileUserId;
-      closeUserProfile();
-      db.collection('users').doc(partnerId).get().then(doc => {
-        if (doc.exists) {
-          const partnerUsername = doc.data().username || 'مستخدم';
-          openPrivateChatFromProfile(partnerId, partnerUsername);
-        } else {
-          showToast('المستخدم غير موجود', 'error');
-        }
-      }).catch(err => { showToast('حدث خطأ أثناء فتح المحادثة', 'error'); });
-    };
-    function openPrivateChatFromProfile(uid, username) {
-      if (!currentUser) return;
-      activePartner = { uid, username };
-      privatePartnerName.textContent = username;
-      privatePage.classList.add('show');
-      loadPrivateMessages(uid);
-      if (unsubscribePartner) unsubscribePartner();
-      unsubscribePartner = db.collection('users').doc(uid).onSnapshot(doc => {
-        if (doc.exists) {
-          const data = doc.data();
-          if (data.online && data.status === 'online') { privateStatus.textContent = '🟢 متصل'; privateStatus.style.color = '#48bb78'; privateLastSeen.textContent = 'متصل الآن'; }
-          else if (data.online && data.status === 'away') { privateStatus.textContent = '🟡 غير نشط'; privateStatus.style.color = '#ecc94b'; privateLastSeen.textContent = 'غير نشط حالياً'; }
-          else { privateStatus.textContent = '🔴 غير متصل'; privateStatus.style.color = '#a0aec0'; privateLastSeen.textContent = formatTimeAgo(data.lastSeen?.toDate()); }
+        if (!partnerUid) return;
+        const ts = msg.createdAt;
+        const current = partnerMap.get(partnerUid) || {};
+        if (!current.lastTimestamp || (ts && ts > current.lastTimestamp)) {
+          partnerMap.set(partnerUid, {
+            lastTimestamp: ts || current.lastTimestamp,
+            lastMessageText: msg.text || msg.caption || ''
+          });
         }
       });
-      if (window._privateTypingUnsub) window._privateTypingUnsub();
-      window._privateTypingUnsub = setupPrivateTypingListener();
+      scheduleRender();
     }
-    window.openPrivateChat = function(uid, username) { openPrivateChatFromProfile(uid, username); };
-    window.closePrivateChat = function() {
-      activePartner = null; currentPrivateRoomId = null; privatePage.classList.remove('show');
-      if (unsubscribePrivate) unsubscribePrivate();
-      if (unsubscribePartner) unsubscribePartner();
-      if (window._privateTypingUnsub) window._privateTypingUnsub();
-      cancelReply();
+    
+    function scheduleRender() {
+      if (renderTimeout) clearTimeout(renderTimeout);
+      renderTimeout = setTimeout(() => renderPrivateChatList(), 100);
+    }
+    
+    async function renderPrivateChatList() {
+      if (!currentUser) return;
+      const partnerUids = Array.from(partnerMap.keys());
+      
+      // Fetch user documents for partners not yet cached
+      const toFetch = partnerUids.filter(uid => !partnerUserCache.has(uid));
+      if (toFetch.length > 0) {
+        const promises = toFetch.map(uid => 
+          db.collection('users').doc(uid).get().then(doc => {
+            if (doc.exists) {
+              const data = doc.data();
+              partnerUserCache.set(uid, {
+                username: data.username || 'مستخدم',
+                profileImage: data.profileImage || null
+              });
+              if (data.profileImage) setCachedAvatar(uid, data.profileImage);
+            } else {
+              partnerUserCache.set(uid, { username: 'مستخدم', profileImage: null });
+            }
+          }).catch(() => {
+            partnerUserCache.set(uid, { username: 'مستخدم', profileImage: null });
+          })
+        );
+        await Promise.all(promises);
+      }
+      
+      const partnersArray = partnerUids.map(uid => {
+        const user = partnerUserCache.get(uid) || { username: 'مستخدم', profileImage: null };
+        const partnerData = partnerMap.get(uid);
+        const unread = unreadCountsObj[uid] || 0;
+        return {
+          uid,
+          username: user.username,
+          profileImage: user.profileImage,
+          lastTimestamp: partnerData?.lastTimestamp,
+          lastMessageText: partnerData?.lastMessageText,
+          unreadCount: unread
+        };
+      });
+      
+      // Sort by last message timestamp descending (most recent first)
+      partnersArray.sort((a, b) => (b.lastTimestamp?.toDate?.() || 0) - (a.lastTimestamp?.toDate?.() || 0));
+      
+      allChatPartners = partnersArray;
+      filterUsers(userSearchInput?.value || '');
+      updateChatCount(partnersArray.length);
+    }
+    
+    function updateChatCount(count) {
+      if (chatCount) chatCount.textContent = count;
+    }
+    
+    // Override filterUsers to work with chat partners
+    window.filterUsers = function(searchTerm) {
+      const term = searchTerm.toLowerCase().trim();
+      let filtered = allChatPartners;
+      if (term) {
+        filtered = allChatPartners.filter(p => p.username.toLowerCase().includes(term));
+      }
+      displayChatPartners(filtered);
     };
+    
+    function displayChatPartners(partnersArray) {
+      let html = '';
+      partnersArray.forEach(partner => {
+        const initial = partner.username.charAt(0).toUpperCase();
+        const avatarStyle = partner.profileImage 
+          ? `style="background-image: url('${escapeHtml(partner.profileImage)}'); background-size: cover;"` 
+          : '';
+        const lastTime = partner.lastTimestamp?.toDate ? formatTimeAgo(partner.lastTimestamp.toDate()) : '';
+        const lastMsg = partner.lastMessageText ? escapeHtml(partner.lastMessageText.substring(0, 30)) : '';
+        html += `
+          <div class="user-item" onclick="openPrivateChat('${partner.uid}','${escapeHtml(partner.username)}')">
+            <div class="user-avatar" ${avatarStyle}>${partner.profileImage ? '' : initial}</div>
+            <div class="user-info">
+              <div class="user-name">${escapeHtml(partner.username)}</div>
+              <div class="user-last-seen">${lastMsg ? lastMsg + ' · ' : ''}${lastTime}</div>
+            </div>
+            ${partner.unreadCount > 0 ? `<span class="notification-badge-new">${partner.unreadCount}</span>` : ''}
+          </div>`;
+      });
+      onlineList.innerHTML = html || '<div class="no-messages">لا توجد محادثات خاصة</div>';
+    }
 
     // Search, reply, image upload, etc.
     let currentSearchTerm = '';
@@ -1998,7 +1944,7 @@
         }
       }
     };
-    window.logout = async function() { try{ if(currentUser){ await db.collection('users').doc(currentUser.uid).update({ online:false, status:'offline', lastSeen:firebase.firestore.FieldValue.serverTimestamp() }); if(unsubscribePublic)unsubscribePublic(); if(unsubscribePrivate)unsubscribePrivate(); if(unsubscribeOnline)unsubscribeOnline(); if(unsubscribePartner)unsubscribePartner(); if(unsubscribeTyping)unsubscribeTyping(); await db.collection('typing').doc(currentUser.uid).delete().catch(()=>{}); } await auth.signOut(); currentUser=null; currentUsername=''; activePartner=null; chatDiv.style.display='none'; authDiv.style.display='flex'; privatePage.classList.remove('show'); cancelReply(); showToast('✅ تم تسجيل الخروج بنجاح'); }catch(e){ showToast('❌ خطأ في تسجيل الخروج','error'); } };
+    window.logout = async function() { try{ if(currentUser){ await db.collection('users').doc(currentUser.uid).update({ online:false, status:'offline', lastSeen:firebase.firestore.FieldValue.serverTimestamp() }); if(unsubscribePublic)unsubscribePublic(); if(unsubscribePrivate)unsubscribePrivate(); if(unsubscribePartner)unsubscribePartner(); if(unsubscribeTyping)unsubscribeTyping(); stopPrivateChatsListener(); partnerMap.clear(); partnerUserCache.clear(); allChatPartners = []; filterUsers(''); await db.collection('typing').doc(currentUser.uid).delete().catch(()=>{}); } await auth.signOut(); currentUser=null; currentUsername=''; activePartner=null; chatDiv.style.display='none'; authDiv.style.display='flex'; privatePage.classList.remove('show'); cancelReply(); showToast('✅ تم تسجيل الخروج بنجاح'); }catch(e){ showToast('❌ خطأ في تسجيل الخروج','error'); } };
 
     // Forgot password
     window.showForgotPasswordModal = function() { forgotPasswordModal.classList.add('show'); resetEmail.value=''; resetEmailValidation.style.display='none'; forgotPasswordMessage.innerHTML=''; resetLoading.style.display='none'; };
@@ -2048,10 +1994,9 @@
 
           await setupUserPresence();
           setupActivityMonitor();
-          // تم إزالة استدعاء listenToCurrentUser() الذي كان غير معرف
           setupConnectionMonitoring();
           loadPublicMessages();
-          loadOnlineUsers();
+          startPrivateChatsListener();  // Changed from loadOnlineUsers
           setupTypingListener();
           checkNotificationPermission();
 
@@ -2071,7 +2016,6 @@
         } catch (error) {
           console.error('Error in auth state handler:', error);
           hideLoadingScreen();
-          // في حالة حدوث خطأ كبير، نعيد عرض واجهة المصادقة
           authDiv.style.display = 'flex';
           chatDiv.style.display = 'none';
         }
